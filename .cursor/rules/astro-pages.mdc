@@ -1,0 +1,51 @@
+---
+description: Astro page conventions — layout, data fetching, SEO, and composition patterns
+globs: src/pages/**/*.astro
+alwaysApply: false
+---
+
+# Astro Page Conventions
+
+## Page Composition Pattern
+
+Every page follows this structure:
+
+```astro
+---
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import StructuredData from "@/components/StructuredData.astro";
+import { getEntry } from "astro:content";
+import { buildProductSchema } from "@/lib/seo";
+
+// 1. Fetch data from content collections
+const product = await getEntry("products", "slug-here");
+if (!product) throw new Error("Content not found");
+const { data } = product;
+
+// 2. Build structured data
+const schema = buildProductSchema(data);
+---
+
+<!-- 3. Wrap in layout with SEO props -->
+<DefaultLayout
+  title={data.seo.metaTitle}
+  description={data.seo.metaDescription}
+  ogImage={data.seo.ogImage}
+  keywords={data.seo.keywords}
+>
+  <!-- 4. Inject structured data into <head> -->
+  <StructuredData slot="head" data={schema} />
+
+  <!-- 5. Compose with block components -->
+  <HeroSection title={data.title} />
+  <Features features={data.features} />
+</DefaultLayout>
+```
+
+## Rules
+
+- Always pass SEO props (`title`, `description`, `ogImage`) to the layout
+- Always include JSON-LD structured data via `StructuredData` component
+- Never hardcode content — fetch from content collections or import from `consts.ts`
+- Use `DefaultLayout` for public pages, `BasicLayout` for utility pages (confirmation, error)
+- Only add `client:*` directives to components that need interactivity

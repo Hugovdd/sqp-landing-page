@@ -1,0 +1,49 @@
+---
+description: Sidequest plugins project context — identity, tech stack, architecture, and deployment
+alwaysApply: true
+---
+
+# Sidequest Plugins — Project Context
+
+## Identity
+
+Marketing website for **Sidequest Plugins** (`sidequestplugins.com`). Sells After Effects plugins and extensions. Small personal project, updated infrequently.
+
+## Tech Stack
+
+- **Astro 5** (hybrid output: static by default, server for API routes)
+- **Mainline template** (shadcn/ui + Tailwind CSS 4 + React 19)
+- **Cloudflare Pages** + Workers (hosting + server endpoints)
+- **Astro Content Collections** for all content (products, legal pages)
+- **`src/consts.ts`** for site-wide config (nav, footer, social links, metadata)
+- **Mailgun** for email (double opt-in subscriptions + contact notifications)
+- **LemonSqueezy** for payments (checkout links only)
+- **Cloudflare Turnstile** for bot protection
+- **Cloudflare Web Analytics** for tracking
+
+## Architecture Principles
+
+- **No CMS** — content lives in Markdown/MDX with Zod-validated frontmatter
+- **No hardcoded content in components** — all data flows from content collections or `consts.ts` via typed props
+- **Astro islands** — only hydrate interactive components (`client:load`, `client:visible`). Keep everything else static.
+- **Maximum reusability** — every page section is a composable block component accepting typed props
+- **SEO-first** — every page needs metadata, OG tags, canonical URL, and JSON-LD structured data
+
+## Key File Locations
+
+- Content: `src/content/products/*.mdx`, `src/content/legal/*.md`
+- Content schemas: `src/content.config.ts`
+- Site config: `src/consts.ts`
+- SEO utilities: `src/lib/seo.ts`
+- Block components: `src/components/blocks/`
+- UI primitives: `src/components/ui/` (shadcn — don't modify)
+- Layouts: `src/layouts/`
+- API routes: `src/pages/api/`
+- Full spec: `docs/ASTRO-REBUILD-SPEC.md`
+
+## Path Aliases
+
+- `@/*` → `./src/*`
+- `@components/*` → `./src/components/*`
+- `@layouts/*` → `./src/layouts/*`
+- `@lib/*` → `./src/lib/*`

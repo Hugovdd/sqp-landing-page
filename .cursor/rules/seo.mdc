@@ -1,0 +1,40 @@
+---
+description: SEO conventions — metadata, structured data, and performance best practices
+globs: "{src/pages/**/*.astro,src/components/BaseHead.astro,src/lib/seo.ts}"
+alwaysApply: false
+---
+
+# SEO Conventions
+
+## Every Page Must Have
+
+1. **Title** — via layout prop, formatted as `"Page Title | SideQuest Plugins"`
+2. **Meta description** — unique per page, from content frontmatter `seo.metaDescription`
+3. **Canonical URL** — auto-generated from `Astro.url.href`
+4. **Open Graph tags** — `og:title`, `og:description`, `og:image`, `og:url`, `og:type`
+5. **Twitter card** — `summary_large_image`
+6. **JSON-LD structured data** — via `StructuredData.astro` component
+
+## Structured Data Types
+
+| Page | Schema |
+|---|---|
+| All pages | `Organization` (in root layout) |
+| Homepage | `WebSite` |
+| Product pages | `SoftwareApplication` + `FAQPage` |
+| Legal pages | `WebPage` with `breadcrumb` |
+
+Build schemas with helper functions in `src/lib/seo.ts`.
+
+## Image Optimization
+
+- Use Astro's `<Image />` component for automatic format conversion and sizing
+- Always provide `width`, `height`, and descriptive `alt` attributes
+- OG images must be 1200x630px JPG
+- Lazy-load below-the-fold images with `loading="lazy"`
+
+## Performance
+
+- Preconnect to external origins (LemonSqueezy, font CDNs)
+- Minimal client-side JS — use Astro islands sparingly
+- Target Lighthouse 95+ on all metrics

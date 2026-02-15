@@ -1,0 +1,55 @@
+---
+description: Astro API route conventions for Cloudflare Workers — validation, error handling, integrations
+globs: src/pages/api/**/*.ts
+alwaysApply: false
+---
+
+# API Route Conventions
+
+## Structure
+
+API routes run as Cloudflare Workers. Use Astro's `APIRoute` type:
+
+```ts
+import type { APIRoute } from "astro";
+import { z } from "zod";
+
+const schema = z.object({
+  email: z.string().email(),
+});
+
+export const POST: APIRoute = async ({ request }) => {
+  const body = await request.json();
+  const result = schema.safeParse(body);
+
+  if (!result.success) {
+    return new Response(JSON.stringify({ error: result.error.flatten() }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // ... handle request
+  return new Response(JSON.stringify({ success: true }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+};
+```
+
+## Rules
+
+- Always validate input with **Zod**
+- Always return proper JSON responses with correct status codes and `Content-Type`
+- Access env vars via `import.meta.env` (Cloudflare bindings)
+- Handle errors gracefully — never expose internal details to the client
+- Mark API route files as server-rendered: `export const prerender = false;`
+
+## Endpoints
+
+| Route | Purpose |
+|---|---|
+| `/api/subscribe` | Mailgun double opt-in email subscription |
+| `/api/confirm` | Email confirmation redirect handler |
+| `/api/contact` | Contact form → Turnstile validation + Mailgun |
+| `/api/health` | Health check (`{ status: "ok" }`) |

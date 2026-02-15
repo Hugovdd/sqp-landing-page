@@ -3,11 +3,14 @@ import { ArrowLeft } from "lucide-react";
 
 import { Background } from "@/components/background";
 import { Button } from "@/components/ui/button";
-import BasicLayout from "@/layouts/BasicLayout.astro";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
 ---
 
-<DefaultLayout title="404: Not Found" description="Sorry, the page you're looking for doesn't exist.">
+<DefaultLayout
+  title="404: Not Found"
+  description="Sorry, the page you're looking for doesn't exist."
+  noIndex={true}
+>
   <Background>
     <div class="container flex min-h-[70vh] flex-col items-center justify-center py-28 text-center lg:min-h-[80vh] lg:py-32">
       <div class="relative z-10 max-w-2xl">
@@ -22,22 +25,18 @@ import DefaultLayout from "@/layouts/DefaultLayout.astro";
 
         <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a href="/">
-          <Button size="lg" className="group min-w-[200px] gap-2">
+            <Button size="lg" className="group min-w-[200px] gap-2">
               <ArrowLeft className="size-5 transition-transform group-hover:-translate-x-1" />
               Back to Home
             </Button>
           </a>
           <a href="/contact">
-            <Button
-            variant="outline"
-            size="lg"
-            className="min-w-[200px]"
-            >
+            <Button variant="outline" size="lg" className="min-w-[200px]">
               Contact Support
             </Button>
-           </a>
+          </a>
         </div>
       </div>
     </div>
   </Background>
-</DefaultLayout> 
+</DefaultLayout>

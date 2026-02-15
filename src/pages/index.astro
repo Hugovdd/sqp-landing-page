@@ -1,30 +1,62 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from "astro:content";
 
-import { Background } from '@/components/background';
-import { FAQ } from '@/components/blocks/faq';
-import { Features } from '@/components/blocks/features';
-import { Hero } from '@/components/blocks/hero';
-import { Logos } from '@/components/blocks/logos';
-import { Pricing } from '@/components/blocks/pricing';
-import { ResourceAllocation } from '@/components/blocks/resource-allocation';
-import { Testimonials } from '@/components/blocks/testimonials';
-import DefaultLayout from '@/layouts/DefaultLayout.astro';
+import { Background } from "@/components/background";
+import { EmailSignup } from "@/components/blocks/email-signup";
+import { Hero } from "@/components/blocks/hero";
+import { ProductCards } from "@/components/blocks/product-cards";
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
 
+const allProducts = await getCollection("products");
+const products = allProducts
+  .filter((p) => !p.data.isFree)
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .map((p) => ({
+    id: p.id,
+    title: p.data.title,
+    tagline: p.data.tagline,
+    price: p.data.price,
+    currency: p.data.currency,
+    status: p.data.status,
+    category: p.data.category,
+    heroImage: p.data.heroImage,
+    slug: `/${p.id}`,
+  }));
 
-
+const orgSchema = buildOrganizationSchema();
+const siteSchema = buildWebSiteSchema();
 ---
 
-<DefaultLayout title={SITE_TITLE} description={SITE_DESCRIPTION} >
+<DefaultLayout
+  title=""
+  description={SITE.tagline}
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={siteSchema} />
+
   <Background className="via-muted to-muted/80">
-    <Hero />
-    <Logos client:only="react"/> 
-    <Features />
-    <ResourceAllocation />
+    <Hero
+      title="After Effects tools to supercharge your workflow"
+      subtitle="Professional plugins, extensions, and scripts to speed up your After Effects workflow."
+      ctaText="Browse Products"
+      ctaHref="#products"
+      secondaryCtaText="Free Scripts"
+      secondaryCtaHref="/free-ae-scripts"
+    />
   </Background>
-  <Testimonials client:only='react'/>
+
+  <div id="products">
+    <ProductCards
+      products={products}
+      heading="Our Products"
+      description="Tools built by motion designers, for motion designers."
+    />
+  </div>
+
   <Background variant="bottom">
-    <Pricing client:only='react'/>
-    <FAQ client:only='react'/>
+    <EmailSignup client:visible />
   </Background>
 </DefaultLayout>

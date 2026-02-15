@@ -1,0 +1,49 @@
+---
+description: React component patterns for Astro islands — props, hydration, and shadcn/ui usage
+globs: src/components/**/*.tsx
+alwaysApply: false
+---
+
+# React Component Patterns
+
+## Block Components (`src/components/blocks/`)
+
+- Accept all content as **typed props** — never fetch data inside components
+- Export a single default function component
+- Use shadcn/ui primitives from `@/components/ui/` — don't reinvent them
+- Use `cn()` from `@/lib/utils` for conditional class merging
+
+```tsx
+// ✅ Good — data-driven, reusable
+interface FeaturesProps {
+  features: { title: string; description: string; icon: string }[];
+}
+
+export default function Features({ features }: FeaturesProps) {
+  return (
+    <section className="py-16">
+      {features.map((f) => (
+        <FeatureCard key={f.title} {...f} />
+      ))}
+    </section>
+  );
+}
+```
+
+```tsx
+// ❌ Bad — hardcoded content
+export default function Features() {
+  const features = [{ title: "Scope Control", ... }]; // Don't do this
+}
+```
+
+## Hydration Rules
+
+When used in `.astro` pages:
+- `client:load` — forms, purchase buttons, mobile nav (needs JS immediately)
+- `client:visible` — FAQ accordion, video player, carousel (JS when scrolled into view)
+- No directive — static display components (feature cards, hero text, tech stack)
+
+## UI Primitives (`src/components/ui/`)
+
+These come from shadcn/ui via the Mainline template. **Don't modify them directly.** Customize via Tailwind theme tokens in `globals.css` or wrapper components.

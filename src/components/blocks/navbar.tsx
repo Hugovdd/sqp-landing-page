@@ -1,47 +1,22 @@
 import { useState, useEffect } from "react";
 
-import { ChevronRight, Github } from "lucide-react";
-
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { GITHUB_URL } from "@/consts";
+import { NAV_LINKS } from "@/consts";
 import { cn } from "@/lib/utils";
 
-const ITEMS = [
-  {
-    label: "Features",
-    href: "#features",
-    dropdownItems: [
-      {
-        title: "Modern product teams",
-        href: "/#feature-modern-teams",
-        description:
-          "Mainline is built on the habits that make the best product teams successful",
-      },
-      {
-        title: "Resource Allocation",
-        href: "/#resource-allocation",
-        description: "Mainline your resource allocation and execution",
-      },
-    ],
+// Group links by their group field for mobile menu
+const groups = NAV_LINKS.reduce(
+  (acc, link) => {
+    const group = link.group;
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(link);
+    return acc;
   },
-  { label: "About Us", href: "/about" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
-];
+  {} as Record<string, typeof NAV_LINKS[number][]>,
+);
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [pathname, setPathname] = useState("");
 
   useEffect(() => {
@@ -59,7 +34,7 @@ export const Navbar = () => {
         <a href="/" className="flex shrink-0 items-center gap-2">
           <img
             src="/logo.svg"
-            alt="logo"
+            alt="SideQuest Plugins"
             width={94}
             height={18}
             className="dark:invert"
@@ -67,68 +42,27 @@ export const Navbar = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <NavigationMenu className="max-lg:hidden">
-          <NavigationMenuList>
-            {ITEMS.map((link) =>
-              link.dropdownItems ? (
-                <NavigationMenuItem key={link.label} className="">
-                  <NavigationMenuTrigger className="data-[state=open]:bg-accent/50 bg-transparent! px-1.5">
-                    {link.label}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="w-[400px] space-y-2 p-4">
-                      {link.dropdownItems.map((item) => (
-                        <li key={item.title}>
-                          <a
-                            href={item.href}
-                            className="group hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex items-center gap-4 rounded-md p-3 leading-none no-underline outline-hidden transition-colors select-none"
-                          >
-                            <div className="space-y-1.5 transition-transform duration-300 group-hover:translate-x-1">
-                              <div className="text-sm leading-none font-medium">
-                                {item.title}
-                              </div>
-                              <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-                                {item.description}
-                              </p>
-                            </div>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ) : (
-                <NavigationMenuItem key={link.label} className="">
-                  <a
-                    href={link.href}
-                    className={cn(
-                      "relative bg-transparent px-1.5 text-sm font-medium transition-opacity hover:opacity-75",
-                      pathname === link.href && "text-muted-foreground",
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                </NavigationMenuItem>
-              ),
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
+        <nav className="max-lg:hidden">
+          <ul className="flex items-center gap-1">
+            {NAV_LINKS.map((link) => (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  className={cn(
+                    "relative bg-transparent px-2.5 py-1.5 text-sm font-medium transition-opacity hover:opacity-75",
+                    pathname === link.href && "text-muted-foreground",
+                  )}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        {/* Auth Buttons */}
+        {/* Right side controls */}
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
-          <a href="/login" className="max-lg:hidden">
-            <Button variant="outline">
-              <span className="relative z-10">Login</span>
-            </Button>
-          </a>
-          <a
-            href={GITHUB_URL}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Github className="size-4" />
-            <span className="sr-only">GitHub</span>
-          </a>
 
           {/* Hamburger Menu Button (Mobile Only) */}
           <button
@@ -154,7 +88,7 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/*  Mobile Menu Navigation */}
+      {/* Mobile Menu Navigation */}
       <div
         className={cn(
           "bg-background fixed inset-x-0 top-[calc(100%+1rem)] flex flex-col rounded-2xl border p-6 transition-all duration-300 ease-in-out lg:hidden",
@@ -163,73 +97,29 @@ export const Navbar = () => {
             : "invisible -translate-y-4 opacity-0",
         )}
       >
-        <nav className="divide-border flex flex-1 flex-col divide-y">
-          {ITEMS.map((link) =>
-            link.dropdownItems ? (
-              <div key={link.label} className="py-4 first:pt-0 last:pb-0">
-                <button
-                  onClick={() =>
-                    setOpenDropdown(
-                      openDropdown === link.label ? null : link.label,
-                    )
-                  }
-                  className="text-foreground flex w-full items-center justify-between text-base font-medium"
-                >
-                  {link.label}
-                  <ChevronRight
+        <nav className="flex flex-1 flex-col gap-6">
+          {Object.entries(groups).map(([groupName, links]) => (
+            <div key={groupName}>
+              <h3 className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider">
+                {groupName}
+              </h3>
+              <div className="space-y-1">
+                {links.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
                     className={cn(
-                      "size-4 transition-transform duration-200",
-                      openDropdown === link.label ? "rotate-90" : "",
+                      "text-foreground hover:text-foreground/80 block py-2 text-base font-medium transition-colors",
+                      pathname === link.href && "text-muted-foreground",
                     )}
-                  />
-                </button>
-                <div
-                  className={cn(
-                    "overflow-hidden transition-all duration-300",
-                    openDropdown === link.label
-                      ? "mt-4 max-h-[1000px] opacity-100"
-                      : "max-h-0 opacity-0",
-                  )}
-                >
-                  <div className="bg-muted/50 space-y-3 rounded-lg p-4">
-                    {link.dropdownItems.map((item) => (
-                      <a
-                        key={item.title}
-                        href={item.href}
-                        className="hover:bg-accent group block rounded-md p-2 transition-colors"
-                        onClick={() => {
-                          setIsMenuOpen(false);
-                          setOpenDropdown(null);
-                        }}
-                      >
-                        <div className="transition-transform duration-200 group-hover:translate-x-1">
-                          <div className="text-primary font-medium">
-                            {item.title}
-                          </div>
-
-                          <p className="text-muted-foreground mt-1 text-sm">
-                            {item.description}
-                          </p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ))}
               </div>
-            ) : (
-              <a
-                key={link.label}
-                href={link.href}
-                className={cn(
-                  "text-foreground hover:text-foreground/80 py-4 text-base font-medium transition-colors first:pt-0 last:pb-0",
-                  pathname === link.href && "text-muted-foreground",
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.label}
-              </a>
-            ),
-          )}
+            </div>
+          ))}
         </nav>
       </div>
     </section>

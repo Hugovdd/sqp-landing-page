@@ -1,0 +1,47 @@
+---
+import { Background } from "@/components/background";
+import { Button } from "@/components/ui/button";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+
+const url = new URL(Astro.request.url);
+const alreadyConfirmed = url.searchParams.get("already") === "true";
+---
+
+<BasicLayout
+  title="Subscription Confirmed"
+  description="Your email subscription has been confirmed."
+  noIndex={true}
+>
+  <Background>
+    <div class="container flex min-h-[60vh] flex-col items-center justify-center py-28 text-center lg:min-h-[70vh]">
+      <div class="max-w-md">
+        {alreadyConfirmed ? (
+          <>
+            <h1 class="text-2xl font-semibold tracking-tight md:text-3xl">
+              Already confirmed
+            </h1>
+            <p class="text-muted-foreground mt-4 leading-relaxed">
+              Your email is already confirmed. You're all set to receive
+              updates from us.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 class="text-2xl font-semibold tracking-tight md:text-3xl">
+              You're subscribed!
+            </h1>
+            <p class="text-muted-foreground mt-4 leading-relaxed">
+              Thanks for confirming your email. You'll be the first to hear
+              about new plugins, updates, and freebies.
+            </p>
+          </>
+        )}
+        <div class="mt-8">
+          <a href="/">
+            <Button>Back to Home</Button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Background>
+</BasicLayout>

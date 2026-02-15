@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+
+import { Background } from "@/components/background";
+import { FreebieCards } from "@/components/blocks/freebie-cards";
+import { Hero } from "@/components/blocks/hero";
+import StructuredData from "@/components/StructuredData.astro";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildOrganizationSchema } from "@/lib/seo";
+
+const allProducts = await getCollection("products");
+const freebies = allProducts
+  .filter((p) => p.data.isFree)
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .map((p) => ({
+    id: p.id,
+    title: p.data.title,
+    tagline: p.data.tagline,
+    heroImage: p.data.heroImage,
+    slug: `/free-ae-scripts/${p.id}`,
+  }));
+
+const orgSchema = buildOrganizationSchema();
+---
+
+<DefaultLayout
+  title="Free After Effects Scripts"
+  description="Free After Effects scripts and tools from SideQuest Plugins. Download and use them in your projects."
+>
+  <StructuredData slot="head" data={orgSchema} />
+
+  <Background className="via-muted to-muted/80">
+    <Hero
+      title="Free After Effects scripts to supercharge your workflow"
+      subtitle="Useful scripts and tools to speed up your workflow. Free to download and use."
+    />
+  </Background>
+
+  <FreebieCards
+    freebies={freebies}
+    className="pt-0"
+  />
+</DefaultLayout>

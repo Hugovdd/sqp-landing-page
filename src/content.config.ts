@@ -1,20 +1,77 @@
 import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
-const blog = defineCollection({
-  // Load Markdown and MDX files in the `src/content/blog/` directory.
-  loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
-  // Type-check frontmatter using a schema
+// -- Product Feature (used in frontmatter arrays) --
+const featureSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  icon: z.string(), // Lucide icon name, e.g. "Type"
+  image: z.string().optional(), // path to image in public/
+  video: z.string().optional(), // path to video in public/
+});
+
+// -- FAQ Item --
+const faqSchema = z.object({
+  question: z.string(),
+  answer: z.string(), // supports markdown in MDX rendering
+});
+
+// -- Tech Stack Item --
+const techItemSchema = z.object({
+  name: z.string(),
+  icon: z.string(), // path to icon in public/
+  label: z.string().optional(),
+});
+
+// -- Stat --
+const statSchema = z.object({
+  value: z.string(), // e.g. "500+"
+  label: z.string(), // e.g. "users"
+});
+
+// -- SEO Fields (reused across collections) --
+const seoSchema = z.object({
+  metaTitle: z.string(),
+  metaDescription: z.string(),
+  ogImage: z.string().optional(), // path in public/images/
+  keywords: z.string().optional(),
+  noIndex: z.boolean().default(false),
+});
+
+// -- Products Collection --
+const products = defineCollection({
+  loader: glob({ base: "./src/content/products", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    // Transform string to Date object
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    image: z.string().optional(),
-    authorImage: z.string().optional(),
-    authorName: z.string().optional(),
+    tagline: z.string(),
+    price: z.number(),
+    currency: z.string().default("USD"),
+    version: z.string(),
+    status: z.enum(["available", "coming_soon", "discontinued"]),
+    supportedApp: z.string(), // e.g. "AFTER EFFECTS 24.0+"
+    extensionType: z.string(), // e.g. "Extension (.ZXP)"
+    checkoutUrl: z.string().url(),
+    heroVideo: z.string().optional(), // path or external URL
+    heroImage: z.string().optional(),
+    isFree: z.boolean().default(false),
+    category: z.enum(["plugin", "script", "freebie"]),
+    sortOrder: z.number().default(0),
+    features: z.array(featureSchema).default([]),
+    techStack: z.array(techItemSchema).default([]),
+    faqs: z.array(faqSchema).default([]),
+    stats: z.array(statSchema).default([]),
+    seo: seoSchema,
   }),
 });
 
-export const collections = { blog };
+// -- Legal Pages Collection --
+const legal = defineCollection({
+  loader: glob({ base: "./src/content/legal", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    lastUpdated: z.coerce.date(),
+    seo: seoSchema,
+  }),
+});
+
+export const collections = { products, legal };

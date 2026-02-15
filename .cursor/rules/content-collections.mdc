@@ -1,0 +1,65 @@
+---
+description: Astro Content Collections conventions — product and legal page schemas, frontmatter format
+globs: src/content/**/*.{md,mdx}
+alwaysApply: false
+---
+
+# Content Collections
+
+## Products (`src/content/products/*.mdx`)
+
+Each product is a single MDX file. The filename becomes the slug (e.g. `find-and-replace-fonts.mdx` → accessed via `getEntry("products", "find-and-replace-fonts")`).
+
+Required frontmatter fields — see `src/content.config.ts` for the full Zod schema:
+
+```yaml
+title: "Product Name"
+tagline: "Short description for cards"
+price: 20
+currency: "USD"
+version: "1.5.1"
+status: "available"           # available | coming_soon | discontinued
+supportedApp: "AFTER EFFECTS 24.0+"
+extensionType: "Extension (.ZXP)"
+checkoutUrl: "https://..."
+isFree: false
+category: "plugin"            # plugin | script | freebie
+sortOrder: 1
+features: [...]               # Array of { title, description, icon, image? }
+techStack: [...]               # Array of { name, icon, label? }
+faqs: [...]                    # Array of { question, answer }
+stats: [...]                   # Array of { value, label }
+seo:
+  metaTitle: "..."
+  metaDescription: "..."
+  ogImage: "/images/og/..."    # Optional
+  keywords: "..."              # Optional
+```
+
+The MDX body below frontmatter is optional — used for rich content rendered below structured sections.
+
+## Legal Pages (`src/content/legal/*.md`)
+
+Simple markdown with minimal frontmatter:
+
+```yaml
+title: "Privacy Policy"
+lastUpdated: 2025-03-07
+seo:
+  metaTitle: "Privacy Policy"
+  metaDescription: "..."
+```
+
+## Querying Content
+
+```ts
+import { getEntry, getCollection } from "astro:content";
+
+// Single item by slug
+const product = await getEntry("products", "find-and-replace-fonts");
+
+// All items with filtering
+const freebies = (await getCollection("products"))
+  .filter((p) => p.data.isFree)
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+```

@@ -2,21 +2,23 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '../styles/global.css';
-import { SITE_TITLE, SITE_METADATA } from '../consts';
+import { SITE } from '../consts';
 
 interface Props {
-	title: string;
-	description: string;
-	image?: string;
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  keywords?: string;
+  noIndex?: boolean;
+  type?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image } = Astro.props;
-const finalTitle = title || SITE_METADATA.title.default;
-const finalDescription = description || SITE_METADATA.description;
-const finalImage = image || SITE_METADATA.openGraph.images[0].url;
-const imageURL = new URL(finalImage, Astro.url);
+const { title, description, ogImage, keywords, noIndex = false, type = "website" } = Astro.props;
+const fullTitle = title ? `${title} | ${SITE.name}` : `After Effects Tools - Professional Plugins | ${SITE.name}`;
+const finalDescription = description || SITE.tagline;
+const imageURL = new URL(ogImage || SITE.defaultOgImage, SITE.domain);
 ---
 
 <!-- Global Metadata -->
@@ -26,31 +28,38 @@ const imageURL = new URL(finalImage, Astro.url);
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+<!-- Preconnect to external services -->
+<link rel="preconnect" href="https://challenges.cloudflare.com" />
+
 <!-- Load Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
 <!-- Preload local fonts -->
-<link 
-  rel="preload" 
-  href="/fonts/dm-sans/DMSans-Regular.ttf" 
-  as="font" 
-  type="font/ttf" 
+<link
+  rel="preload"
+  href="/fonts/dm-sans/DMSans-Regular.ttf"
+  as="font"
+  type="font/ttf"
   crossorigin="anonymous"
 />
-<link 
-  rel="preload" 
-  href="/fonts/dm-sans/DMSans-Bold.ttf" 
-  as="font" 
-  type="font/ttf" 
+<link
+  rel="preload"
+  href="/fonts/dm-sans/DMSans-Bold.ttf"
+  as="font"
+  type="font/ttf"
   crossorigin="anonymous"
 />
 
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="robots" content={`${SITE_METADATA.robots.index ? 'index' : 'noindex'}, ${SITE_METADATA.robots.follow ? 'follow' : 'nofollow'}`} />
-<meta name="keywords" content={SITE_METADATA.keywords.join(', ')} />
-<meta name="author" content={SITE_METADATA.authors[0].name} />
-<meta name="creator" content={SITE_METADATA.creator} />
-<meta name="publisher" content={SITE_METADATA.publisher} />
+
+<!-- Robots -->
+{noIndex ? (
+  <meta name="robots" content="noindex, nofollow" />
+) : (
+  <meta name="robots" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1" />
+)}
+
+{keywords && <meta name="keywords" content={keywords} />}
 
 <!-- Theme Script -->
 <script is:inline>
@@ -58,66 +67,46 @@ const imageURL = new URL(finalImage, Astro.url);
   const savedTheme = localStorage.getItem('theme');
   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   const initialTheme = savedTheme || systemTheme;
-  
+
   // Apply theme immediately to prevent flashing
   document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 </script>
 
 <!-- Favicon -->
-{SITE_METADATA.icons.icon.map((icon) => (
-  <link
-    rel="icon"
-    type={icon.type}
-    sizes={icon.sizes}
-    href={icon.url}
-  />
-))}
-{SITE_METADATA.icons.apple.map((icon) => (
-  <link
-    rel="apple-touch-icon"
-    sizes={icon.sizes}
-    href={icon.url}
-  />
-))}
-{SITE_METADATA.icons.shortcut.map((icon) => (
-  <link
-    rel="shortcut icon"
-    href={icon.url}
-  />
-))}
+<link rel="icon" href="/favicon/favicon.ico" sizes="48x48" />
+<link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon/favicon-96x96.png" sizes="96x96" type="image/png" />
+<link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
+<link rel="shortcut icon" href="/favicon/favicon.ico" />
 
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link
-	rel="alternate"
-	type="application/rss+xml"
-	title={SITE_TITLE}
-	href={new URL('rss.xml', Astro.site)}
-/>
 <meta name="generator" content={Astro.generator} />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Primary Meta Tags -->
-<title>{finalTitle}</title>
-<meta name="title" content={finalTitle} />
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
 <meta name="description" content={finalDescription} />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={type} />
+<meta property="og:locale" content={SITE.locale} />
 <meta property="og:url" content={Astro.url} />
-<meta property="og:site_name" content={SITE_METADATA.openGraph.siteName} />
-<meta property="og:title" content={finalTitle} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={finalDescription} />
 <meta property="og:image" content={imageURL} />
-<meta property="og:image:width" content={SITE_METADATA.openGraph.images[0].width.toString()} />
-<meta property="og:image:height" content={SITE_METADATA.openGraph.images[0].height.toString()} />
-<meta property="og:image:alt" content={SITE_METADATA.openGraph.images[0].alt} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 
 <!-- Twitter -->
-<meta property="twitter:card" content={SITE_METADATA.twitter.card} />
+<meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={finalTitle} />
+<meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={finalDescription} />
 <meta property="twitter:image" content={imageURL} />
-<meta property="twitter:creator" content={SITE_METADATA.twitter.creator} />
+
+<!-- Head slot for structured data and additional tags -->
+<slot name="head" />

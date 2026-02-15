@@ -1,0 +1,66 @@
+---
+import { getEntry } from "astro:content";
+
+import { EmailSignup } from "@/components/blocks/email-signup";
+import { FAQ } from "@/components/blocks/faq";
+import { Features } from "@/components/blocks/features";
+import { ProductHero } from "@/components/blocks/product-hero";
+import { TechStack } from "@/components/blocks/tech-stack";
+import StructuredData from "@/components/StructuredData.astro";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import {
+  buildFAQSchema,
+  buildOrganizationSchema,
+  buildProductSchema,
+} from "@/lib/seo";
+
+const product = await getEntry("products", "ae-sheets");
+if (!product) throw new Error("Product not found");
+
+const { data } = product;
+const productSchema = buildProductSchema(data);
+const faqSchema = buildFAQSchema(data.faqs);
+const orgSchema = buildOrganizationSchema();
+---
+
+<DefaultLayout
+  title={data.seo.metaTitle}
+  description={data.seo.metaDescription}
+  ogImage={data.seo.ogImage}
+  keywords={data.seo.keywords}
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={productSchema} />
+  {faqSchema && <StructuredData slot="head" data={faqSchema} />}
+
+  <ProductHero
+    title={data.title}
+    tagline={data.tagline}
+    price={data.price}
+    currency={data.currency}
+    version={data.version}
+    status={data.status}
+    supportedApp={data.supportedApp}
+    extensionType={data.extensionType}
+    checkoutUrl={data.checkoutUrl}
+    heroImage={data.heroImage}
+    stats={data.stats}
+  />
+
+  <Features
+    features={data.features}
+    heading="What it does"
+    description="A new way to work with data in After Effects."
+  />
+
+  <TechStack items={data.techStack} heading="Built with" />
+
+  {data.faqs.length > 0 && <FAQ client:visible items={data.faqs} />}
+
+  <EmailSignup
+    client:visible
+    heading="Get notified when AE Sheets launches"
+    description="Be the first to know. No spam, ever."
+    product="ae-sheets"
+  />
+</DefaultLayout>

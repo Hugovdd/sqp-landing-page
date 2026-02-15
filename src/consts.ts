@@ -1,73 +1,64 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+// Site metadata
+export const SITE = {
+  name: "SideQuest Plugins",
+  tagline: "Professional After Effects plugins designed to streamline your workflow. Find and replace fonts globally, connect to spreadsheets, and automate your motion graphics workflow.",
+  domain: "https://sidequestplugins.com",
+  supportEmail: "support@sidequestplugins.com",
+  defaultOgImage: "/images/og-homepage.jpg",
+  locale: "en_US",
+} as const;
 
-export const SITE_TITLE = "Mainline - Modern Astro Template";
-export const SITE_DESCRIPTION =
-  "A modern, fully featured Astro template built with Shadcn/UI, TailwindCSS and TypeScript, perfect for your next web application.";
-
-export const GITHUB_URL =
-  "https://github.com/shadcnblocks/mainline-astro-template";
-
-export const SITE_METADATA = {
-  title: {
-    default: "Mainline - Modern Astro Template",
-    template: "%s | Mainline",
+// Navigation links (used by navbar + mobile drawer)
+export const NAV_LINKS = [
+  {
+    label: "Find and Replace Fonts",
+    href: "/find-and-replace-fonts",
+    group: "Products",
   },
-  description:
-    "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
-  keywords: [
-    "Astro",
-    "astro template",
-    "astro theme",
-    "astro starter",
-    "shadcn template",
-    "shadcn theme",
-    "shadcn starter",
-    "tailwind template",
-    "tailwind theme",
-    "tailwind starter",
-    "mdx template",
-    "mdx theme",
-    "mdx starter",
-  ],
-  authors: [{ name: "shadcnblocks.com" }],
-  creator: "shadcnblocks.com",
-  publisher: "shadcnblocks.com",
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    icon: [
-      { url: "/favicon/favicon.ico", sizes: "48x48" },
-      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon/favicon.ico" },
+  { label: "AE Sheets", href: "/ae-sheets", group: "Products" },
+  { label: "Freebies", href: "/free-ae-scripts", group: "Resources" },
+  { label: "Help", href: "/help", group: "Resources" },
+  { label: "Contact", href: "/contact", group: "Resources" },
+] as const;
+
+// Footer columns
+export const FOOTER_COLUMNS = [
+  {
+    title: "Products",
+    links: [
+      { text: "Find and Replace Fonts", url: "/find-and-replace-fonts" },
+      { text: "Freebies", url: "/free-ae-scripts" },
     ],
-    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180" }],
-    shortcut: [{ url: "/favicon/favicon.ico" }],
   },
-  openGraph: {
-    title: "Mainline - Modern Astro Template",
-    description:
-      "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
-    siteName: "Mainline",
-    images: [
+  {
+    title: "Company",
+    links: [
+      { text: "Help", url: "/help" },
+      { text: "Contact", url: "/contact" },
+    ],
+  },
+  {
+    title: "Connect",
+    links: [
+      { text: "Twitter", url: "https://twitter.com/sidequestplugins" },
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Mainline - Modern Astro Template",
+        text: "Instagram",
+        url: "https://instagram.com/sidequestplugins",
       },
+      { text: "YouTube", url: "https://youtube.com/sidequestplugins" },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mainline - Modern Astro Template",
-    description:
-      "A modern Astro template built with shadcn/ui, Tailwind & MDX. Open source - MIT License.",
-    images: ["/og-image.jpg"],
-    creator: "@ausrobdev",
-  },
-};
+] as const;
+
+// Footer bottom links
+export const LEGAL_LINKS = [
+  { text: "Terms of Service", url: "/terms" },
+  { text: "Privacy Policy", url: "/privacy" },
+] as const;
+
+// Social links (for structured data)
+export const SOCIAL_URLS = [
+  "https://twitter.com/sidequestplugins",
+  "https://instagram.com/sidequestplugins",
+  "https://youtube.com/sidequestplugins",
+] as const;
