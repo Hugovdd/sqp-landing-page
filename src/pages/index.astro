@@ -52,13 +52,16 @@ const siteSchema = buildWebSiteSchema();
   </Background>
 
   <AnimateOnScroll animation="fade-up">
-    <div id="products">
+    <Background variant="bottom">
+      <div id="products">
       <ProductShowcase
         products={products}
         heading="Our Products"
         description="Tools built by motion designers, for motion designers."
       />
     </div>
+    </Background>
+    
   </AnimateOnScroll>
 
   <AnimateOnScroll animation="fade-up">

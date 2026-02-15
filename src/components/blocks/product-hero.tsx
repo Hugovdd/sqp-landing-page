@@ -113,7 +113,14 @@ export const ProductHero = ({
           />
 
           {/* Right: Video or Image */}
-          <div className="relative" style={{ opacity: 0, animation: "hero-fade-up 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.3s forwards" }}>
+          <div
+            className="relative"
+            style={{
+              opacity: 0,
+              animation:
+                "hero-fade-up 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.3s forwards",
+            }}
+          >
             {heroVideo ? (
               <video
                 src={heroVideo}
