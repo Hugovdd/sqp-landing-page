@@ -39,6 +39,22 @@ const topItems = [
 
 const bottomItems = [
   {
+    title: "Font Map Panel",
+    description:
+      "Map source fonts to language-specific replacements, keeping your weight hierarchy intact when swapping scripts.",
+    images: [
+      {
+        src: "/images/ae-sheets/features/font-maps.png",
+        alt: "Font Map interface",
+        width: 320,
+        height: 103,
+      },
+    ],
+    className:
+      "[&>.title-container]:mb-5 md:[&>.title-container]:mb-0 [&>.image-container]:flex-1 md:[&>.image-container]:place-items-center md:[&>.image-container]:-translate-y-3",
+    fade: [""],
+  },
+  {
     title: "Rigging Tools",
     description:
       "Automatically resize text, lock anchor points, and pin graphics so your motion design stays pixel-perfect regardless of translation length.",
@@ -55,28 +71,12 @@ const bottomItems = [
     fade: ["bottom"],
   },
   {
-    title: "Font Map Panel",
-    description:
-      "Map source fonts to language-specific replacements, keeping your weight hierarchy intact when swapping scripts.",
-    images: [
-      {
-        src: "/resource-allocation/discussions.webp",
-        alt: "Font Map interface",
-        width: 320,
-        height: 103,
-      },
-    ],
-    className:
-      "[&>.title-container]:mb-5 md:[&>.title-container]:mb-0 [&>.image-container]:flex-1 md:[&>.image-container]:place-items-center md:[&>.image-container]:-translate-y-3",
-    fade: [""],
-  },
-  {
     title: "Batch Create",
     description:
       "Select multiple target languages and let AE Sheets duplicate, rename, and restyle every composition in one batch.",
     images: [
       {
-        src: "/resource-allocation/notifications.webp",
+        src: "/images/ae-sheets/features/batch-create.png",
         alt: "Batch Create interface",
         width: 305,
         height: 280,

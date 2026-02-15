@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DashedLine } from "@/components/dashed-line";
 import { cn } from "@/lib/utils";
 
 interface ProductHeroProps {
@@ -44,9 +45,9 @@ export const ProductHero = ({
   return (
     <section className={cn("py-28 lg:py-32 lg:pt-44", className)}>
       <div className="container">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-0">
           {/* Left: Content */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 lg:pr-10">
             <div className="flex items-center gap-3">
               {status === "coming_soon" && (
                 <Badge variant="secondary" className="text-xs uppercase">
@@ -106,8 +107,13 @@ export const ProductHero = ({
             )}
           </div>
 
+          <DashedLine
+            orientation="vertical"
+            className="hidden h-full self-stretch lg:block"
+          />
+
           {/* Right: Video or Image */}
-          <div className="relative overflow-hidden rounded-2xl border shadow-lg">
+          <div className="relative">
             {heroVideo ? (
               <video
                 src={heroVideo}
@@ -115,13 +121,13 @@ export const ProductHero = ({
                 loop
                 muted
                 playsInline
-                className="aspect-video w-full object-cover"
+                className="w-full object-contain object-left"
               />
             ) : heroImage ? (
               <img
                 src={heroImage}
                 alt={`${title} preview`}
-                className="aspect-video w-full object-cover"
+                className="block w-5/6 object-contain object-left"
                 width={800}
                 height={450}
                 loading="eager"
