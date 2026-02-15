@@ -2,11 +2,12 @@
 import { getEntry } from "astro:content";
 
 import { AESheetsFeatures } from "@/components/blocks/ae-sheets-features";
+import { Background } from "@/components/background";
 import { EmailSignup } from "@/components/blocks/email-signup";
 import { FAQ } from "@/components/blocks/faq";
-import { Features } from "@/components/blocks/features";
 import { ProductHero } from "@/components/blocks/product-hero";
 import { TechStack } from "@/components/blocks/tech-stack";
+import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import StructuredData from "@/components/StructuredData.astro";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
 import {
@@ -34,36 +35,82 @@ const orgSchema = buildOrganizationSchema();
   <StructuredData slot="head" data={productSchema} />
   {faqSchema && <StructuredData slot="head" data={faqSchema} />}
 
-  <ProductHero
-    title={data.title}
-    tagline={data.tagline}
-    price={data.price}
-    currency={data.currency}
-    version={data.version}
-    status={data.status}
-    supportedApp={data.supportedApp}
-    extensionType={data.extensionType}
-    checkoutUrl={data.checkoutUrl}
-    heroImage={data.heroImage}
-    stats={data.stats}
-  />
+  <!-- Force dark mode & radial reveal animation -->
+  <script is:inline slot="head">
+    (function() {
+      // Remember the user's real theme so we can restore it when they leave
+      var current = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (current !== 'dark') {
+        sessionStorage.setItem('__ae_prev_theme', current);
+      }
+      // Switch to dark using the same mechanism as ThemeToggle
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
 
-  <AESheetsFeatures />
+      // Inject the radial reveal animation
+      var s = document.createElement('style');
+      s.textContent = '@keyframes radial-reveal{from{clip-path:circle(0% at 50% 0%)}to{clip-path:circle(150% at 50% 0%)}}body{animation:radial-reveal .8s cubic-bezier(.25,.46,.45,.94) forwards}';
+      document.head.appendChild(s);
 
-  <Features
-    features={data.features}
-    heading="What it does"
-    description="A new way to work with data in After Effects."
-  />
+      // Remove clip-path once animation completes so it doesn't mask scrollable content
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('animationend', function handler(e) {
+          if (e.animationName === 'radial-reveal') {
+            document.body.style.animation = 'none';
+            document.body.style.clipPath = 'none';
+            document.body.removeEventListener('animationend', handler);
+          }
+        });
+      });
 
-  <TechStack items={data.techStack} heading="Built with" />
+      // Restore theme when the user navigates away
+      window.addEventListener('beforeunload', function() {
+        var prev = sessionStorage.getItem('__ae_prev_theme');
+        if (prev) {
+          localStorage.setItem('theme', prev);
+          sessionStorage.removeItem('__ae_prev_theme');
+        }
+      });
+    })();
+  </script>
 
-  {data.faqs.length > 0 && <FAQ client:visible items={data.faqs} />}
+  <Background className="via-muted to-muted/80">
+    <ProductHero
+      title={data.title}
+      tagline={data.tagline}
+      price={data.price}
+      currency={data.currency}
+      version={data.version}
+      status={data.status}
+      supportedApp={data.supportedApp}
+      extensionType={data.extensionType}
+      checkoutUrl={data.checkoutUrl}
+      heroImage={data.heroImage}
+      stats={data.stats}
+    />
+  </Background>
 
-  <EmailSignup
-    client:visible
-    heading="Get notified when AE Sheets launches"
-    description="Be the first to know. No spam, ever."
-    product="ae-sheets"
-  />
+  <AnimateOnScroll animation="fade-up">
+    <AESheetsFeatures />
+  </AnimateOnScroll>
+
+  <AnimateOnScroll animation="fade-up">
+    <TechStack items={data.techStack} heading="Built with" />
+  </AnimateOnScroll>
+
+  {data.faqs.length > 0 && (
+    <AnimateOnScroll animation="fade-up">
+      <FAQ client:visible items={data.faqs} />
+    </AnimateOnScroll>
+  )}
+
+  <AnimateOnScroll animation="fade-up">
+    <EmailSignup
+      client:visible
+      heading="Get notified when AE Sheets launches"
+      description="Be the first to know. No spam, ever."
+      product="ae-sheets"
+    />
+  </AnimateOnScroll>
 </DefaultLayout>

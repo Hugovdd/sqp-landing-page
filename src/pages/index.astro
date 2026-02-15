@@ -1,10 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 
+import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import { Background } from "@/components/background";
 import { EmailSignup } from "@/components/blocks/email-signup";
 import { Hero } from "@/components/blocks/hero";
 import { ProductCards } from "@/components/blocks/product-cards";
+import { ProductShowcase } from "@/components/blocks/product-showcase";
 import StructuredData from "@/components/StructuredData.astro";
 import { SITE } from "@/consts";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
@@ -24,6 +26,7 @@ const products = allProducts
     category: p.data.category,
     heroImage: p.data.heroImage,
     slug: `/${p.id}`,
+    features: p.data.features,
   }));
 
 const orgSchema = buildOrganizationSchema();
@@ -48,15 +51,19 @@ const siteSchema = buildWebSiteSchema();
     />
   </Background>
 
-  <div id="products">
-    <ProductCards
-      products={products}
-      heading="Our Products"
-      description="Tools built by motion designers, for motion designers."
-    />
-  </div>
+  <AnimateOnScroll animation="fade-up">
+    <div id="products">
+      <ProductShowcase
+        products={products}
+        heading="Our Products"
+        description="Tools built by motion designers, for motion designers."
+      />
+    </div>
+  </AnimateOnScroll>
 
-  <Background variant="bottom">
-    <EmailSignup client:visible />
-  </Background>
+  <AnimateOnScroll animation="fade-up">
+    <Background variant="bottom">
+      <EmailSignup client:visible />
+    </Background>
+  </AnimateOnScroll>
 </DefaultLayout>

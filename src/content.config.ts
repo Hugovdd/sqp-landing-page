@@ -20,6 +20,7 @@ const faqSchema = z.object({
 const techItemSchema = z.object({
   name: z.string(),
   icon: z.string(), // path to icon in public/
+  darkIcon: z.string().optional(), // alternate icon for dark mode
   label: z.string().optional(),
 });
 

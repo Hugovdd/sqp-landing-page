@@ -44,11 +44,11 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.92 0.04 86.47);
+  --primary: oklch(77.671% 0.08938 289.959);
   --primary-foreground: oklch(0.31 0.02 86.64);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
+  --muted: oklch(97.015% 0.00011 271.152);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
@@ -111,7 +111,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(77.671% 0.08938 289.959);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -301,5 +301,62 @@ body {
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+/* ------------------------------------------------
+   Scroll & load animations
+   ------------------------------------------------ */
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll-triggered: hidden by default, revealed by IntersectionObserver */
+[data-animate] {
+  opacity: 0 !important;
+  transition-property: opacity, transform;
+  transition-duration: 0.6s;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+[data-animate="fade-up"] { transform: translateY(24px); }
+[data-animate="fade-in"] { transform: none; }
+[data-animate="slide-left"] { transform: translateX(24px); }
+[data-animate="slide-right"] { transform: translateX(-24px); }
+
+[data-animate].is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) translateX(0);
+}
+
+/* Hero: plays on page load with staggered children */
+.animate-hero-stagger > * {
+  opacity: 0;
+  animation: hero-fade-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.animate-hero-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.animate-hero-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.animate-hero-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.animate-hero-stagger > *:nth-child(4) { animation-delay: 240ms; }
+.animate-hero-stagger > *:nth-child(5) { animation-delay: 320ms; }
+.animate-hero-stagger > *:nth-child(6) { animation-delay: 400ms; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-animate],
+  [data-animate].is-visible,
+  .animate-hero-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
   }
 }

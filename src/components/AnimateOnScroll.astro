@@ -1,0 +1,62 @@
+---
+interface Props {
+  animation?: "fade-up" | "fade-in" | "slide-left" | "slide-right";
+  delay?: string;
+  duration?: string;
+  class?: string;
+  threshold?: number;
+}
+
+const {
+  animation = "fade-up",
+  delay,
+  duration,
+  class: className,
+  threshold = 0.1,
+} = Astro.props;
+
+const style = [
+  delay ? `transition-delay: ${delay}` : "",
+  duration ? `transition-duration: ${duration}` : "",
+]
+  .filter(Boolean)
+  .join("; ");
+---
+
+<div
+  data-animate={animation}
+  data-threshold={threshold}
+  class={className}
+  style={style || undefined}
+>
+  <slot />
+</div>
+
+<script>
+  // Astro deduplicates module scripts — this runs once per page
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      }
+    },
+    { threshold: 0.1 },
+  );
+
+  function observe() {
+    document.querySelectorAll<HTMLElement>("[data-animate]").forEach((el) => {
+      if (!el.classList.contains("is-visible")) {
+        observer.observe(el);
+      }
+    });
+  }
+
+  // Run on initial load
+  observe();
+
+  // Re-run after Astro client-side navigation (if view transitions are ever added)
+  document.addEventListener("astro:page-load", observe);
+</script>

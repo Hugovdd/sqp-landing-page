@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 
+import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import { Background } from "@/components/background";
 import { FreebieCards } from "@/components/blocks/freebie-cards";
 import { Hero } from "@/components/blocks/hero";
@@ -36,8 +37,10 @@ const orgSchema = buildOrganizationSchema();
     />
   </Background>
 
-  <FreebieCards
-    freebies={freebies}
-    className="pt-0"
-  />
+  <AnimateOnScroll animation="fade-up">
+    <FreebieCards
+      freebies={freebies}
+      className="pt-0"
+    />
+  </AnimateOnScroll>
 </DefaultLayout>

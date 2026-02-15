@@ -4,6 +4,7 @@ import { getEntry } from "astro:content";
 import { FAQ } from "@/components/blocks/faq";
 import { Features } from "@/components/blocks/features";
 import { ProductHero } from "@/components/blocks/product-hero";
+import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import StructuredData from "@/components/StructuredData.astro";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
 import {
@@ -45,8 +46,14 @@ const orgSchema = buildOrganizationSchema();
   />
 
   {data.features.length > 0 && (
-    <Features features={data.features} />
+    <AnimateOnScroll animation="fade-up">
+      <Features features={data.features} />
+    </AnimateOnScroll>
   )}
 
-  {data.faqs.length > 0 && <FAQ client:visible items={data.faqs} />}
+  {data.faqs.length > 0 && (
+    <AnimateOnScroll animation="fade-up">
+      <FAQ client:visible items={data.faqs} />
+    </AnimateOnScroll>
+  )}
 </DefaultLayout>

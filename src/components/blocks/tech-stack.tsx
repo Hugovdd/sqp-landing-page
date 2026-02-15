@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 interface TechItem {
   name: string;
   icon: string;
+  darkIcon?: string;
   label?: string;
 }
 
@@ -33,13 +34,28 @@ export const TechStack = ({
               key={item.name}
               className="flex flex-col items-center gap-2 transition-opacity hover:opacity-75"
             >
-              <img
-                src={item.icon}
-                alt={`${item.name} logo`}
-                width={48}
-                height={48}
-                className="size-12 object-contain dark:invert"
-              />
+              {item.darkIcon ? (
+                <>
+                  <img
+                    src={item.icon}
+                    alt={`${item.name} logo`}
+                    className="h-12 w-auto object-contain dark:hidden"
+                  />
+                  <img
+                    src={item.darkIcon}
+                    alt={`${item.name} logo`}
+                    className="hidden h-12 w-auto object-contain dark:block"
+                  />
+                </>
+              ) : (
+                <img
+                  src={item.icon}
+                  alt={`${item.name} logo`}
+                  width={48}
+                  height={48}
+                  className="size-12 object-contain dark:invert"
+                />
+              )}
               <span className="text-muted-foreground text-xs font-medium">
                 {item.label || item.name}
               </span>

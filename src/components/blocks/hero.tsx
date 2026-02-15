@@ -25,7 +25,7 @@ export const Hero = ({
   return (
     <section className={cn("py-28 lg:py-32 lg:pt-44", className)}>
       <div className="container">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="animate-hero-stagger mx-auto max-w-3xl text-center">
           <h1 className="text-foreground text-3xl tracking-tight md:text-4xl lg:text-5xl xl:text-6xl">
             {title}
           </h1>

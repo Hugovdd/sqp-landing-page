@@ -47,7 +47,7 @@ export const ProductHero = ({
       <div className="container">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-0">
           {/* Left: Content */}
-          <div className="flex flex-col gap-6 lg:pr-10">
+          <div className="animate-hero-stagger flex flex-col gap-6 lg:pr-10">
             <div className="flex items-center gap-3">
               {status === "coming_soon" && (
                 <Badge variant="secondary" className="text-xs uppercase">
@@ -113,7 +113,7 @@ export const ProductHero = ({
           />
 
           {/* Right: Video or Image */}
-          <div className="relative">
+          <div className="relative" style={{ opacity: 0, animation: "hero-fade-up 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.3s forwards" }}>
             {heroVideo ? (
               <video
                 src={heroVideo}
