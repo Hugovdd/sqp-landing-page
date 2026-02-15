@@ -12,7 +12,7 @@ const groups = NAV_LINKS.reduce(
     acc[group].push(link);
     return acc;
   },
-  {} as Record<string, typeof NAV_LINKS[number][]>,
+  {} as Record<string, (typeof NAV_LINKS)[number][]>,
 );
 
 export const Navbar = () => {
@@ -100,7 +100,7 @@ export const Navbar = () => {
         <nav className="flex flex-1 flex-col gap-6">
           {Object.entries(groups).map(([groupName, links]) => (
             <div key={groupName}>
-              <h3 className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider">
+              <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
                 {groupName}
               </h3>
               <div className="space-y-1">

@@ -17,7 +17,8 @@ export const GET: APIRoute = async ({ request, redirect, locals }) => {
     const runtime = (locals as { runtime?: { env?: Record<string, string> } })
       .runtime;
     const env = runtime?.env || {};
-    const MAILGUN_API_KEY = env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
+    const MAILGUN_API_KEY =
+      env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
     const SUBSCRIBE_SECRET =
       env.SUBSCRIBE_SECRET || import.meta.env.SUBSCRIBE_SECRET;
@@ -50,9 +51,10 @@ export const GET: APIRoute = async ({ request, redirect, locals }) => {
     }
 
     // Add member to Mailgun mailing list
-    const mailgunBase = MAILGUN_EU === "true"
-      ? "https://api.eu.mailgun.net/v3"
-      : "https://api.mailgun.net/v3";
+    const mailgunBase =
+      MAILGUN_EU === "true"
+        ? "https://api.eu.mailgun.net/v3"
+        : "https://api.mailgun.net/v3";
 
     const listAddress = `${list}@${MAILGUN_DOMAIN}`;
 

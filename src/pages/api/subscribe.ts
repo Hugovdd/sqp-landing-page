@@ -23,7 +23,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const runtime = (locals as { runtime?: { env?: Record<string, string> } })
       .runtime;
     const env = runtime?.env || {};
-    const MAILGUN_API_KEY = env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
+    const MAILGUN_API_KEY =
+      env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
     const SUBSCRIBE_SECRET =
       env.SUBSCRIBE_SECRET || import.meta.env.SUBSCRIBE_SECRET;
@@ -63,9 +64,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     confirmUrl.searchParams.set("list", listName);
 
     // Send confirmation email via Mailgun
-    const mailgunBase = MAILGUN_EU === "true"
-      ? "https://api.eu.mailgun.net/v3"
-      : "https://api.mailgun.net/v3";
+    const mailgunBase =
+      MAILGUN_EU === "true"
+        ? "https://api.eu.mailgun.net/v3"
+        : "https://api.mailgun.net/v3";
 
     const formData = new FormData();
     formData.append("from", `SideQuest Plugins <noreply@${MAILGUN_DOMAIN}>`);
@@ -109,9 +111,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   } catch (error) {
     console.error("Subscribe error:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error." }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: "Internal server error." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

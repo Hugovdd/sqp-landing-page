@@ -54,7 +54,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t mt-12 flex flex-col items-center justify-between gap-4 pt-8 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row">
           <p className="text-muted-foreground text-sm">
             &copy; {year} {SITE.name}. All rights reserved.
           </p>

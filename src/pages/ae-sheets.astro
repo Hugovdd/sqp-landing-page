@@ -1,6 +1,7 @@
 ---
 import { getEntry } from "astro:content";
 
+import { AESheetsFeatures } from "@/components/blocks/ae-sheets-features";
 import { EmailSignup } from "@/components/blocks/email-signup";
 import { FAQ } from "@/components/blocks/faq";
 import { Features } from "@/components/blocks/features";
@@ -46,6 +47,8 @@ const orgSchema = buildOrganizationSchema();
     heroImage={data.heroImage}
     stats={data.stats}
   />
+
+  <AESheetsFeatures />
 
   <Features
     features={data.features}

@@ -75,9 +75,7 @@ export function buildProductSchema(data: {
 /**
  * FAQPage schema — used on product pages with FAQs
  */
-export function buildFAQSchema(
-  faqs: { question: string; answer: string }[],
-) {
+export function buildFAQSchema(faqs: { question: string; answer: string }[]) {
   if (faqs.length === 0) return null;
 
   return {

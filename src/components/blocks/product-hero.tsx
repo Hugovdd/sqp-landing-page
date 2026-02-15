@@ -76,9 +76,7 @@ export const ProductHero = ({
               {status === "available" ? (
                 <>
                   <Button size="lg" asChild>
-                    <a href={checkoutUrl}>
-                      Buy for {formattedPrice}
-                    </a>
+                    <a href={checkoutUrl}>Buy for {formattedPrice}</a>
                   </Button>
                   <span className="text-muted-foreground text-sm">
                     14-day money-back guarantee

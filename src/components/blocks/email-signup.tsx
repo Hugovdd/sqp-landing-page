@@ -72,12 +72,10 @@ export const EmailSignup = ({
 
           {status === "success" ? (
             <div className="mt-8 rounded-xl border p-6">
-              <p className="text-foreground font-medium">
-                Check your inbox!
-              </p>
+              <p className="text-foreground font-medium">Check your inbox!</p>
               <p className="text-muted-foreground mt-1 text-sm">
-                We've sent you a confirmation email. Click the link to
-                complete your subscription.
+                We've sent you a confirmation email. Click the link to complete
+                your subscription.
               </p>
             </div>
           ) : (

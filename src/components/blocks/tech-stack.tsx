@@ -23,7 +23,7 @@ export const TechStack = ({
     <section className={cn("py-16 lg:py-20", className)}>
       <div className="container">
         <div className="text-center">
-          <h2 className="text-muted-foreground mb-8 text-sm font-medium uppercase tracking-wider">
+          <h2 className="text-muted-foreground mb-8 text-sm font-medium tracking-wider uppercase">
             {heading}
           </h2>
         </div>

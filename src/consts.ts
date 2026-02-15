@@ -1,7 +1,8 @@
 // Site metadata
 export const SITE = {
   name: "SideQuest Plugins",
-  tagline: "Professional After Effects plugins designed to streamline your workflow. Find and replace fonts globally, connect to spreadsheets, and automate your motion graphics workflow.",
+  tagline:
+    "Professional After Effects plugins designed to streamline your workflow. Find and replace fonts globally, connect to spreadsheets, and automate your motion graphics workflow.",
   domain: "https://sidequestplugins.com",
   supportEmail: "support@sidequestplugins.com",
   defaultOgImage: "/images/og-homepage.jpg",

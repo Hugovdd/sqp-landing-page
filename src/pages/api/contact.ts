@@ -43,7 +43,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const runtime = (locals as { runtime?: { env?: Record<string, string> } })
       .runtime;
     const env = runtime?.env || {};
-    const MAILGUN_API_KEY = env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
+    const MAILGUN_API_KEY =
+      env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
     const MAILGUN_EU = env.MAILGUN_EU || import.meta.env.MAILGUN_EU;
     const TURNSTILE_SECRET_KEY =
@@ -85,15 +86,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    const mailgunBase = MAILGUN_EU === "true"
-      ? "https://api.eu.mailgun.net/v3"
-      : "https://api.mailgun.net/v3";
+    const mailgunBase =
+      MAILGUN_EU === "true"
+        ? "https://api.eu.mailgun.net/v3"
+        : "https://api.mailgun.net/v3";
 
     const formData = new FormData();
-    formData.append(
-      "from",
-      `SideQuest Contact <noreply@${MAILGUN_DOMAIN}>`,
-    );
+    formData.append("from", `SideQuest Contact <noreply@${MAILGUN_DOMAIN}>`);
     formData.append("to", "support@sidequestplugins.com");
     formData.append("subject", `Contact form: ${name}`);
     formData.append("reply-to", email);
@@ -135,9 +134,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   } catch (error) {
     console.error("Contact error:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error." }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: "Internal server error." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };
