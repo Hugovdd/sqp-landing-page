@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ interface Product {
   category: "plugin" | "script" | "freebie";
   heroImage?: string;
   slug: string;
+  checkoutUrl?: string;
   features?: { title: string; description?: string }[];
 }
 
@@ -24,6 +25,12 @@ interface ProductShowcaseProps {
   className?: string;
 }
 
+const placeholderImages = [
+  "https://static.wixstatic.com/media/7e521c_b0ef000940f94f8dab0d3717447e7ce7~mv2.jpg/v1/fill/w_972,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Default%20mode.jpg",
+  "https://static.wixstatic.com/media/7e521c_6a3aacc163064dc8a2dbb53e4d6fe913~mv2.jpg/v1/fill/w_972,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ready%20to%20use%2C%20instantly.jpg",
+  "https://static.wixstatic.com/media/7e521c_22eddcf7e947417f80b180080d1fc70a~mv2.jpg/v1/fill/w_972,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Real%20backed%2C%20real%20results.jpg",
+];
+
 export const ProductShowcase = ({
   products,
   heading,
@@ -32,127 +39,106 @@ export const ProductShowcase = ({
 }: ProductShowcaseProps) => {
   return (
     <section className={cn("relative", className)}>
-      <div className="container py-8 lg:py-12">
+      <div className="w-full mx-auto grid box-border pt-[16.67vw] pr-[5.6vw] pb-[16.67vw] pl-[5.6vw] gap-[5.55vw] md:pt-[14.3vw] md:pr-[6.5vw] md:pb-[14.3vw] md:pl-[6.5vw] md:gap-[1.8vw] desktop:pt-[6.8vw] desktop:pr-[7.8125vw] desktop:pb-[7.65vw] desktop:pl-[7.8125vw] desktop:gap-[0.625vw]">
+        {/* Header */}
         {(heading || description) && (
-          <div className="mb-4 md:mb-6 md:text-center">
+          <header className="w-full mx-auto grid justify-items-center text-center gap-[2vw] desktop:w-[40vw] desktop:gap-[1.2vw]">
             {heading && (
-              <h2 className="text-3xl tracking-tight md:text-4xl lg:text-5xl">
+              <h2 className="m-0 text-foreground font-semibold leading-[1.1] tracking-[-0.02em] text-[clamp(1.875rem,8.3vw,2.4rem)] md:text-[clamp(2.2rem,7.55vw,3.625rem)] desktop:text-[clamp(2.5rem,3.75vw,4.5rem)]">
                 {heading}
               </h2>
             )}
             {description && (
-              <p className="text-muted-foreground mx-auto mt-4 max-w-2xl text-lg leading-relaxed">
+              <p className="m-0 text-muted-foreground leading-[1.4] text-[clamp(1rem,4.44vw,1.2rem)] md:text-[clamp(1rem,2.6vw,1.25rem)] desktop:text-[clamp(1rem,1.041vw,1.25rem)]">
                 {description}
               </p>
             )}
-          </div>
+          </header>
         )}
-      </div>
 
-      <div className="relative -mt-[30vh]">
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-             <div className="animate-aurora-gradient absolute right-0 bottom-0 left-0 h-[50vh] bg-linear-to-t from-blue-500/30 via-purple-500/30 to-pink-500/30 blur-3xl opacity-50" />
-        </div>
+        {/* Product cards */}
+        {products.map((product, index) => {
+          const isReversed = index % 2 !== 0;
+          const zIndex = 20 + (index + 1) * 10;
+          const image = placeholderImages[index % placeholderImages.length];
 
-        <div className="relative -mt-[100vh]">
-          {products.map((product, index) => {
-            const formattedPrice =
-              product.price === 0
-                ? "Free"
-                : new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: product.currency,
-                    minimumFractionDigits: 0,
-                  }).format(product.price);
+          const formattedPrice =
+            product.price === 0
+              ? "Free"
+              : new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: product.currency,
+                  minimumFractionDigits: 0,
+                }).format(product.price);
 
-            // Format index for display (e.g., "01 / 04")
-            const currentIndex = String(index + 1).padStart(2, "0");
-            const totalProducts = String(products.length).padStart(2, "0");
+          return (
+            <article
+              key={product.id}
+              className="grid grid-cols-1 relative desktop:grid-cols-[0.9975fr_1fr] desktop:sticky desktop:top-[8vw]"
+              style={{ zIndex }}
+            >
+              {/* Image */}
+              <img
+                className={cn(
+                  "block w-full object-cover h-[73.9vw] rounded-[14px] md:h-[59.9vw] md:rounded-[20px] desktop:h-[30.73vw] desktop:rounded-[40px]",
+                  isReversed && "desktop:order-2"
+                )}
+                src={image}
+                alt={`${product.title} preview`}
+                loading="lazy"
+              />
 
-            return (
-              <div
-                key={product.id}
-                className="sticky top-0 h-screen w-full flex items-center justify-center p-4"
-                style={{ top: index * 20 }}
-              >
-                  <div className="bg-card grid w-full max-w-6xl overflow-hidden rounded-3xl border shadow-2xl lg:grid-cols-2 lg:items-center">
-                    {/* Content Section - Order 2 on mobile, Order 1 on desktop */}
-                    <div className="order-2 flex flex-col gap-6 p-8 lg:order-1 lg:p-12 lg:pr-16">
-                      <div className="text-muted-foreground font-mono text-sm tracking-wider">
-                        {currentIndex} / {totalProducts}
-                      </div>
-
-                      <h3 className="text-3xl font-bold tracking-tight md:text-4xl">
-                        {product.title}
-                      </h3>
-
-                      <p className="text-muted-foreground text-lg leading-relaxed">
-                        {product.tagline}
-                      </p>
-
-                      {/* Features List */}
-                      {product.features && product.features.length > 0 && (
-                        <ul className="my-6 grid gap-3 sm:grid-cols-2">
-                          {product.features.slice(0, 6).map((feature, i) => (
-                            <li
-                              key={i}
-                              className="flex items-start gap-2 text-sm"
-                            >
-                              <Check className="text-primary mt-1 size-4 shrink-0" />
-                              <span className="text-muted-foreground">
-                                {feature.title}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-
-                      <div className="mt-2 flex items-center gap-4">
-                        <Button size="lg" className="rounded-full px-8" asChild>
-                          <a href={product.slug}>
-                            {product.status === "coming_soon"
-                              ? "Coming Soon"
-                              : `Get for ${formattedPrice}`}
-                          </a>
-                        </Button>
-
-                        {product.status === "coming_soon" && (
-                          <Badge variant="secondary" className="text-sm">
-                            Notify me
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Visual Section - Order 1 on mobile, Order 2 on desktop */}
-                    <div className="order-1 h-full lg:order-2">
-                      <div className="bg-muted relative h-full min-h-[300px] w-full overflow-hidden lg:min-h-full">
-                        {product.heroImage ? (
-                          <img
-                            src={product.heroImage}
-                            alt={`${product.title} preview`}
-                            className="size-full object-cover transition-transform duration-500 hover:scale-105"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="flex size-full items-center justify-center bg-linear-to-br from-muted to-muted/50">
-                            <span className="text-muted-foreground text-lg">
-                              No preview available
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Floating badge */}
-                        <div className="absolute top-4 left-4 rounded-full border border-border/50 bg-background/80 px-3 py-1 text-xs font-medium backdrop-blur-sm">
-                          {product.category}
-                        </div>
-                      </div>
-                    </div>
+              {/* Text panel */}
+              <div className="bg-[#faf9f7] dark:bg-card grid content-center rounded-[14px] py-[13.89vw] px-[8.33vw] gap-[3.88vw] md:min-h-[59.9vw] md:pt-[6.77vw] md:pr-[4vw] md:pb-[6vw] md:pl-[5.2vw] md:gap-[3.35vw] md:rounded-[20px] desktop:min-h-0 desktop:py-0 desktop:pr-[6.61vw] desktop:pl-[5.21vw] desktop:gap-[1.35vw] desktop:rounded-[40px]">
+                <div className="flex flex-col gap-4 desktop:gap-[1.35vw]">
+                  {/* Badges */}
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs capitalize">
+                      {product.category}
+                    </Badge>
+                    {product.status === "coming_soon" && (
+                      <Badge variant="secondary" className="text-xs uppercase">
+                        Coming Soon
+                      </Badge>
+                    )}
                   </div>
+
+                  {/* Title */}
+                  <h3 className="m-0 text-foreground font-normal leading-[1.1] tracking-[-0.02em] text-[clamp(1.625rem,7.2vw,2.25rem)] md:text-[clamp(2rem,6.25vw,3rem)] desktop:text-[clamp(2rem,3.33vw,4rem)]">
+                    {product.title}
+                  </h3>
+
+                  {/* Tagline */}
+                  <p className="m-0 w-full text-muted-foreground leading-[1.4] text-[clamp(1rem,4.44vw,1.2rem)] md:text-[clamp(1rem,2.6vw,1.25rem)] desktop:w-[22vw] desktop:text-[clamp(1rem,1.041vw,1.25rem)]">
+                    {product.tagline}
+                  </p>
+
+                  {/* Price + CTA */}
+                  <div className="flex items-center gap-4 mt-2">
+                    <Button size="lg" className="rounded-full px-8" asChild>
+                      <a href={product.checkoutUrl ?? product.slug}>
+                        {product.status === "coming_soon"
+                          ? "Coming Soon"
+                          : `Get for ${formattedPrice}`}
+                      </a>
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="rounded-full px-8"
+                      asChild
+                    >
+                      <a href={product.slug}>
+                        Learn more{" "}
+                        <ArrowRight className="ml-2 size-4" />
+                      </a>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            );
-          })}
-        </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

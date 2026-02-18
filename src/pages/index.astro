@@ -5,7 +5,6 @@ import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import { Background } from "@/components/background";
 import { EmailSignup } from "@/components/blocks/email-signup";
 import { Hero } from "@/components/blocks/hero";
-import { ProductCards } from "@/components/blocks/product-cards";
 import { ProductShowcase } from "@/components/blocks/product-showcase";
 import StructuredData from "@/components/StructuredData.astro";
 import { SITE } from "@/consts";
@@ -15,18 +14,28 @@ import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
 const allProducts = await getCollection("products");
 const products = allProducts
   .filter((p) => !p.data.isFree)
-  .sort((a, b) => a.data.sortOrder - b.data.sortOrder)
+  .sort((a, b) => {
+    // Priority order
+    if (a.id === "ae-sheets") return -1;
+    if (b.id === "ae-sheets") return 1;
+    if (a.id === "find-and-replace-fonts") return -1;
+    if (b.id === "find-and-replace-fonts") return 1;
+    
+    // Default sort for others
+    return a.data.sortOrder - b.data.sortOrder;
+  })
   .map((p) => ({
     id: p.id,
-    title: p.data.title,
-    tagline: p.data.tagline,
-    price: p.data.price,
-    currency: p.data.currency,
+    title: p.data.homeCard?.title ?? p.data.title,
+    tagline: p.data.homeCard?.tagline ?? p.data.tagline,
+    price: p.data.homeCard?.price ?? p.data.price,
+    currency: p.data.homeCard?.currency ?? p.data.currency,
     status: p.data.status,
     category: p.data.category,
-    heroImage: p.data.heroImage,
+    heroImage: p.data.homeCard?.heroImage ?? p.data.heroImage,
     slug: `/${p.id}`,
-    features: p.data.features,
+    checkoutUrl: p.data.checkoutUrl,
+    features: p.data.homeCard?.features ?? p.data.features,
   }));
 
 const orgSchema = buildOrganizationSchema();
@@ -65,8 +74,6 @@ const siteSchema = buildWebSiteSchema();
   </AnimateOnScroll>
 
   <AnimateOnScroll animation="fade-up">
-    <Background variant="bottom">
       <EmailSignup client:visible />
-    </Background>
   </AnimateOnScroll>
 </DefaultLayout>

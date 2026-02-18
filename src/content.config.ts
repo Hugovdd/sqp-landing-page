@@ -30,6 +30,16 @@ const statSchema = z.object({
   label: z.string(), // e.g. "users"
 });
 
+// -- Homepage Product Card --
+const homeCardSchema = z.object({
+  title: z.string().optional(),
+  tagline: z.string().optional(),
+  price: z.number().optional(),
+  currency: z.string().optional(),
+  heroImage: z.string().optional(),
+  features: z.array(featureSchema).optional(),
+});
+
 // -- SEO Fields (reused across collections) --
 const seoSchema = z.object({
   metaTitle: z.string(),
@@ -58,6 +68,7 @@ const products = defineCollection({
     category: z.enum(["plugin", "script", "freebie"]),
     sortOrder: z.number().default(0),
     features: z.array(featureSchema).default([]),
+    homeCard: homeCardSchema.optional(),
     techStack: z.array(techItemSchema).default([]),
     faqs: z.array(faqSchema).default([]),
     stats: z.array(statSchema).default([]),

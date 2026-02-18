@@ -9,17 +9,27 @@ export const SITE = {
   locale: "en_US",
 } as const;
 
-// Navigation links (used by navbar + mobile drawer)
-export const NAV_LINKS = [
+// Product links (used by desktop dropdown + mobile menu)
+export const PRODUCT_LINKS = [
   {
     label: "Find and Replace Fonts",
     href: "/find-and-replace-fonts",
-    group: "Products",
+    description: "Advanced font replacement workflows for After Effects projects.",
+    previewImage: "/images/find-and-replace-fonts/find-and-replace-fonts-product.png",
   },
-  { label: "AE Sheets", href: "/ae-sheets", group: "Products" },
+  {
+    label: "AE Sheets",
+    href: "/ae-sheets",
+    description:
+      "Localize and version compositions with spreadsheet-driven automation.",
+    previewImage: "/images/ae-sheets/AE_Sheets_Homepage_Product_Thumb.png",
+  },
+] as const;
+
+// Navigation links (used by desktop navbar + mobile menu)
+export const NAV_LINKS = [
   { label: "Freebies", href: "/free-ae-scripts", group: "Resources" },
   { label: "Help", href: "/help", group: "Resources" },
-  { label: "Contact", href: "/contact", group: "Resources" },
 ] as const;
 
 // Footer columns
