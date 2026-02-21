@@ -19,6 +19,7 @@ const freebies = allProducts
     tagline: p.data.tagline,
     heroImage: p.data.heroImage,
     slug: `/free-ae-scripts/${p.id}`,
+    isClickable: p.data.status === "available",
   }));
 
 const orgSchema = buildOrganizationSchema();

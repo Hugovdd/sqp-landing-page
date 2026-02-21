@@ -10,6 +10,7 @@ interface Freebie {
   tagline: string;
   heroImage?: string;
   slug: string;
+  isClickable: boolean;
 }
 
 interface FreebieCardsProps {
@@ -45,42 +46,95 @@ export const FreebieCards = ({
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {freebies.map((freebie) => (
-            <Card
-              key={freebie.id}
-              className="group overflow-hidden rounded-2xl transition-shadow hover:shadow-lg"
-            >
-              <CardContent className="flex h-full flex-col p-0">
-                {freebie.heroImage && (
-                  <div className="bg-muted relative aspect-video overflow-hidden">
-                    <img
-                      src={freebie.heroImage}
-                      alt={`${freebie.title} preview`}
-                      className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      width={600}
-                      height={338}
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-
-                <div className="flex flex-1 flex-col gap-4 p-6">
-                  <div className="flex-1">
-                    <div className="text-primary mb-2 flex items-center gap-1.5 text-sm font-medium">
-                      <Download className="size-3.5" />
-                      Free
+            <div key={freebie.id} className="flex h-full flex-col gap-4">
+              <Card className="bg-muted/40 group gap-0 overflow-hidden rounded-2xl border-none py-0 transition-shadow hover:shadow-lg">
+                <CardContent className="p-0">
+                  {freebie.isClickable ? (
+                    <a href={freebie.slug} aria-label={`View ${freebie.title} details`}>
+                      <div className="bg-muted relative aspect-[16/9] w-full overflow-hidden">
+                        {freebie.heroImage ? (
+                          <img
+                            src={freebie.heroImage}
+                            alt={`${freebie.title} preview`}
+                            className="absolute inset-0 block size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            width={1600}
+                            height={900}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
+                            Preview coming soon
+                          </div>
+                        )}
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="bg-muted relative aspect-[16/9] w-full overflow-hidden">
+                      {freebie.heroImage ? (
+                        <img
+                          src={freebie.heroImage}
+                          alt={`${freebie.title} preview`}
+                          className="absolute inset-0 block size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          width={1600}
+                          height={900}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="text-muted-foreground absolute inset-0 flex items-center justify-center text-sm">
+                          Preview coming soon
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-foreground mb-1.5 text-lg font-semibold">
-                      {freebie.title}
+                  )}
+                </CardContent>
+              </Card>
+
+              <div className="flex flex-1 flex-col gap-4">
+                <div className="flex-1">
+                  <div className="mb-2 flex items-start justify-between gap-3">
+                    <h3 className="text-foreground text-xl font-semibold tracking-tight">
+                      {freebie.isClickable ? (
+                        <a href={freebie.slug} className="hover:text-primary transition-colors">
+                          {freebie.title}
+                        </a>
+                      ) : (
+                        freebie.title
+                      )}
                     </h3>
+                    {freebie.isClickable ? (
+                      <a
+                        href={freebie.slug}
+                        className="text-primary hover:bg-muted/80 flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors"
+                      >
+                        <Download className="size-3.5" />
+                        Free
+                      </a>
+                    ) : (
+                      <div className="text-primary flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium">
+                        <Download className="size-3.5" />
+                        Free
+                      </div>
+                    )}
+                  </div>
+                  {freebie.isClickable ? (
+                    <a
+                      href={freebie.slug}
+                      className="text-muted-foreground hover:text-foreground block text-sm leading-relaxed transition-colors"
+                    >
+                      {freebie.tagline}
+                    </a>
+                  ) : (
                     <p className="text-muted-foreground text-sm leading-relaxed">
                       {freebie.tagline}
                     </p>
-                  </div>
+                  )}
+                </div>
 
+                {freebie.isClickable ? (
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
-                    className="group/btn w-full gap-1"
+                    className="group/btn w-full gap-1 md:hidden"
                     asChild
                   >
                     <a href={freebie.slug}>
@@ -88,9 +142,19 @@ export const FreebieCards = ({
                       <ArrowRight className="size-4 transition-transform group-hover/btn:translate-x-0.5" />
                     </a>
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full gap-1 opacity-70"
+                    disabled
+                    aria-label={`${freebie.title} coming soon`}
+                  >
+                    Coming soon
+                  </Button>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>

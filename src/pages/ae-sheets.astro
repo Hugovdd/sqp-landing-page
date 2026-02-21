@@ -77,6 +77,7 @@ const orgSchema = buildOrganizationSchema();
 
   <Background className="via-muted to-muted/80">
     <ProductHero
+      client:load
       title={data.title}
       tagline={data.tagline}
       price={data.price}
@@ -86,8 +87,11 @@ const orgSchema = buildOrganizationSchema();
       supportedApp={data.supportedApp}
       extensionType={data.extensionType}
       checkoutUrl={data.checkoutUrl}
+      heroVideo={data.heroVideo}
       heroImage={data.heroImage}
       stats={data.stats}
+      showDivider={false}
+      mediaStyle="card"
     />
   </Background>
 
