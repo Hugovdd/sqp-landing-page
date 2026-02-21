@@ -7,6 +7,7 @@ import { CTASection } from "@/components/blocks/cta-section";
 import { FAQ } from "@/components/blocks/faq";
 import { ProductHero } from "@/components/blocks/product-hero";
 import { TechStack } from "@/components/blocks/tech-stack";
+import { TimeSavingsCalculator } from "@/components/blocks/time-savings-calculator";
 import { TutorialVideo } from "@/components/blocks/tutorial-video";
 import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import StructuredData from "@/components/StructuredData.astro";
@@ -111,6 +112,10 @@ const orgSchema = buildOrganizationSchema();
     </AnimateOnScroll>
   )}
 
+  <AnimateOnScroll animation="fade-up">
+    <TimeSavingsCalculator client:visible />
+  </AnimateOnScroll>
+
   {data.faqs.length > 0 && (
     <AnimateOnScroll animation="fade-up">
       <FAQ client:visible items={data.faqs} />
@@ -130,8 +135,8 @@ const orgSchema = buildOrganizationSchema();
       status={data.status}
       checkoutUrl={data.checkoutUrl}
       stats={data.stats}
-      heading="Your client wants it in 12 languages by Friday."
-      description="AE Sheets handles the copy-paste hellhole. You handle the creative work."
+      heading="Turn a day of grunt work into a coffee break."
+      description="Translate, restyle, and batch-export every language version without touching a single layer by hand."
       buttonLabel="Stop doing it the hard way — $69"
     />
   </AnimateOnScroll>
