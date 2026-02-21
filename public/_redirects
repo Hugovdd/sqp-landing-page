@@ -1,3 +1,7 @@
+# Multi-zone: proxy /docs to the Docusaurus site (URL stays as /docs/... in browser)
+/docs       https://sqp-docs.vercel.app/          200
+/docs/*     https://sqp-docs.vercel.app/:splat    200
+
 /healthz    /api/health    200
 /health     /api/health    200
 /ping       /api/health    200

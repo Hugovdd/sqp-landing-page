@@ -9,6 +9,9 @@ interface CTASectionProps {
   status: "available" | "coming_soon" | "discontinued";
   checkoutUrl: string;
   stats: { value: string; label: string }[];
+  heading?: string;
+  description?: string;
+  buttonLabel?: string;
   className?: string;
 }
 
@@ -20,6 +23,9 @@ export const CTASection = ({
   status,
   checkoutUrl,
   stats,
+  heading,
+  description,
+  buttonLabel,
   className,
 }: CTASectionProps) => {
   const formattedPrice =
@@ -36,10 +42,10 @@ export const CTASection = ({
       <div className="container">
         <div className="bg-muted mx-auto max-w-3xl rounded-3xl p-8 text-center md:p-12 lg:p-16">
           <h2 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
-            Get {title}
+            {heading ?? `Get ${title}`}
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-lg leading-relaxed">
-            {tagline}
+            {description ?? tagline}
           </p>
 
           {/* Stats */}
@@ -62,7 +68,7 @@ export const CTASection = ({
           <div className="mt-8">
             {status === "available" ? (
               <Button size="lg" asChild>
-                <a href={checkoutUrl} className="lemonsqueezy-button">Buy for {formattedPrice}</a>
+                <a href={checkoutUrl} className="lemonsqueezy-button">{buttonLabel ?? `Buy for ${formattedPrice}`}</a>
               </Button>
             ) : status === "coming_soon" ? (
               <p className="text-muted-foreground text-sm">

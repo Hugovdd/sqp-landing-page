@@ -3,10 +3,11 @@ import { getEntry } from "astro:content";
 
 import { AESheetsFeatures } from "@/components/blocks/ae-sheets-features";
 import { Background } from "@/components/background";
-import { EmailSignup } from "@/components/blocks/email-signup";
+import { CTASection } from "@/components/blocks/cta-section";
 import { FAQ } from "@/components/blocks/faq";
 import { ProductHero } from "@/components/blocks/product-hero";
 import { TechStack } from "@/components/blocks/tech-stack";
+import { TutorialVideo } from "@/components/blocks/tutorial-video";
 import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import StructuredData from "@/components/StructuredData.astro";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
@@ -99,9 +100,16 @@ const orgSchema = buildOrganizationSchema();
     <AESheetsFeatures />
   </AnimateOnScroll>
 
-  <AnimateOnScroll animation="fade-up">
-    <TechStack items={data.techStack} heading="Built with" />
-  </AnimateOnScroll>
+  {data.tutorialVideoId && (
+    <AnimateOnScroll animation="fade-up">
+      <TutorialVideo
+        youtubeId={data.tutorialVideoId}
+        heading="See it in action"
+        description="Watch a full walkthrough of AE Sheets to see how it fits into your localization workflow."
+        className="pt-10 lg:pt-12"
+      />
+    </AnimateOnScroll>
+  )}
 
   {data.faqs.length > 0 && (
     <AnimateOnScroll animation="fade-up">
@@ -110,11 +118,21 @@ const orgSchema = buildOrganizationSchema();
   )}
 
   <AnimateOnScroll animation="fade-up">
-    <EmailSignup
-      client:visible
-      heading="Get notified when AE Sheets launches"
-      description="Be the first to know. No spam, ever."
-      product="ae-sheets"
+    <TechStack items={data.techStack} heading="Built with" />
+  </AnimateOnScroll>
+
+  <AnimateOnScroll animation="fade-up">
+    <CTASection
+      title={data.title}
+      tagline={data.tagline}
+      price={data.price}
+      currency={data.currency}
+      status={data.status}
+      checkoutUrl={data.checkoutUrl}
+      stats={data.stats}
+      heading="Your client wants it in 12 languages by Friday."
+      description="AE Sheets handles the copy-paste hellhole. You handle the creative work."
+      buttonLabel="Stop doing it the hard way — $69"
     />
   </AnimateOnScroll>
 </DefaultLayout>

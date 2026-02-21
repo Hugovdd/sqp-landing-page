@@ -1,0 +1,93 @@
+---
+import { Background } from "@/components/background";
+import { HelpCards } from "@/components/blocks/help-cards";
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Help & Support",
+  description: "Find answers about licensing, refunds, installing scripts and extensions, and troubleshooting common issues.",
+  url: `${SITE.domain}/help`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+  ],
+});
+
+const cards = [
+  {
+    icon: "Key",
+    title: "Licensing",
+    description: "Understand how licenses work, how many you need, and how to transfer to a new machine.",
+    href: "/help/licensing",
+  },
+  {
+    icon: "RotateCcw",
+    title: "Refunds",
+    description: "You can request a refund within 30 days of purchase. Find out how here.",
+    href: "/help/refunds",
+  },
+  {
+    icon: "FileCode",
+    title: "Install a Script",
+    description: "Step-by-step instructions for installing .jsx and .jsxbin script files in After Effects.",
+    href: "/help/install-script",
+  },
+  {
+    icon: "Package",
+    title: "Install an Extension",
+    description: "How to install .zxp extension files using ZXP Installer or the aescripts manager.",
+    href: "/help/install-extension",
+  },
+  {
+    icon: "Wrench",
+    title: "Troubleshooting",
+    description: "Find solutions to common problems, or report a bug if you can't find an answer.",
+    href: "/help/troubleshooting",
+  },
+  {
+    icon: "ShoppingBag",
+    title: "Manage Orders",
+    description: "View purchases, download your tools, and find your license keys on LemonSqueezy.",
+    href: "https://app.lemonsqueezy.com/my-orders",
+  },
+  {
+    icon: "ShoppingCart",
+    title: "Bought via aescripts.com?",
+    description: "Licensing, downloads, and support for aescripts.com purchases are all handled by their platform.",
+    href: "https://aescripts.com/my-account/",
+  },
+  {
+    icon: "Mail",
+    title: "Contact",
+    description: "Have a question that isn't answered here? Get in touch with the team directly.",
+    href: "/contact",
+  },
+];
+---
+
+<DefaultLayout
+  title="Help & Support — Sidequest Plugins"
+  description="Find answers about licensing, refunds, installing scripts and extensions, and troubleshooting common issues."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+
+  <Background>
+    <section class="pt-28 pb-16 lg:pt-44 lg:pb-20">
+      <div class="container max-w-2xl text-center">
+        <h1 class="text-2xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
+          Help & Support
+        </h1>
+        <p class="text-muted-foreground mt-4 leading-snug">
+          Everything you need to get up and running with your Sidequest tools.
+        </p>
+      </div>
+    </section>
+  </Background>
+
+  <HelpCards cards={cards} heading="Topics" />
+</DefaultLayout>

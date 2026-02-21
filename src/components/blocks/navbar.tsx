@@ -52,14 +52,14 @@ export const Navbar = () => {
         <a href="/" className="mr-4 flex shrink-0 items-center gap-2 lg:mr-6">
           <img
             src="/images/logo-light.svg"
-            alt="SideQuest Plugins"
+            alt="Sidequest Plugins"
             width={170}
             height={33}
             className="dark:hidden"
           />
           <img
             src="/images/logo-dark.svg"
-            alt="SideQuest Plugins"
+            alt="Sidequest Plugins"
             width={170}
             height={33}
             className="hidden dark:block"
@@ -67,7 +67,7 @@ export const Navbar = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <div className="max-lg:hidden">
+        <div className="mr-2 max-lg:hidden">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>

@@ -3,7 +3,7 @@ title: "Privacy Policy"
 lastUpdated: 2025-03-07
 seo:
   metaTitle: "Privacy Policy"
-  metaDescription: "Privacy Policy for SideQuest Plugins — how we handle your data."
+  metaDescription: "Privacy Policy for Sidequest Plugins — how we handle your data."
 ---
 
 # Privacy Policy
@@ -25,14 +25,14 @@ The words of which the initial letter is capitalized have meanings defined under
 For the purposes of this Privacy Policy:
 
 - **Account** means a unique account created for you to access our Service or parts of our Service.
-- **Company** (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to SideQuest Plugins.
+- **Company** (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Sidequest Plugins.
 - **Cookies** are small files that are placed on your computer, mobile device, or any other device by a website, containing the details of your browsing history on that website among its many uses.
 - **Country** refers to: The Netherlands
 - **Device** means any device that can access the Service such as a computer, a cellphone, or a digital tablet.
 - **Personal Data** is any information that relates to an identified or identifiable individual.
 - **Service** refers to the Website.
 - **Service Provider** means any natural or legal person who processes the data on behalf of the Company.
-- **Website** refers to SideQuest Plugins, accessible from [sidequestplugins.com](https://sidequestplugins.com)
+- **Website** refers to Sidequest Plugins, accessible from [sidequestplugins.com](https://sidequestplugins.com)
 - **You** means the individual accessing or using the Service.
 
 ## Collecting and Using Your Personal Data

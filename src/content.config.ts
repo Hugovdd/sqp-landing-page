@@ -64,6 +64,7 @@ const products = defineCollection({
     checkoutUrl: z.string().url(),
     heroVideo: z.string().optional(), // path or external URL
     heroImage: z.string().optional(),
+    tutorialVideoId: z.string().optional(), // YouTube video ID
     isFree: z.boolean().default(false),
     category: z.enum(["plugin", "script", "freebie"]),
     sortOrder: z.number().default(0),

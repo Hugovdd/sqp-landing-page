@@ -1,0 +1,93 @@
+---
+import { Background } from "@/components/background";
+import { FAQ } from "@/components/blocks/faq";
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildFAQSchema, buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const faqs = [
+  {
+    question: "My script doesn't appear under File → Scripts.",
+    answer:
+      "Try reinstalling the script via File → Scripts → Install Script File… and then restart After Effects. If it still doesn't appear, copy the .jsx or .jsxbin file manually into the After Effects Scripts folder: on macOS that's /Applications/Adobe After Effects [version]/Scripts/, on Windows it's C:\\Program Files\\Adobe\\Adobe After Effects [version]\\Support Files\\Scripts\\.",
+  },
+  {
+    question: "My extension doesn't appear under Window → Extensions.",
+    answer:
+      "Extensions must be installed via ZXP Installer or manually — After Effects can't install .zxp files on its own. Make sure you've restarted After Effects after installation. Also confirm the extension is compatible with your version of After Effects.",
+  },
+  {
+    question: "I'm getting a network error or the script can't connect.",
+    answer:
+      "Some scripts need permission to access the network. Go to Edit → Preferences → Scripting & Expressions (Mac: After Effects → Settings → Scripting & Expressions) and enable \"Allow Scripts to Write Files and Access Network\". Restart After Effects and try again.",
+  },
+  {
+    question: "The script says my license is invalid.",
+    answer:
+      "Double-check that you entered your license key exactly as it appeared in your purchase confirmation email — it's case-sensitive. If you've moved to a new machine, your old activation may still be active. Contact us at " +
+      SITE.supportEmail +
+      " and we'll sort it out.",
+  },
+  {
+    question: "After Effects crashes when I run the script.",
+    answer:
+      "First, make sure you're running a supported version of After Effects (check the product page). Try restarting After Effects and running the script with no other compositions or projects open. If the crash persists, contact us with your AE version and OS so we can investigate.",
+  },
+  {
+    question: "The script or extension runs but doesn't do anything.",
+    answer:
+      "Check that you have a composition open and at least one layer selected (if the tool operates on layers). Some tools also require a specific layer type — check the product documentation for requirements.",
+  },
+  {
+    question: "How do I report a bug?",
+    answer:
+      "Use the contact form at sidequestplugins.com/contact or email " +
+      SITE.supportEmail +
+      ". Include your After Effects version, operating system, a description of what you were doing when the issue occurred, and any error messages you saw.",
+  },
+];
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Troubleshooting",
+  description: "Solutions to common issues with Sidequest Plugins tools for After Effects.",
+  url: `${SITE.domain}/help/troubleshooting`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+    { name: "Troubleshooting", url: `${SITE.domain}/help/troubleshooting` },
+  ],
+});
+const faqSchema = buildFAQSchema(faqs);
+---
+
+<DefaultLayout
+  title="Troubleshooting — Help — Sidequest Plugins"
+  description="Solutions to common issues with Sidequest Plugins tools for After Effects."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+  {faqSchema && <StructuredData slot="head" data={faqSchema} />}
+
+  <Background>
+    <section class="pt-28 pb-4 lg:pt-44 lg:pb-8">
+      <div class="container max-w-3xl">
+        <p class="text-muted-foreground mb-6 text-sm">
+          <a href="/help" class="hover:text-foreground transition-colors">← Back to Help</a>
+        </p>
+        <h1 class="text-2xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
+          Troubleshooting
+        </h1>
+        <p class="text-muted-foreground mt-4 leading-snug">
+          Common issues and how to fix them. Can't find your answer?{" "}
+          <a href="/contact" class="underline underline-offset-4 hover:text-foreground transition-colors">
+            Contact us
+          </a>.
+        </p>
+      </div>
+    </section>
+  </Background>
+
+  <FAQ client:visible items={faqs} heading="" />
+</DefaultLayout>

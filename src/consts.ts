@@ -1,6 +1,6 @@
 // Site metadata
 export const SITE = {
-  name: "SideQuest Plugins",
+  name: "Sidequest Plugins",
   tagline:
     "Professional After Effects scripts and tools to automate your motion graphics workflow.",
   domain: "https://sidequestplugins.com",

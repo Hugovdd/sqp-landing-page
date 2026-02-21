@@ -47,6 +47,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
     const MAILGUN_EU = env.MAILGUN_EU || import.meta.env.MAILGUN_EU;
+    const MAILGUN_REGION =
+      env.MAILGUN_REGION || import.meta.env.MAILGUN_REGION;
+    const CONTACT_TO_EMAIL =
+      env.CONTACT_TO_EMAIL || import.meta.env.CONTACT_TO_EMAIL;
     const TURNSTILE_SECRET_KEY =
       env.TURNSTILE_SECRET_KEY || import.meta.env.TURNSTILE_SECRET_KEY;
 
@@ -86,14 +90,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    const mailgunBase =
-      MAILGUN_EU === "true"
-        ? "https://api.eu.mailgun.net/v3"
-        : "https://api.mailgun.net/v3";
+    // Backward-compatible with old Next.js setup that defaulted to EU Mailgun.
+    const useEuMailgun =
+      MAILGUN_REGION?.toLowerCase() === "eu" ||
+      (MAILGUN_REGION === undefined && MAILGUN_EU !== "false");
+    const mailgunBase = useEuMailgun
+      ? "https://api.eu.mailgun.net/v3"
+      : "https://api.mailgun.net/v3";
 
     const formData = new FormData();
     formData.append("from", `SideQuest Contact <noreply@${MAILGUN_DOMAIN}>`);
-    formData.append("to", "support@sidequestplugins.com");
+    formData.append("to", CONTACT_TO_EMAIL || "support@sidequestplugins.com");
     formData.append("subject", `Contact form: ${name}`);
     formData.append("reply-to", email);
     formData.append(

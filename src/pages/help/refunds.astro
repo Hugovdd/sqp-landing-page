@@ -1,0 +1,72 @@
+---
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Refunds",
+  description: "Sidequest Plugins refund policy — request a refund within 30 days of purchase.",
+  url: `${SITE.domain}/help/refunds`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+    { name: "Refunds", url: `${SITE.domain}/help/refunds` },
+  ],
+});
+---
+
+<BasicLayout
+  title="Refunds — Help — Sidequest Plugins"
+  description="Sidequest Plugins refund policy — request a refund within 30 days of purchase."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+
+  <p><a href="/help">← Back to Help</a></p>
+
+  <h1>Refunds</h1>
+
+  <div class="not-prose my-6 rounded-xl border bg-muted/50 p-5">
+    <p class="text-sm font-semibold">Bought through aescripts.com?</p>
+    <p class="text-muted-foreground mt-1 text-sm">
+      Refunds for purchases made on aescripts.com are handled by their team under
+      their own refund policy. Please{" "}
+      <a
+        href="https://aescripts.com/contact/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline underline-offset-2"
+      >
+        contact aescripts support
+      </a>{" "}
+      directly for those orders.
+    </p>
+  </div>
+
+  <h2>Our policy</h2>
+  <p>
+    We offer a <strong>30-day refund</strong> on all purchases, no questions asked.
+    If a tool isn't working for you, just reach out within 30 days of your purchase
+    date and we'll process a full refund.
+  </p>
+
+  <h2>How to request a refund</h2>
+  <p>Email us at <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a> with:</p>
+  <ul>
+    <li>Your order number or the email address used at checkout</li>
+    <li>The name of the product you'd like refunded</li>
+  </ul>
+  <p>
+    You can also use the <a href="/contact">contact form</a>. We typically respond
+    within one business day.
+  </p>
+
+  <h2>After a refund</h2>
+  <p>
+    Once a refund is processed, your license will be deactivated and you won't be
+    able to continue using the tool. Refunds are issued to your original payment
+    method.
+  </p>
+</BasicLayout>

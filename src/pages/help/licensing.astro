@@ -1,0 +1,112 @@
+---
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Licensing",
+  description: "Understand how Sidequest Plugins licenses work, how many you need, and how to move to a new machine.",
+  url: `${SITE.domain}/help/licensing`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+    { name: "Licensing", url: `${SITE.domain}/help/licensing` },
+  ],
+});
+---
+
+<BasicLayout
+  title="Licensing — Help — Sidequest Plugins"
+  description="Understand how Sidequest Plugins licenses work, how many you need, and how to move to a new machine."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+
+  <p><a href="/help">← Back to Help</a></p>
+
+  <h1>Licensing</h1>
+
+  <div class="not-prose my-6 rounded-xl border bg-muted/50 p-5">
+    <p class="text-sm font-semibold">Bought through aescripts.com?</p>
+    <p class="text-muted-foreground mt-1 text-sm">
+      If you purchased through aescripts.com, all licensing, downloads, and support
+      are handled by them — not us. Visit your{" "}
+      <a
+        href="https://aescripts.com/my-account/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline underline-offset-2"
+      >
+        aescripts account
+      </a>{" "}
+      to manage your licenses, or contact their support team directly.
+    </p>
+  </div>
+
+  <h2>Managing your orders & licenses</h2>
+  <p>
+    Purchases and licenses are managed through <strong>LemonSqueezy</strong>. After
+    buying a tool you'll receive an order confirmation email containing your license
+    key and download link. You can also access everything from your LemonSqueezy
+    customer dashboard at any time:
+  </p>
+  <ul>
+    <li>View and download all your purchases</li>
+    <li>Find your license keys</li>
+    <li>Update your billing details or request an invoice</li>
+  </ul>
+  <p>
+    <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener noreferrer">
+      Manage your orders on LemonSqueezy →
+    </a>
+  </p>
+
+  <h2>How it works</h2>
+  <p>
+    When you purchase a Sidequest Plugins tool, you receive a license that allows
+    you to use it on your machine. Each license is tied to a single user on a
+    single machine.
+  </p>
+
+  <h2>How many licenses do I need?</h2>
+  <p>Buy one license per user, per machine. Some examples:</p>
+  <ul>
+    <li>You work on a desktop and a laptop — you need <strong>2 licenses</strong>.</li>
+    <li>You and a colleague share one machine — you need <strong>2 licenses</strong>.</li>
+    <li>A team of 3 people, each with their own machine — you need <strong>3 licenses</strong>.</li>
+  </ul>
+  <p>
+    If you're not sure how many you need,{" "}
+    <a href="/contact">get in touch</a> and we'll help you figure it out.
+  </p>
+
+  <h2>Moving to a new machine</h2>
+  <p>
+    You can manage your license activations directly from your{" "}
+    <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener noreferrer">
+      LemonSqueezy customer dashboard
+    </a>. If you need to move to a new machine, deactivate your old machine there first,
+    then activate on the new one.
+  </p>
+  <p>
+    If you run into any trouble, email us at{" "}
+    <a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a> and we'll sort it out.
+  </p>
+
+  <h2>Updates</h2>
+  <p>
+    Your license includes all minor updates within the same major version. For
+    example, buying v1.0 gives you free updates through v1.x. A new major version
+    (v2.0) would be a separate purchase, but you can continue using the version
+    you bought for as long as you like.
+  </p>
+
+  <h2>Terms</h2>
+  <p>
+    By purchasing a license you agree to our{" "}
+    <a href="/terms">Terms of Service</a>. Please read it to understand what you
+    can and cannot do with your tools.
+  </p>
+</BasicLayout>

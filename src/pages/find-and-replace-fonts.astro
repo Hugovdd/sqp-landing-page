@@ -6,6 +6,7 @@ import { FAQ } from "@/components/blocks/faq";
 import { Features } from "@/components/blocks/features";
 import { ProductHero } from "@/components/blocks/product-hero";
 import { TechStack } from "@/components/blocks/tech-stack";
+import { Background } from "@/components/background";
 import AnimateOnScroll from "@/components/AnimateOnScroll.astro";
 import StructuredData from "@/components/StructuredData.astro";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
@@ -34,20 +35,25 @@ const orgSchema = buildOrganizationSchema();
   <StructuredData slot="head" data={productSchema} />
   {faqSchema && <StructuredData slot="head" data={faqSchema} />}
 
-  <ProductHero
-    title={data.title}
-    tagline={data.tagline}
-    price={data.price}
-    currency={data.currency}
-    version={data.version}
-    status={data.status}
-    supportedApp={data.supportedApp}
-    extensionType={data.extensionType}
-    checkoutUrl={data.checkoutUrl}
-    heroVideo={data.heroVideo}
-    heroImage={data.heroImage}
-    stats={data.stats}
-  />
+  <Background className="via-muted to-muted/80">
+    <ProductHero
+      title={data.title}
+      tagline={data.tagline}
+      price={data.price}
+      currency={data.currency}
+      version={data.version}
+      status={data.status}
+      supportedApp={data.supportedApp}
+      extensionType={data.extensionType}
+      checkoutUrl={data.checkoutUrl}
+      heroVideo={data.heroVideo}
+      heroVideoShowControls={false}
+      heroImage={data.heroImage}
+      stats={data.stats}
+      showDivider={false}
+      mediaStyle="card"
+    />
+  </Background>
 
   <AnimateOnScroll animation="fade-up">
     <Features

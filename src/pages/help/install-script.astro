@@ -1,0 +1,86 @@
+---
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Install a Script",
+  description: "Step-by-step instructions for installing .jsx and .jsxbin script files in Adobe After Effects.",
+  url: `${SITE.domain}/help/install-script`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+    { name: "Install a Script", url: `${SITE.domain}/help/install-script` },
+  ],
+});
+---
+
+<BasicLayout
+  title="Install a Script — Help — Sidequest Plugins"
+  description="Step-by-step instructions for installing .jsx and .jsxbin script files in Adobe After Effects."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+
+  <p><a href="/help">← Back to Help</a></p>
+
+  <h1>Install a Script</h1>
+
+  <p>
+    Scripts come as <code>.jsx</code> or <code>.jsxbin</code> files and are installed
+    directly inside After Effects. Follow these steps to get set up.
+  </p>
+
+  <h2>Installation steps</h2>
+
+  <ol>
+    <li>
+      <strong>Download your script</strong> — after purchase you'll receive a download
+      link via email. Save the <code>.jsx</code> or <code>.jsxbin</code> file somewhere
+      easy to find.
+    </li>
+    <li>
+      <strong>Open After Effects</strong> and go to{" "}
+      <strong>File → Scripts → Install Script File…</strong>
+    </li>
+    <li>
+      <strong>Locate the file</strong> you downloaded and click Open. After Effects
+      will copy it into the correct Scripts folder automatically.
+    </li>
+    <li>
+      <strong>Restart After Effects</strong> to make the script available.
+    </li>
+    <li>
+      <strong>Run your script</strong> by going to{" "}
+      <strong>File → Scripts → [Script Name]</strong>.
+    </li>
+  </ol>
+
+  <h2>Allow scripts to write files and access the network</h2>
+  <p>
+    Some scripts need permission to read and write files or connect to the
+    internet (for license validation). To enable this:
+  </p>
+  <ol>
+    <li>Go to <strong>Edit → Preferences → Scripting & Expressions</strong> (on Mac: <strong>After Effects → Settings → Scripting & Expressions</strong>)</li>
+    <li>Check <strong>"Allow Scripts to Write Files and Access Network"</strong></li>
+    <li>Click OK and restart After Effects</li>
+  </ol>
+
+  <h2>Can't find the script after installing?</h2>
+  <p>
+    If the script doesn't appear under <strong>File → Scripts</strong>, try
+    installing it manually by copying the file into your After Effects Scripts
+    folder:
+  </p>
+  <ul>
+    <li><strong>macOS:</strong> <code>/Applications/Adobe After Effects [version]/Scripts/</code></li>
+    <li><strong>Windows:</strong> <code>C:\Program Files\Adobe\Adobe After Effects [version]\Support Files\Scripts\</code></li>
+  </ul>
+  <p>
+    Still stuck? Check the <a href="/help/troubleshooting">troubleshooting guide</a>{" "}
+    or <a href="/contact">contact us</a>.
+  </p>
+</BasicLayout>

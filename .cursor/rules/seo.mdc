@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## Every Page Must Have
 
-1. **Title** — via layout prop, formatted as `"Page Title | SideQuest Plugins"`
+1. **Title** — via layout prop, formatted as `"Page Title | Sidequest Plugins"`
 2. **Meta description** — unique per page, from content frontmatter `seo.metaDescription`
 3. **Canonical URL** — auto-generated from `Astro.url.href`
 4. **Open Graph tags** — `og:title`, `og:description`, `og:image`, `og:url`, `og:type`

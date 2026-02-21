@@ -70,7 +70,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         : "https://api.mailgun.net/v3";
 
     const formData = new FormData();
-    formData.append("from", `SideQuest Plugins <noreply@${MAILGUN_DOMAIN}>`);
+    formData.append("from", `Sidequest Plugins <noreply@${MAILGUN_DOMAIN}>`);
     formData.append("to", email);
     formData.append("subject", "Confirm your subscription");
     formData.append(
@@ -79,7 +79,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 <p>Please confirm your subscription by clicking the link below:</p>
 <p><a href="${confirmUrl.toString()}">Confirm my subscription</a></p>
 <p>If you didn't sign up for this, you can safely ignore this email.</p>
-<p>— SideQuest Plugins</p>`,
+<p>— Sidequest Plugins</p>`,
     );
 
     const mailgunResponse = await fetch(

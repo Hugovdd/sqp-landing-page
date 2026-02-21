@@ -44,9 +44,5 @@ export default defineConfig({
       status: 301,
       destination: "/find-and-replace-fonts",
     },
-    "/help": {
-      status: 301,
-      destination: "/docs",
-    },
   },
 });

@@ -1,0 +1,93 @@
+---
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { buildOrganizationSchema, buildWebPageSchema } from "@/lib/seo";
+
+const orgSchema = buildOrganizationSchema();
+const pageSchema = buildWebPageSchema({
+  title: "Install an Extension",
+  description: "How to install .zxp extension files in Adobe After Effects using ZXP Installer or the aescripts manager.",
+  url: `${SITE.domain}/help/install-extension`,
+  breadcrumbs: [
+    { name: "Home", url: SITE.domain },
+    { name: "Help", url: `${SITE.domain}/help` },
+    { name: "Install an Extension", url: `${SITE.domain}/help/install-extension` },
+  ],
+});
+---
+
+<BasicLayout
+  title="Install an Extension — Help — Sidequest Plugins"
+  description="How to install .zxp extension files in Adobe After Effects using ZXP Installer or the aescripts manager."
+>
+  <StructuredData slot="head" data={orgSchema} />
+  <StructuredData slot="head" data={pageSchema} />
+
+  <p><a href="/help">← Back to Help</a></p>
+
+  <h1>Install an Extension</h1>
+
+  <p>
+    Extensions come as <code>.zxp</code> files and run inside After Effects as
+    dockable panels. They require a third-party installer — After Effects cannot
+    install them directly.
+  </p>
+
+  <h2>Option 1: ZXP Installer (recommended)</h2>
+  <p>
+    <a href="https://aescripts.com/learn/zxp-installer/" target="_blank" rel="noopener noreferrer">
+      ZXP Installer by aescripts + aeplugins
+    </a>{" "}
+    is a free tool that makes installing extensions simple.
+  </p>
+  <ol>
+    <li>
+      <strong>Download and install ZXP Installer</strong> from{" "}
+      <a href="https://aescripts.com/learn/zxp-installer/" target="_blank" rel="noopener noreferrer">
+        aescripts.com
+      </a>.
+    </li>
+    <li>
+      <strong>Download your .zxp file</strong> — you'll receive a download link
+      via email after purchase.
+    </li>
+    <li>
+      <strong>Open ZXP Installer</strong>, then drag your <code>.zxp</code> file
+      onto the ZXP Installer window.
+    </li>
+    <li>
+      <strong>Restart After Effects</strong> once the installation completes.
+    </li>
+    <li>
+      <strong>Open your extension</strong> via{" "}
+      <strong>Window → Extensions → [Extension Name]</strong>.
+    </li>
+  </ol>
+
+  <h2>Option 2: Manual installation</h2>
+  <p>
+    If you prefer to install manually, rename your <code>.zxp</code> file to
+    <code>.zip</code> and extract it, then copy the extracted folder to:
+  </p>
+  <ul>
+    <li>
+      <strong>macOS:</strong>{" "}
+      <code>~/Library/Application Support/Adobe/CEP/extensions/</code>
+    </li>
+    <li>
+      <strong>Windows:</strong>{" "}
+      <code>C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\</code>
+    </li>
+  </ul>
+  <p>Restart After Effects after copying the folder.</p>
+
+  <h2>Extension doesn't appear in the Window menu?</h2>
+  <p>
+    Make sure you have the correct version of After Effects. Check the product
+    page for supported version requirements. If the extension still doesn't
+    appear, visit the{" "}
+    <a href="/help/troubleshooting">troubleshooting guide</a> or{" "}
+    <a href="/contact">contact us</a>.
+  </p>
+</BasicLayout>

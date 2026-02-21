@@ -15,6 +15,7 @@ interface ProductHeroProps {
   extensionType: string;
   checkoutUrl: string;
   heroVideo?: string;
+  heroVideoShowControls?: boolean;
   heroImage?: string;
   stats: { value: string; label: string }[];
   showDivider?: boolean;
@@ -32,6 +33,7 @@ export const ProductHero = ({
   supportedApp,
   checkoutUrl,
   heroVideo,
+  heroVideoShowControls = true,
   heroImage,
   stats,
   showDivider = true,
@@ -96,9 +98,6 @@ export const ProductHero = ({
                   <Button size="lg" asChild>
                     <a href={checkoutUrl} className="lemonsqueezy-button">Buy for {formattedPrice}</a>
                   </Button>
-                  <span className="text-muted-foreground text-sm">
-                    14-day money-back guarantee
-                  </span>
                 </>
               ) : status === "coming_soon" ? (
                 <p className="text-muted-foreground text-sm">
@@ -148,7 +147,15 @@ export const ProductHero = ({
                 )}
               >
                 {heroVideo ? (
-                  <VideoPlayer src={heroVideo} poster={heroImage} />
+                  <VideoPlayer
+                    src={heroVideo}
+                    poster={heroImage}
+                    className={
+                      !heroVideoShowControls
+                        ? "[&>div.absolute]:hidden [&>video]:cursor-default"
+                        : undefined
+                    }
+                  />
                 ) : heroImage ? (
                   <div className="bg-muted relative aspect-video overflow-hidden">
                     <img
