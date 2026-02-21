@@ -222,36 +222,39 @@ export function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
       )}
     >
       {/* Paused overlay with thumbnail + big play button */}
-      {showPausedOverlay && (
-        <div
-          className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center"
-          onClick={handleVideoClick}
-        >
-          {poster && (
-            <img
-              src={poster}
-              alt="Video thumbnail"
-              className="size-full object-cover"
-            />
-          )}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex size-16 items-center justify-center rounded-full bg-white/30 backdrop-blur transition duration-200 hover:bg-white/40">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                className="size-5 translate-x-0.5 text-white"
-              >
-                <path
-                  d="M2.2 2.863C2.2 1.612 3.572.845 4.638 1.5l8.347 5.137c1.016.625 1.016 2.1 0 2.726L4.638 14.5C3.572 15.155 2.2 14.388 2.2 13.137V2.863Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
+      <div
+        className={cn(
+          "absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-300",
+          showPausedOverlay
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0",
+        )}
+        onClick={handleVideoClick}
+      >
+        {poster && (
+          <img
+            src={poster}
+            alt="Video thumbnail"
+            className="size-full object-cover"
+          />
+        )}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex size-16 items-center justify-center rounded-full bg-white/30 backdrop-blur transition duration-200 hover:bg-white/40">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="size-5 translate-x-0.5 text-white"
+            >
+              <path
+                d="M2.2 2.863C2.2 1.612 3.572.845 4.638 1.5l8.347 5.137c1.016.625 1.016 2.1 0 2.726L4.638 14.5C3.572 15.155 2.2 14.388 2.2 13.137V2.863Z"
+                fill="currentColor"
+              />
+            </svg>
           </div>
         </div>
-      )}
+      </div>
 
       <video
         ref={videoRef}
