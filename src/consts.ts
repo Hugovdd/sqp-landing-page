@@ -2,7 +2,7 @@
 export const SITE = {
   name: "SideQuest Plugins",
   tagline:
-    "Professional After Effects plugins designed to streamline your workflow. Find and replace fonts globally, connect to spreadsheets, and automate your motion graphics workflow.",
+    "Professional After Effects scripts and tools to automate your motion graphics workflow.",
   domain: "https://sidequestplugins.com",
   supportEmail: "support@sidequestplugins.com",
   defaultOgImage: "/images/og-homepage.jpg",
@@ -12,17 +12,17 @@ export const SITE = {
 // Product links (used by desktop dropdown + mobile menu)
 export const PRODUCT_LINKS = [
   {
-    label: "Find and Replace Fonts",
-    href: "/find-and-replace-fonts",
-    description: "Advanced font replacement workflows for After Effects projects.",
-    previewImage: "/images/find-and-replace-fonts/find-and-replace-fonts-product.png",
-  },
-  {
     label: "AE Sheets",
     href: "/ae-sheets",
     description:
       "Localize and version compositions with spreadsheet-driven automation.",
-    previewImage: "/images/ae-sheets/AE_Sheets_Homepage_Product_Thumb.png",
+    previewImage: "/images/ae-sheets/ae-sheets-hero.avif",
+  },
+  {
+    label: "Find and Replace Fonts",
+    href: "/find-and-replace-fonts",
+    description: "Advanced font replacement workflows for After Effects projects.",
+    previewImage: "/images/find-and-replace-fonts/find-and-replace-fonts-hero.avif",
   },
 ] as const;
 
@@ -51,12 +51,12 @@ export const FOOTER_COLUMNS = [
   {
     title: "Connect",
     links: [
-      { text: "Twitter", url: "https://twitter.com/sidequestplugins" },
+      { text: "X", url: "https://x.com/SideQuestPlugns" },
       {
         text: "Instagram",
-        url: "https://instagram.com/sidequestplugins",
+        url: "https://www.instagram.com/sidequestplugins",
       },
-      { text: "YouTube", url: "https://youtube.com/sidequestplugins" },
+      { text: "YouTube", url: "https://www.youtube.com/@SidequestPlugins" },
     ],
   },
 ] as const;
@@ -69,7 +69,7 @@ export const LEGAL_LINKS = [
 
 // Social links (for structured data)
 export const SOCIAL_URLS = [
-  "https://twitter.com/sidequestplugins",
-  "https://instagram.com/sidequestplugins",
-  "https://youtube.com/sidequestplugins",
+  "https://x.com/SideQuestPlugns",
+  "https://www.instagram.com/sidequestplugins",
+  "https://www.youtube.com/@SidequestPlugins",
 ] as const;

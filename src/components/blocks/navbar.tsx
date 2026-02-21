@@ -51,11 +51,18 @@ export const Navbar = () => {
       <div className="flex items-center justify-between px-6 py-3">
         <a href="/" className="mr-4 flex shrink-0 items-center gap-2 lg:mr-6">
           <img
-            src="/logo.svg"
+            src="/images/logo-light.svg"
             alt="SideQuest Plugins"
-            width={94}
-            height={18}
-            className="dark:invert"
+            width={170}
+            height={33}
+            className="dark:hidden"
+          />
+          <img
+            src="/images/logo-dark.svg"
+            alt="SideQuest Plugins"
+            width={170}
+            height={33}
+            className="hidden dark:block"
           />
         </a>
 
@@ -73,7 +80,7 @@ export const Navbar = () => {
                   Products
                 </NavigationMenuTrigger>
                     <NavigationMenuContent className="w-max overflow-hidden p-0">
-                      <div className="grid grid-cols-[280px_220px] gap-0">
+                      <div className="grid grid-cols-[280px_320px] gap-0">
                     <ul className="space-y-1 p-4">
                       {PRODUCT_LINKS.map((link) => {
                         const isActive = activeProduct?.href === link.href;
@@ -107,15 +114,13 @@ export const Navbar = () => {
                     {activeProduct && (
                       <a
                         href={activeProduct.href}
-                        className="group bg-muted/30 hover:bg-muted/50 block overflow-hidden border-l transition-colors"
+                        className="group bg-muted/30 hover:bg-muted/50 flex items-center justify-center overflow-hidden border-l transition-colors"
                       >
-                        <div className="aspect-[4/5] w-[220px] overflow-hidden">
-                          <img
-                            src={activeProduct.previewImage}
-                            alt={activeProduct.label}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                          />
-                        </div>
+                        <img
+                          src={activeProduct.previewImage}
+                          alt={activeProduct.label}
+                          className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                        />
                       </a>
                     )}
                   </div>

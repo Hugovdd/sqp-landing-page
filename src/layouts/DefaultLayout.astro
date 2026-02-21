@@ -32,5 +32,15 @@ const { title, description, ogImage, keywords, noIndex, type } = Astro.props;
     <Navbar client:only="react" />
     <main><slot /></main>
     <Footer />
+    <script>
+      const lsScript = document.createElement("script");
+      lsScript.src = "https://assets.lemonsqueezy.com/lemon.js";
+      lsScript.onload = () => {
+        if (typeof (window as any).createLemonSqueezy === "function") {
+          (window as any).createLemonSqueezy();
+        }
+      };
+      document.head.appendChild(lsScript);
+    </script>
   </body>
 </html>

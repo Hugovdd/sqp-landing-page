@@ -14,11 +14,18 @@ export function Footer() {
           <div className="space-y-4">
             <a href="/" className="flex items-center gap-2">
               <img
-                src="/logo.svg"
+                src="/images/logo-light.svg"
                 alt={SITE.name}
-                width={94}
-                height={18}
-                className="dark:invert"
+                width={170}
+                height={33}
+                className="dark:hidden"
+              />
+              <img
+                src="/images/logo-dark.svg"
+                alt={SITE.name}
+                width={170}
+                height={33}
+                className="hidden dark:block"
               />
             </a>
             <p className="text-muted-foreground max-w-xs text-sm leading-relaxed">

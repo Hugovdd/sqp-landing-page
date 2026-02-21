@@ -62,7 +62,7 @@ export const CTASection = ({
           <div className="mt-8">
             {status === "available" ? (
               <Button size="lg" asChild>
-                <a href={checkoutUrl}>Buy for {formattedPrice}</a>
+                <a href={checkoutUrl} className="lemonsqueezy-button">Buy for {formattedPrice}</a>
               </Button>
             ) : status === "coming_soon" ? (
               <p className="text-muted-foreground text-sm">
