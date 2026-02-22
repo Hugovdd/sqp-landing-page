@@ -10,7 +10,13 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://sidequestplugins.com",
   output: "static",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    routes: {
+      extend: {
+        include: [{ pattern: "/docs" }, { pattern: "/docs/*" }],
+      },
+    },
+  }),
   integrations: [
     react(),
     sitemap({
