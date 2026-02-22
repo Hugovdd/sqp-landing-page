@@ -1,5 +1,3 @@
-/docs    /docs/    302
-
 /healthz    /api/health    200
 /health     /api/health    200
 /ping       /api/health    200
