@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 
 const DOCS_ORIGIN = "https://sqp-docs.vercel.app";
 
-export const ALL: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async ({ params, request }) => {
   const path = params.path ?? "";
   const { search } = new URL(request.url);
   const target = `${DOCS_ORIGIN}/${path}${search}`;
