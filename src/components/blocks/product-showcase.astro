@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { FeatureChips } from "@/components/blocks/feature-chips";
 import { cn } from "@/lib/utils";
 
 interface Product {
@@ -13,10 +14,12 @@ interface Product {
   price: number;
   currency: string;
   status: "available" | "coming_soon" | "discontinued";
-  category: "plugin" | "script" | "freebie";
+  category: "extension" | "plugin" | "script" | "freebie";
   heroImage?: string;
   slug: string;
   checkoutUrl?: string;
+  buyButtonLabel?: string;
+  features?: { icon: string; title: string; description: string }[];
 }
 
 interface ProductShowcaseProps {
@@ -105,17 +108,23 @@ const placeholderImages = [
                 {product.tagline}
               </p>
 
+              {product.features && product.features.length > 0 && (
+                <FeatureChips features={product.features} className="gap-y-2.5 desktop:w-[22vw]" />
+              )}
+
               <div class="flex items-center gap-4 mt-2">
                 <a
                   href={product.checkoutUrl ?? product.slug}
                   class={cn(
                     buttonVariants({ size: "lg" }),
-                    "rounded-full px-8 lemonsqueezy-button"
+                    "rounded-full px-8",
+                    !product.buyButtonLabel && "lemonsqueezy-button"
                   )}
+                  {...(product.buyButtonLabel ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 >
                   {product.status === "coming_soon"
                     ? "Coming Soon"
-                    : `Get for ${formattedPrice}`}
+                    : (product.buyButtonLabel ?? `Get for ${formattedPrice}`)}
                 </a>
                 <a
                   href={product.slug}

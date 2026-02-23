@@ -2,7 +2,7 @@
 export const SITE = {
   name: "Sidequest Plugins",
   tagline:
-    "Professional After Effects scripts and tools to automate your motion graphics workflow.",
+    "Professional After Effects plugins, scripts, and extensions by Sidequest Plugins. Automate font replacement, spreadsheet-driven localization, batch renaming, and more. Free and paid tools for motion designers.",
   domain: "https://sidequestplugins.com",
   supportEmail: "support@sidequestplugins.com",
   defaultOgImage: "/images/og-homepage.jpg",

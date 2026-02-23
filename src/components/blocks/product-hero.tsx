@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FeatureChips } from "@/components/blocks/feature-chips";
 import { DashedLine } from "@/components/dashed-line";
 import { VideoPlayer } from "@/components/video-player";
 import { cn } from "@/lib/utils";
@@ -14,10 +15,12 @@ interface ProductHeroProps {
   supportedApp: string;
   extensionType: string;
   checkoutUrl: string;
+  buyButtonLabel?: string;
   heroVideo?: string;
   heroVideoShowControls?: boolean;
   heroImage?: string;
-  stats: { value: string; label: string }[];
+  heroFeatures?: { icon: string; title: string }[];
+  stats?: { value: string; label: string }[];
   showDivider?: boolean;
   mediaStyle?: "default" | "card";
   className?: string;
@@ -32,9 +35,11 @@ export const ProductHero = ({
   status,
   supportedApp,
   checkoutUrl,
+  buyButtonLabel,
   heroVideo,
   heroVideoShowControls = true,
   heroImage,
+  heroFeatures,
   stats,
   showDivider = true,
   mediaStyle = "default",
@@ -91,12 +96,24 @@ export const ProductHero = ({
               {tagline}
             </p>
 
+            {heroFeatures && heroFeatures.length > 0 && (
+              <FeatureChips features={heroFeatures} />
+            )}
+
             {/* Price + CTA */}
             <div className="flex flex-wrap items-center gap-4">
               {status === "available" ? (
                 <>
                   <Button size="lg" asChild>
-                    <a href={checkoutUrl} className="lemonsqueezy-button">Buy for {formattedPrice}</a>
+                    <a
+                      href={checkoutUrl}
+                      {...(buyButtonLabel
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : { className: "lemonsqueezy-button" }
+                      )}
+                    >
+                      {buyButtonLabel ?? `Buy for ${formattedPrice}`}
+                    </a>
                   </Button>
                 </>
               ) : status === "coming_soon" ? (
@@ -107,9 +124,9 @@ export const ProductHero = ({
             </div>
 
             {/* Stats */}
-            {stats.length > 0 && (
+            {stats && stats.length > 0 && (
               <div className="mt-4 flex gap-8">
-                {stats.map((stat) => (
+                {stats!.map((stat) => (
                   <div key={stat.label}>
                     <div className="text-foreground text-2xl font-bold">
                       {stat.value}

@@ -89,9 +89,10 @@ const orgSchema = buildOrganizationSchema();
       supportedApp={data.supportedApp}
       extensionType={data.extensionType}
       checkoutUrl={data.checkoutUrl}
+      buyButtonLabel={data.buyButtonLabel}
       heroVideo={data.heroVideo}
       heroImage={data.heroImage}
-      stats={data.stats}
+      heroFeatures={data.heroFeatures}
       showDivider={false}
       mediaStyle="card"
     />
@@ -117,9 +118,7 @@ const orgSchema = buildOrganizationSchema();
   </AnimateOnScroll>
 
   {data.faqs.length > 0 && (
-    <AnimateOnScroll animation="fade-up">
-      <FAQ client:visible items={data.faqs} />
-    </AnimateOnScroll>
+    <FAQ client:only="react" items={data.faqs} />
   )}
 
   <AnimateOnScroll animation="fade-up">

@@ -30,6 +30,12 @@ const statSchema = z.object({
   label: z.string(), // e.g. "users"
 });
 
+// -- Hero Feature Chip (icon + short label, shown in product hero) --
+const heroChipSchema = z.object({
+  icon: z.string(), // Lucide icon name, e.g. "Sparkles"
+  title: z.string(), // Short label, e.g. "Google Gemini & OpenAI"
+});
+
 // -- Homepage Product Card --
 const homeCardSchema = z.object({
   title: z.string().optional(),
@@ -38,6 +44,7 @@ const homeCardSchema = z.object({
   currency: z.string().optional(),
   heroImage: z.string().optional(),
   features: z.array(featureSchema).optional(),
+  buyButtonLabel: z.string().optional(),
 });
 
 // -- SEO Fields (reused across collections) --
@@ -62,13 +69,15 @@ const products = defineCollection({
     supportedApp: z.string(), // e.g. "AFTER EFFECTS 24.0+"
     extensionType: z.string(), // e.g. "Extension (.ZXP)"
     checkoutUrl: z.string().url(),
+    buyButtonLabel: z.string().optional(),
     heroVideo: z.string().optional(), // path or external URL
     heroImage: z.string().optional(),
     tutorialVideoId: z.string().optional(), // YouTube video ID
     isFree: z.boolean().default(false),
-    category: z.enum(["plugin", "script", "freebie"]),
+    category: z.enum(["extension", "plugin", "script", "freebie"]),
     sortOrder: z.number().default(0),
     features: z.array(featureSchema).default([]),
+    heroFeatures: z.array(heroChipSchema).optional(),
     homeCard: homeCardSchema.optional(),
     techStack: z.array(techItemSchema).default([]),
     faqs: z.array(faqSchema).default([]),

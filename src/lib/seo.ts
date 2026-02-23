@@ -9,6 +9,8 @@ export function buildOrganizationSchema() {
     "@type": "Organization",
     name: SITE.name,
     url: SITE.domain,
+    description:
+      "Sidequest Plugins builds professional automation tools for Adobe After Effects, helping motion designers eliminate repetitive tasks in localization, font management, and project organization.",
     logo: `${SITE.domain}/images/logo.png`,
     sameAs: [...SOCIAL_URLS],
     contactPoint: {
@@ -88,6 +90,31 @@ export function buildFAQSchema(faqs: { question: string; answer: string }[]) {
         "@type": "Answer",
         text: faq.answer,
       },
+    })),
+  };
+}
+
+/**
+ * ItemList schema — used on the homepage product showcase
+ */
+export function buildItemListSchema(
+  products: {
+    name: string;
+    url: string;
+    image?: string;
+    description: string;
+  }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((product, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: product.name,
+      url: product.url,
+      ...(product.image && { image: `${SITE.domain}${product.image}` }),
+      description: product.description,
     })),
   };
 }

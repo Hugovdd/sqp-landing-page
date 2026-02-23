@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Debug Helper</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #252526;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .error {
+            color: #f48771;
+        }
+        .success {
+            color: #4ec9b0;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+    </style>
+</head>
+<body>
+    <h1>FAQ Debug Tool</h1>
+    <button onclick="runDiagnostics()">Run Diagnostics</button>
+    <button onclick="location.href='http://localhost:4321/'">Open Site</button>
+    
+    <div class="section">
+        <h2>Instructions</h2>
+        <ol>
+            <li>Click "Open Site" to navigate to localhost:4321</li>
+            <li>Open browser console (F12 or Cmd+Option+I)</li>
+            <li>Paste the diagnostic script below into the console</li>
+            <li>Scroll to the FAQ section</li>
+            <li>Run the script again after scrolling</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Diagnostic Script (Copy & Paste into Console)</h2>
+        <pre id="script">
+// FAQ Diagnostic Script
+console.clear();
+console.log('=== FAQ DIAGNOSTIC REPORT ===\n');
+
+// 1. Check for console errors
+console.log('1. CONSOLE ERRORS:');
+console.log('(Check above for any red error messages)\n');
+
+// 2. Find FAQ section
+const faqSection = document.querySelector('section.py-28, section.py-32');
+console.log('2. FAQ SECTION FOUND:', !!faqSection);
+
+if (faqSection) {
+    // 3. Check parent wrapper with data-animate
+    const animateWrapper = faqSection.closest('[data-animate]');
+    console.log('\n3. ANIMATE WRAPPER:');
+    if (animateWrapper) {
+        console.log('   - data-animate:', animateWrapper.getAttribute('data-animate'));
+        console.log('   - has is-visible class:', animateWrapper.classList.contains('is-visible'));
+        console.log('   - computed opacity:', window.getComputedStyle(animateWrapper).opacity);
+        console.log('   - all classes:', Array.from(animateWrapper.classList).join(', '));
+    } else {
+        console.log('   - No animate wrapper found');
+    }
+
+    // 4. Check astro-island
+    const astroIsland = faqSection.querySelector('astro-island') || 
+                        document.querySelector('astro-island[component-export="FAQ"]');
+    console.log('\n4. ASTRO ISLAND:');
+    if (astroIsland) {
+        console.log('   - component-url:', astroIsland.getAttribute('component-url'));
+        console.log('   - component-export:', astroIsland.getAttribute('component-export'));
+        console.log('   - client:', astroIsland.getAttribute('client'));
+        console.log('   - ssr:', astroIsland.getAttribute('ssr'));
+        console.log('   - props:', astroIsland.getAttribute('props'));
+        console.log('   - All attributes:');
+        Array.from(astroIsland.attributes).forEach(attr => {
+            console.log(`     ${attr.name}: ${attr.value}`);
+        });
+    } else {
+        console.log('   - No astro-island found');
+    }
+
+    // 5. Check accordion structure
+    const accordion = faqSection.querySelector('[data-slot="accordion"]');
+    console.log('\n5. ACCORDION ELEMENT:');
+    console.log('   - Found:', !!accordion);
+    if (accordion) {
+        const triggers = accordion.querySelectorAll('[data-slot="accordion-trigger"]');
+        console.log('   - Number of triggers:', triggers.length);
+        console.log('   - First trigger text:', triggers[0]?.textContent?.trim().substring(0, 50));
+    }
+
+    // 6. Check if React has hydrated
+    console.log('\n6. REACT HYDRATION CHECK:');
+    const hasReactProps = !!faqSection.querySelector('[data-radix-collection-item]');
+    console.log('   - Radix UI props present:', hasReactProps);
+    
+    // 7. Test click handler
+    const firstTrigger = faqSection.querySelector('[data-slot="accordion-trigger"]');
+    if (firstTrigger) {
+        console.log('\n7. CLICK HANDLER TEST:');
+        console.log('   - First trigger element:', firstTrigger);
+        console.log('   - Has click listeners:', !!firstTrigger.onclick || 
+                    window.getEventListeners?.(firstTrigger)?.click?.length > 0);
+        console.log('   - Try clicking the first FAQ question manually now!');
+    }
+}
+
+console.log('\n=== END DIAGNOSTIC REPORT ===');
+console.log('\nNow try clicking on an FAQ question and observe what happens.');
+        </pre>
+        <button onclick="copyScript()">Copy Script</button>
+    </div>
+
+    <script>
+        function copyScript() {
+            const script = document.getElementById('script').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                alert('Script copied! Paste it into the browser console on localhost:4321');
+            });
+        }
+
+        function runDiagnostics() {
+            alert('This will open the site. Then:\n1. Open Console (F12)\n2. Click "Copy Script" button\n3. Paste into console\n4. Scroll to FAQ section\n5. Run script again');
+            window.open('http://localhost:4321/', '_blank');
+        }
+    </script>
+</body>
+</html>

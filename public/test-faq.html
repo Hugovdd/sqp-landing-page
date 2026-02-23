@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Diagnostic Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4ec9b0;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .card {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #569cd6;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px 5px 5px 0;
+            transition: background 0.2s;
+        }
+        .button:hover {
+            background: #1177bb;
+        }
+        .button.secondary {
+            background: #3e3e42;
+        }
+        .button.secondary:hover {
+            background: #505050;
+        }
+        pre {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .step {
+            background: #2d2d30;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-left: 3px solid #4ec9b0;
+            border-radius: 3px;
+        }
+        .step strong {
+            color: #4ec9b0;
+        }
+        .warning {
+            background: #3a2d1f;
+            border-left-color: #d7ba7d;
+            color: #d7ba7d;
+        }
+        .success {
+            background: #1f3a2d;
+            border-left-color: #4ec9b0;
+            color: #4ec9b0;
+        }
+        .error {
+            background: #3a1f1f;
+            border-left-color: #f48771;
+            color: #f48771;
+        }
+        code {
+            background: #1e1e1e;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #ce9178;
+        }
+        ol {
+            margin-left: 20px;
+        }
+        ol li {
+            margin: 8px 0;
+        }
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border: 2px solid #3e3e42;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status.ready {
+            background: #1f3a2d;
+            color: #4ec9b0;
+        }
+        .status.pending {
+            background: #3a2d1f;
+            color: #d7ba7d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 FAQ Accordion Diagnostic Tool</h1>
+        
+        <div class="card">
+            <h2>Quick Actions</h2>
+            <button class="button" onclick="openSite()">🌐 Open Site in New Tab</button>
+            <button class="button" onclick="copyDiagnosticScript()">📋 Copy Diagnostic Script</button>
+            <button class="button secondary" onclick="location.reload()">🔄 Refresh This Page</button>
+        </div>
+
+        <div class="card">
+            <h2>Testing Instructions</h2>
+            <ol>
+                <li><strong>Open the site:</strong> Click "Open Site in New Tab" or navigate to <code>http://localhost:4321/</code></li>
+                <li><strong>Open DevTools:</strong> Press <code>F12</code> (or <code>Cmd+Option+I</code> on Mac)</li>
+                <li><strong>Go to Console tab:</strong> Click the "Console" tab in DevTools</li>
+                <li><strong>Copy the diagnostic script:</strong> Click "Copy Diagnostic Script" button above</li>
+                <li><strong>Paste and run:</strong> Paste the script into the console and press Enter</li>
+                <li><strong>Scroll to FAQ:</strong> Scroll down to the "Frequently Asked Questions" section</li>
+                <li><strong>Run script again:</strong> After scrolling, run the script again in console</li>
+                <li><strong>Click FAQ question:</strong> Try clicking on any FAQ question</li>
+                <li><strong>Run script one more time:</strong> After clicking, run the script again</li>
+                <li><strong>Report findings:</strong> Copy all console output and report back</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>What to Look For</h2>
+            <div class="step">
+                <strong>✅ Good Signs:</strong>
+                <ul>
+                    <li>astro-island element found with <code>client="load"</code> attribute</li>
+                    <li>Radix UI elements present (indicates React hydration)</li>
+                    <li>Accordion triggers have event listeners</li>
+                    <li>Clicking FAQ questions expands/collapses content</li>
+                    <li>No JavaScript errors in console</li>
+                </ul>
+            </div>
+            <div class="step warning">
+                <strong>⚠️ Warning Signs:</strong>
+                <ul>
+                    <li>astro-island has <code>client="visible"</code> instead of <code>client="load"</code></li>
+                    <li>FAQ section has <code>opacity: 0</code> when not scrolled into view</li>
+                    <li>No Radix UI elements found</li>
+                </ul>
+            </div>
+            <div class="step error">
+                <strong>❌ Bad Signs:</strong>
+                <ul>
+                    <li>No astro-island element found</li>
+                    <li>JavaScript errors in console</li>
+                    <li>Clicking FAQ questions does nothing</li>
+                    <li>No accordion triggers found</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Diagnostic Script</h2>
+            <p style="margin-bottom: 15px;">Copy this script and paste it into the browser console at <code>http://localhost:4321/</code></p>
+            <pre id="diagnosticScript">// Loading script...
+fetch('/faq-diagnostic.js')
+    .then(r => r.text())
+    .then(script => {
+        document.getElementById('diagnosticScript').textContent = script;
+    })
+    .catch(err => {
+        document.getElementById('diagnosticScript').textContent = 'Error loading script. Make sure the dev server is running at http://localhost:4321/';
+    });
+</pre>
+        </div>
+
+        <div class="card">
+            <h2>Expected Results (After Fix)</h2>
+            <div class="step success">
+                <p><strong>The fix changed <code>client:visible</code> to <code>client:load</code></strong></p>
+                <p>You should see:</p>
+                <ul>
+                    <li>astro-island with <code>client="load"</code> attribute</li>
+                    <li>Component hydrates immediately on page load</li>
+                    <li>FAQ accordion is interactive even before scrolling into view</li>
+                    <li>Clicking any FAQ question expands/collapses it smoothly</li>
+                    <li>No console errors</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Manual Console Commands</h2>
+            <p style="margin-bottom: 15px;">If you prefer, run these commands one by one in the console:</p>
+            
+            <div class="step">
+                <strong>1. Find all astro-islands:</strong>
+                <pre>document.querySelectorAll('astro-island').forEach(el => console.log(el.outerHTML.substring(0, 500)))</pre>
+            </div>
+
+            <div class="step">
+                <strong>2. Check accordion elements:</strong>
+                <pre>document.querySelectorAll('[data-slot="accordion"]').forEach(el => console.log('accordion found:', el.tagName, el.getAttribute('data-slot')))</pre>
+            </div>
+
+            <div class="step">
+                <strong>3. Check accordion triggers:</strong>
+                <pre>document.querySelectorAll('[data-slot="accordion-trigger"]').forEach(btn => console.log('trigger:', btn.textContent.trim().substring(0, 50), 'onclick:', btn.onclick))</pre>
+            </div>
+
+            <div class="step">
+                <strong>4. Check for Radix UI hydration:</strong>
+                <pre>console.log('Radix elements:', document.querySelectorAll('[data-radix-collection-item], [data-state]').length)</pre>
+            </div>
+
+            <div class="step">
+                <strong>5. Check FAQ island specifically:</strong>
+                <pre>const faqIsland = Array.from(document.querySelectorAll('astro-island')).find(el => el.getAttribute('component-export') === 'FAQ');
+console.log('FAQ Island:', faqIsland);
+console.log('Client directive:', faqIsland?.getAttribute('client'));</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSite() {
+            const win = window.open('http://localhost:4321/', '_blank');
+            if (!win) {
+                alert('Popup blocked! Please allow popups or manually navigate to http://localhost:4321/');
+            }
+        }
+
+        function copyDiagnosticScript() {
+            const script = document.getElementById('diagnosticScript').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#4ec9b0';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy. Please copy manually from the script box below.');
+            });
+        }
+
+        // Load the diagnostic script
+        fetch('/faq-diagnostic.js')
+            .then(r => r.text())
+            .then(script => {
+                document.getElementById('diagnosticScript').textContent = script;
+            })
+            .catch(err => {
+                document.getElementById('diagnosticScript').textContent = 
+                    '// Error loading script from /faq-diagnostic.js\n' +
+                    '// Make sure the dev server is running at http://localhost:4321/\n' +
+                    '// The diagnostic script should be available at http://localhost:4321/faq-diagnostic.js';
+            });
+    </script>
+</body>
+</html>

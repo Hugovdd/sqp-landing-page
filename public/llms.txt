@@ -1,0 +1,33 @@
+# Sidequest Plugins
+
+> Professional After Effects plugins, scripts, and extensions for motion designers. Available at https://sidequestplugins.com
+
+## Products
+
+- [AE Sheets](https://sidequestplugins.com/ae-sheets): Spreadsheet-driven localization and versioning for After Effects compositions. Import CSV or Google Sheets data to auto-populate text layers, duplicate compositions for multiple languages, and batch-create localized versions — all from within After Effects. Includes AI-powered translation, font mapping per language, and rigging tools to keep layouts pixel-perfect across scripts. $69 USD. Available on aescripts.com.
+- [Find and Replace Fonts](https://sidequestplugins.com/find-and-replace-fonts): Advanced font management for Adobe After Effects. Find, replace, and batch-update fonts across entire projects, specific compositions, or selected layers. Handles missing fonts, supports RTL/LTR direction changes, and lets you adjust size, kerning, and line spacing in one operation. $20 USD.
+
+## Free Scripts
+
+- [AE Calculator](https://sidequestplugins.com/free-ae-scripts/ae-calculator): A lightweight in-app calculator for After Effects. Evaluate expressions and do quick math without leaving the application. Free.
+- [AE Batch Renamer](https://sidequestplugins.com/free-ae-scripts/ae-batch-renamer): Rename layers with clean prefixes, suffixes, and incremental numbering. Coming soon. Free.
+- [AE Safe Area Guides](https://sidequestplugins.com/free-ae-scripts/ae-safe-area-guides): One-click title and action-safe overlays for broadcast and social delivery. Coming soon. Free.
+
+## About
+
+Sidequest Plugins builds automation tools for Adobe After Effects. All tools are designed by a motion designer to eliminate repetitive tasks in professional motion graphics workflows. Tools run on both macOS and Windows and require After Effects 2024 or newer.
+
+## Compatibility
+
+- Operating systems: macOS, Windows
+- Application: Adobe After Effects 2024+
+- Extension format: ZXP (installed via Creative Cloud or extension manager)
+- Script format: JSX (placed in After Effects Scripts folder)
+
+## Links
+
+- Website: https://sidequestplugins.com
+- Support: support@sidequestplugins.com
+- X/Twitter: https://x.com/SideQuestPlugns
+- Instagram: https://www.instagram.com/sidequestplugins
+- YouTube: https://www.youtube.com/@SidequestPlugins

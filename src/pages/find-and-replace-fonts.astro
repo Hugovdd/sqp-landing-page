@@ -67,9 +67,7 @@ const orgSchema = buildOrganizationSchema();
     <TechStack items={data.techStack} heading="Built with" />
   </AnimateOnScroll>
 
-  <AnimateOnScroll animation="fade-up">
-    <FAQ client:visible items={data.faqs} />
-  </AnimateOnScroll>
+  <FAQ client:only="react" items={data.faqs} />
 
   <AnimateOnScroll animation="fade-up">
     <CTASection

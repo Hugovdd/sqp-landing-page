@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { FeatureChips } from "@/components/blocks/feature-chips";
 import { cn } from "@/lib/utils";
 
 interface Product {
@@ -12,9 +13,10 @@ interface Product {
   price: number;
   currency: string;
   status: "available" | "coming_soon" | "discontinued";
-  category: "plugin" | "script" | "freebie";
+  category: "extension" | "plugin" | "script" | "freebie";
   heroImage?: string;
   slug: string;
+  features?: { icon: string; title: string; description: string }[];
 }
 
 interface ProductCardsProps {
@@ -95,13 +97,16 @@ export const ProductCards = ({
                       )}
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 space-y-3">
                       <h3 className="text-foreground mb-1.5 text-lg font-semibold">
                         {product.title}
                       </h3>
                       <p className="text-muted-foreground text-sm leading-relaxed">
                         {product.tagline}
                       </p>
+                      {product.features && product.features.length > 0 && (
+                        <FeatureChips features={product.features} className="gap-y-2" />
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between">
