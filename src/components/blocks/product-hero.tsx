@@ -50,7 +50,7 @@ export const ProductHero = ({
         }).format(price);
 
   return (
-    <section className={cn("py-28 lg:py-32 lg:pt-44", className)}>
+    <section className={cn("py-28 md:py-32 md:pt-44", className)}>
       <div className="container">
         <div
           className={cn(

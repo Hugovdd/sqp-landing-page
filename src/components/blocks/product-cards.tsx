@@ -67,11 +67,11 @@ export const ProductCards = ({
                 <CardContent className="flex h-full flex-col p-0">
                   {/* Image */}
                   {product.heroImage && (
-                    <div className="bg-muted relative aspect-video overflow-hidden">
+                    <div className="bg-muted shrink-0 overflow-hidden">
                       <img
                         src={product.heroImage}
                         alt={`${product.title} preview`}
-                        className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="block w-full h-auto transition-transform duration-300 group-hover:scale-105"
                         width={600}
                         height={338}
                         loading="lazy"

@@ -16,6 +16,9 @@ const MOBILE_MENU_GROUPS = [
   { title: "Products", links: PRODUCT_LINKS },
   { title: "Resources", links: NAV_LINKS },
 ] as const;
+const NAV_TOP_OFFSET_CLASS = "top-5 md:top-12";
+const NAV_DESKTOP_ONLY_CLASS = "max-md:hidden";
+const NAV_MOBILE_ONLY_CLASS = "md:hidden";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,12 +47,12 @@ export const Navbar = () => {
   return (
     <section
       className={cn(
-        "bg-background/70 absolute left-1/2 z-50 w-auto max-w-[90%] -translate-x-1/2 rounded-4xl border backdrop-blur-md transition-all duration-300",
-        "top-5 lg:top-12",
+        "bg-background/70 absolute left-1/2 z-50 w-auto min-w-max max-w-[95%] -translate-x-1/2 rounded-4xl border backdrop-blur-md transition-all duration-300",
+        NAV_TOP_OFFSET_CLASS,
       )}
     >
       <div className="flex items-center justify-between px-6 py-3">
-        <a href="/" className="mr-4 flex shrink-0 items-center gap-2 lg:mr-6">
+        <a href="/" className="mr-4 flex shrink-0 items-center gap-2 md:mr-6">
           <img
             src="/images/logo-light.svg"
             alt="Sidequest Plugins"
@@ -67,7 +70,7 @@ export const Navbar = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <div className="mr-2 max-lg:hidden">
+        <div className={cn("mr-2", NAV_DESKTOP_ONLY_CLASS)}>
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -148,11 +151,16 @@ export const Navbar = () => {
 
         {/* Right side controls */}
         <div className="flex items-center gap-2.5">
-          <ThemeToggle />
+          <div className={NAV_DESKTOP_ONLY_CLASS}>
+            <ThemeToggle />
+          </div>
 
           {/* Hamburger Menu Button (Mobile Only) */}
           <button
-            className="text-muted-foreground relative flex size-8 lg:hidden"
+            className={cn(
+              "text-muted-foreground relative flex size-8",
+              NAV_MOBILE_ONLY_CLASS,
+            )}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -177,7 +185,8 @@ export const Navbar = () => {
       {/* Mobile Menu Navigation */}
       <div
         className={cn(
-          "bg-background fixed inset-x-0 top-[calc(100%+1rem)] flex flex-col rounded-2xl border p-6 transition-all duration-300 ease-in-out lg:hidden",
+          "bg-background fixed inset-x-0 top-[calc(100%+1rem)] flex flex-col rounded-2xl border p-6 transition-all duration-300 ease-in-out",
+          NAV_MOBILE_ONLY_CLASS,
           isMenuOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-4 opacity-0",
