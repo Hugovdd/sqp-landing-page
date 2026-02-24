@@ -39,7 +39,7 @@ const products = allProducts
     slug: `/${p.id}`,
     checkoutUrl: p.data.checkoutUrl,
     buyButtonLabel: p.data.homeCard?.buyButtonLabel ?? p.data.buyButtonLabel,
-    features: p.data.homeCard?.features ?? p.data.features,
+    features: p.data.heroFeatures ?? p.data.homeCard?.features,
   }));
 
 const itemListData = products.map((p) => ({

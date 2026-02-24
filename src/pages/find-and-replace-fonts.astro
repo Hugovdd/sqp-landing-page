@@ -37,6 +37,7 @@ const orgSchema = buildOrganizationSchema();
 
   <Background className="via-muted to-muted/80">
     <ProductHero
+      client:load
       title={data.title}
       tagline={data.tagline}
       price={data.price}
@@ -49,6 +50,7 @@ const orgSchema = buildOrganizationSchema();
       heroVideo={data.heroVideo}
       heroVideoShowControls={false}
       heroImage={data.heroImage}
+      heroFeatures={data.heroFeatures}
       stats={data.stats}
       showDivider={false}
       mediaStyle="card"
@@ -73,6 +75,8 @@ const orgSchema = buildOrganizationSchema();
     <CTASection
       title={data.title}
       tagline={data.tagline}
+      heading="The best-selling font tool for After Effects"
+      description="Over 740 motion designers rely on Find and Replace Fonts to swap fonts across their projects in seconds."
       price={data.price}
       currency={data.currency}
       status={data.status}

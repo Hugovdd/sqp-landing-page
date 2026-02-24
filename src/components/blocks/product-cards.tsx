@@ -16,7 +16,7 @@ interface Product {
   category: "extension" | "plugin" | "script" | "freebie";
   heroImage?: string;
   slug: string;
-  features?: { icon: string; title: string; description: string }[];
+  features?: { icon: string; title: string; description?: string }[];
 }
 
 interface ProductCardsProps {

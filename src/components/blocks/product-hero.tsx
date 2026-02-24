@@ -109,8 +109,7 @@ export const ProductHero = ({
                       href={checkoutUrl}
                       {...(buyButtonLabel
                         ? { target: "_blank", rel: "noopener noreferrer" }
-                        : { className: "lemonsqueezy-button" }
-                      )}
+                        : { className: "lemonsqueezy-button" })}
                     >
                       {buyButtonLabel ?? `Buy for ${formattedPrice}`}
                     </a>

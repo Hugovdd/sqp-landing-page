@@ -19,7 +19,7 @@ interface Product {
   slug: string;
   checkoutUrl?: string;
   buyButtonLabel?: string;
-  features?: { icon: string; title: string; description: string }[];
+  features?: { icon: string; title: string; description?: string }[];
 }
 
 interface ProductShowcaseProps {
