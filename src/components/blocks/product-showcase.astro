@@ -37,19 +37,40 @@ const placeholderImages = [
   "https://static.wixstatic.com/media/7e521c_6a3aacc163064dc8a2dbb53e4d6fe913~mv2.jpg/v1/fill/w_972,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ready%20to%20use%2C%20instantly.jpg",
   "https://static.wixstatic.com/media/7e521c_22eddcf7e947417f80b180080d1fc70a~mv2.jpg/v1/fill/w_972,h_708,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Real%20backed%2C%20real%20results.jpg",
 ];
+
+const sectionGridClass =
+  "w-full mx-auto grid box-border pt-[16.67vw] pr-[5.6vw] pb-[16.67vw] pl-[5.6vw] gap-[7vw] md:pt-[14.3vw] md:pr-[6.5vw] md:pb-[14.3vw] md:pl-[6.5vw] md:gap-[3vw] lg:pt-[6.8vw] lg:px-[6.5vw] lg:pb-[7.65vw] lg:gap-[1.5vw] xl:px-[7.8125vw]";
+const headerClass =
+  "w-full mx-auto grid justify-items-center text-center gap-[2vw] mb-[4vw] md:mb-[3vw] lg:w-[40vw] lg:gap-[1.2vw] lg:mb-[2.5vw]";
+const headingClass =
+  "m-0 text-foreground font-semibold leading-[1.1] tracking-[-0.02em] text-[clamp(1.875rem,8.3vw,2.4rem)] md:text-[clamp(2.2rem,7.55vw,3.625rem)] lg:text-[clamp(2.5rem,3.75vw,4.5rem)]";
+const bodyTextClass =
+  "m-0 text-muted-foreground leading-[1.4] text-[clamp(1rem,4.44vw,1.2rem)] md:text-[clamp(1rem,2.6vw,1.25rem)] lg:text-[clamp(1rem,1.041vw,1.25rem)]";
+const articleClass =
+  "grid grid-cols-1 relative lg:grid-cols-[0.9975fr_1fr] lg:sticky lg:top-[8vw]";
+const imageClass =
+  "block w-full object-cover h-[73.9vw] rounded-[14px] md:h-[59.9vw] md:rounded-[20px] lg:h-full lg:rounded-[40px]";
+const contentCardClass =
+  "bg-[#faf9f7] dark:bg-card grid content-center rounded-[14px] py-[6.945vw] px-[7.6vw] gap-[3.88vw] md:min-h-[59.9vw] md:pt-[6.77vw] md:px-[4.2vw] md:pb-[6vw] md:gap-[3.35vw] md:rounded-[20px] lg:min-h-0 lg:py-0 lg:px-[4.36vw] lg:gap-[1.35vw] lg:rounded-[40px]";
+const contentStackClass = "flex flex-col gap-[1.90rem] lg:gap-[1.08vw]";
+const titleClass =
+  "font-display m-0 text-foreground font-normal leading-[1.1] tracking-[-0.02em] text-[clamp(1.5rem,6.8vw,2.1rem)] md:text-[clamp(1.875rem,5.8vw,2.75rem)] lg:text-[clamp(1.875rem,3.1vw,2.8rem)] xl:text-[clamp(2rem,2.7vw,3.4rem)] 2xl:text-[clamp(2.1rem,2.3vw,3.2rem)]";
+const featureChipsClass = "gap-y-2.5 lg:hidden xl:grid xl:w-[28.6vw]";
+const actionRowClass = "flex flex-col items-stretch gap-4 mt-2 xl:flex-row xl:items-center";
+const ctaButtonClass = "rounded-full px-8";
 ---
 
 <section class={cn("relative", className)}>
-  <div class="w-full mx-auto grid box-border pt-[16.67vw] pr-[5.6vw] pb-[16.67vw] pl-[5.6vw] gap-[7vw] md:pt-[14.3vw] md:pr-[6.5vw] md:pb-[14.3vw] md:pl-[6.5vw] md:gap-[3vw] desktop:pt-[6.8vw] desktop:pr-[7.8125vw] desktop:pb-[7.65vw] desktop:pl-[7.8125vw] desktop:gap-[1.5vw]">
+  <div class={sectionGridClass}>
     {(heading || description) && (
-      <header class="w-full mx-auto grid justify-items-center text-center gap-[2vw] mb-[4vw] md:mb-[3vw] desktop:w-[40vw] desktop:gap-[1.2vw] desktop:mb-[2.5vw]">
+      <header class={headerClass}>
         {heading && (
-          <h2 class="m-0 text-foreground font-semibold leading-[1.1] tracking-[-0.02em] text-[clamp(1.875rem,8.3vw,2.4rem)] md:text-[clamp(2.2rem,7.55vw,3.625rem)] desktop:text-[clamp(2.5rem,3.75vw,4.5rem)]">
+          <h2 class={headingClass}>
             {heading}
           </h2>
         )}
         {description && (
-          <p class="m-0 text-muted-foreground leading-[1.4] text-[clamp(1rem,4.44vw,1.2rem)] md:text-[clamp(1rem,2.6vw,1.25rem)] desktop:text-[clamp(1rem,1.041vw,1.25rem)]">
+          <p class={bodyTextClass}>
             {description}
           </p>
         )}
@@ -71,7 +92,7 @@ const placeholderImages = [
 
       return (
         <article
-          class="grid grid-cols-1 relative desktop:grid-cols-[0.9975fr_1fr] desktop:sticky desktop:top-[8vw]"
+          class={articleClass}
           style={`z-index: ${zIndex};`}
         >
           <Image
@@ -79,18 +100,18 @@ const placeholderImages = [
             alt={`${product.title} preview`}
             width={972}
             height={708}
-            sizes="(min-width: 1100px) 50vw, 100vw"
+            sizes="(min-width: 1024px) 50vw, 100vw"
             loading="lazy"
             class={cn(
-              "block w-full h-auto rounded-[14px] md:rounded-[20px] desktop:rounded-[40px]",
-              isReversed && "desktop:order-2"
+              imageClass,
+              isReversed && "lg:order-2"
             )}
           />
 
-          <div class="bg-[#faf9f7] dark:bg-card grid content-center rounded-[14px] py-[13.89vw] px-[8.33vw] gap-[3.88vw] md:pt-[6.77vw] md:pr-[4vw] md:pb-[6vw] md:pl-[5.2vw] md:gap-[3.35vw] md:rounded-[20px] desktop:min-h-0 desktop:py-0 desktop:pr-[6.61vw] desktop:pl-[5.21vw] desktop:gap-[1.35vw] desktop:rounded-[40px]">
-            <div class="flex flex-col gap-4 desktop:gap-[1.35vw]">
+          <div class={contentCardClass}>
+            <div class={contentStackClass}>
               <div class="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs capitalize">
+                <Badge variant="outline" className="text-xs capitalize max-2xl:hidden">
                   {product.category}
                 </Badge>
                 {product.status === "coming_soon" && (
@@ -100,24 +121,24 @@ const placeholderImages = [
                 )}
               </div>
 
-              <h3 class="font-display m-0 text-foreground font-normal leading-[1.1] tracking-[-0.02em] text-[clamp(1.625rem,7.2vw,2.25rem)] md:text-[clamp(2rem,6.25vw,3rem)] desktop:text-[clamp(2rem,3.33vw,4rem)]">
+              <h3 class={titleClass}>
                 {product.title}
               </h3>
 
-              <p class="m-0 w-full text-muted-foreground leading-[1.4] text-[clamp(1rem,4.44vw,1.2rem)] md:text-[clamp(1rem,2.6vw,1.25rem)] desktop:w-[22vw] desktop:text-[clamp(1rem,1.041vw,1.25rem)]">
+              <p class={cn(bodyTextClass, "w-full")}>
                 {product.tagline}
               </p>
 
               {product.features && product.features.length > 0 && (
-                <FeatureChips features={product.features} className="gap-y-2.5 desktop:w-[22vw]" />
+                <FeatureChips features={product.features} className={featureChipsClass} />
               )}
 
-              <div class="flex items-center gap-4 mt-2">
+              <div class={actionRowClass}>
                 <a
                   href={product.checkoutUrl ?? product.slug}
                   class={cn(
                     buttonVariants({ size: "lg" }),
-                    "rounded-full px-8",
+                    ctaButtonClass,
                     !product.buyButtonLabel && "lemonsqueezy-button"
                   )}
                   {...(product.buyButtonLabel ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -130,7 +151,7 @@ const placeholderImages = [
                   href={product.slug}
                   class={cn(
                     buttonVariants({ size: "lg", variant: "outline" }),
-                    "rounded-full px-8"
+                    ctaButtonClass
                   )}
                 >
                   Find out more
