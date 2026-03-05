@@ -342,14 +342,15 @@ body {
 /* Hero: plays on page load with staggered children */
 .animate-hero-stagger > * {
   opacity: 0;
-  animation: hero-fade-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: hero-fade-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
-.animate-hero-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.animate-hero-stagger > *:nth-child(2) { animation-delay: 80ms; }
-.animate-hero-stagger > *:nth-child(3) { animation-delay: 160ms; }
-.animate-hero-stagger > *:nth-child(4) { animation-delay: 240ms; }
-.animate-hero-stagger > *:nth-child(5) { animation-delay: 320ms; }
-.animate-hero-stagger > *:nth-child(6) { animation-delay: 400ms; }
+/* First child (h1 / LCP element) renders instantly — no animation delay */
+.animate-hero-stagger > *:nth-child(1) { animation: none; opacity: 1; }
+.animate-hero-stagger > *:nth-child(2) { animation-delay: 60ms; }
+.animate-hero-stagger > *:nth-child(3) { animation-delay: 120ms; }
+.animate-hero-stagger > *:nth-child(4) { animation-delay: 180ms; }
+.animate-hero-stagger > *:nth-child(5) { animation-delay: 240ms; }
+.animate-hero-stagger > *:nth-child(6) { animation-delay: 300ms; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
