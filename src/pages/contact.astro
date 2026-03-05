@@ -18,7 +18,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "";
 >
   <StructuredData slot="head" data={orgSchema} />
 
-  {/* Load Turnstile script if site key is available */}
+  {/* Preconnect + load Turnstile only on this page */}
+  <link rel="preconnect" href="https://challenges.cloudflare.com" slot="head" />
   {turnstileSiteKey && (
     <script
       slot="head"

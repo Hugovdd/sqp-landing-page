@@ -17,6 +17,7 @@
     "@astrojs/mdx": "^4.3.7",
     "@astrojs/react": "^4.4.0",
     "@astrojs/sitemap": "^3.6.0",
+    "@fontsource-variable/inter": "^5.2.8",
     "@hookform/resolvers": "^5.2.2",
     "@nobie-org/tailwindcss-animate": "^1.0.9",
     "@radix-ui/react-accordion": "^1.2.12",

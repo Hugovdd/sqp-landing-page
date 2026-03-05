@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @import "tw-animate-css";
+
+@import "@fontsource-variable/inter";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -88,7 +90,7 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
   --font-dm-sans: "DM Sans", sans-serif;
-  --font-inter: "inter", sans-serif;
+  --font-inter: "Inter Variable", sans-serif;
 
   --font-sans:
     var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui, sans-serif;

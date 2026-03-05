@@ -3,6 +3,8 @@ export const SITE = {
   name: "Sidequest Plugins",
   tagline:
     "Professional After Effects plugins, scripts, and extensions by Sidequest Plugins. Automate font replacement, spreadsheet-driven localization, batch renaming, and more. Free and paid tools for motion designers.",
+  defaultMetaDescription:
+    "Professional After Effects plugins by Sidequest Plugins. Automate font replacement, localization, and batch renaming for motion designers.",
   domain: "https://sidequestplugins.com",
   supportEmail: "support@sidequestplugins.com",
   defaultOgImage: "/images/og-homepage.jpg",
@@ -57,6 +59,7 @@ export const FOOTER_COLUMNS = [
         url: "https://www.instagram.com/sidequestplugins",
       },
       { text: "YouTube", url: "https://www.youtube.com/@SidequestPlugins" },
+      { text: "Discord", url: "https://discord.gg/uWqvZPH4hA" },
     ],
   },
 ] as const;
@@ -72,4 +75,5 @@ export const SOCIAL_URLS = [
   "https://x.com/SideQuestPlugns",
   "https://www.instagram.com/sidequestplugins",
   "https://www.youtube.com/@SidequestPlugins",
+  "https://discord.gg/uWqvZPH4hA",
 ] as const;
