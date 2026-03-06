@@ -1,0 +1,238 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo";
+
+export async function getStaticPaths() {
+  const isDev = import.meta.env.DEV;
+  const posts = await getCollection("blog");
+  return posts
+    .filter((p) => isDev || !p.data.draft)
+    .map((post) => ({ params: { slug: post.id } }));
+}
+
+const { slug } = Astro.params;
+const post = await getEntry("blog", slug);
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(post);
+const { data } = post;
+
+const isDev = import.meta.env.DEV;
+if (!isDev && data.draft) {
+  return Astro.redirect("/404");
+}
+
+const postUrl = `${SITE.domain}/blog/${slug}`;
+const canonicalUrl = data.canonicalUrl ?? postUrl;
+
+const readingTime = (() => {
+  const wpm = 200;
+  const words = (post.body ?? "").split(/\s+/).length;
+  return `${Math.max(1, Math.ceil(words / wpm))} min read`;
+})();
+
+const formattedDate = data.publishedAt.toLocaleDateString("en-US", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const formattedUpdatedDate = data.updatedAt?.toLocaleDateString("en-US", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+// Fetch related product data for the CTA section
+const relatedProducts = data.relatedProductSlugs.length > 0
+  ? await Promise.all(
+      data.relatedProductSlugs.map((s) => getEntry("products", s))
+    ).then((entries) => entries.filter(Boolean))
+  : [];
+
+const articleSchema = buildArticleSchema({
+  title: data.seo.metaTitle,
+  description: data.seo.metaDescription,
+  url: postUrl,
+  image: data.seo.ogImage ?? data.heroImage,
+  publishedAt: data.publishedAt,
+  updatedAt: data.updatedAt,
+  authorName: data.author.name,
+  authorUrl: data.author.href,
+});
+
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { name: "Home", url: SITE.domain },
+  { name: "Blog", url: `${SITE.domain}/blog` },
+  { name: data.title, url: postUrl },
+]);
+---
+
+<DefaultLayout
+  title={data.seo.metaTitle}
+  description={data.seo.metaDescription}
+  ogImage={data.seo.ogImage ?? data.heroImage}
+  keywords={data.seo.keywords}
+  noIndex={data.seo.noIndex || data.draft}
+  type="article"
+>
+  <StructuredData slot="head" data={articleSchema} />
+  <StructuredData slot="head" data={breadcrumbSchema} />
+  {canonicalUrl !== postUrl && (
+    <link rel="canonical" href={canonicalUrl} slot="head" />
+  )}
+
+  <!-- Article hero: two-column layout matching product hero style -->
+  <section class="py-28 md:py-32 md:pt-44">
+    <div class="container">
+      <div class="grid items-center gap-12 lg:grid-cols-[3fr_2fr] lg:gap-10">
+
+        <!-- Left: text content -->
+        <div class="animate-hero-stagger flex flex-col gap-6">
+          <!-- Breadcrumb -->
+          <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-muted-foreground">
+            <a href="/" class="hover:text-foreground transition-colors">Home</a>
+            <span>/</span>
+            <a href="/blog" class="hover:text-foreground transition-colors">Blog</a>
+            <span>/</span>
+            <a href={`/blog/category/${data.category.slug}`} class="hover:text-foreground transition-colors">{data.category.name}</a>
+          </nav>
+
+          <!-- Category + tags -->
+          <div class="flex flex-wrap items-center gap-2">
+            <a
+              href={`/blog/category/${data.category.slug}`}
+              class="text-sm font-semibold text-primary hover:underline"
+            >
+              {data.category.name}
+            </a>
+            {data.tags.map((tag) => (
+              <a
+                href={`/blog/tag/${tag.slug}`}
+                class="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {tag.name}
+              </a>
+            ))}
+          </div>
+
+          <!-- Title -->
+          <h1 class="text-3xl tracking-tight text-foreground md:text-4xl lg:text-5xl">
+            {data.title}
+          </h1>
+
+          <!-- Summary -->
+          <p class="text-lg text-muted-foreground leading-relaxed md:text-xl">
+            {data.excerpt ?? data.summary}
+          </p>
+
+          <!-- Author + meta -->
+          <div class="flex flex-wrap items-center gap-3 border-t border-border pt-6">
+            {data.author.avatarUrl && (
+              <img
+                src={data.author.avatarUrl}
+                alt={data.author.name}
+                class="size-10 rounded-full object-cover ring-2 ring-border"
+              />
+            )}
+            <div>
+              <p class="text-sm font-semibold text-foreground">{data.author.name}</p>
+              <p class="text-xs text-muted-foreground">
+                <time datetime={data.publishedAt.toISOString()}>{formattedDate}</time>
+                {formattedUpdatedDate && formattedUpdatedDate !== formattedDate && (
+                  <span> · Updated <time datetime={data.updatedAt?.toISOString()}>{formattedUpdatedDate}</time></span>
+                )}
+                <span> · {readingTime}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: hero image card -->
+        <div
+          style="opacity:0;animation:hero-fade-up 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.3s forwards"
+        >
+          <div class="bg-card border-border w-full overflow-hidden rounded-2xl border shadow-sm">
+            <div class="bg-muted relative aspect-video overflow-hidden">
+              <img
+                src={data.heroImage}
+                alt={data.heroImageAlt}
+                class="size-full object-cover"
+                width={800}
+                height={450}
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Article body -->
+  <div class="mx-auto w-full max-w-3xl px-4 pb-12 md:px-8">
+    <div class="prose prose-lg dark:prose-invert max-w-none
+      prose-headings:font-semibold prose-headings:tracking-tight
+      prose-a:text-primary prose-a:underline-offset-4
+      prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:text-sm
+      prose-pre:bg-transparent
+      prose-img:rounded-2xl prose-img:shadow-md
+    ">
+      <Content />
+    </div>
+  </div>
+
+  <!-- Related products CTA -->
+  {relatedProducts.length > 0 && (
+    <div class="border-t border-border bg-muted/40">
+      <div class="mx-auto max-w-3xl px-4 py-12 md:px-8 md:py-16">
+        <p class="text-sm font-semibold text-brand-secondary">Mentioned in this article</p>
+        <h2 class="mt-2 text-2xl font-semibold text-foreground">Take your workflow further</h2>
+        <p class="mt-2 text-muted-foreground">The tools covered in this guide are available on Sidequest Plugins.</p>
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+          {relatedProducts.map((product) => product && (
+            <a
+              href={`/${product.id}`}
+              class="group flex flex-col gap-2 rounded-2xl border border-border bg-background p-5 transition hover:border-primary/40 hover:shadow-sm sm:w-72"
+            >
+              {(product.data.homeCard?.heroImage ?? product.data.heroImage) && (
+                <img
+                  src={product.data.homeCard?.heroImage ?? product.data.heroImage}
+                  alt={product.data.title}
+                  class="mb-2 aspect-video w-full rounded-lg object-cover"
+                />
+              )}
+              <p class="font-semibold text-foreground group-hover:text-primary transition-colors">
+                {product.data.title}
+              </p>
+              <p class="text-sm text-muted-foreground line-clamp-2">
+                {product.data.homeCard?.tagline ?? product.data.tagline}
+              </p>
+              <span class="mt-auto text-sm font-medium text-primary">
+                Learn more →
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- Back to blog -->
+  <div class="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <a
+      href="/blog"
+      class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+    >
+      ← Back to blog
+    </a>
+  </div>
+</DefaultLayout>

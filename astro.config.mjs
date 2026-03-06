@@ -17,6 +17,14 @@ export default defineConfig({
       },
     },
   }),
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "github-light",
+        dark: "github-dark",
+      },
+    },
+  },
   integrations: [
     react(),
     sitemap({
@@ -34,6 +42,12 @@ export default defineConfig({
         )
           item.priority = 0.7;
         if (item.url.includes("/ae-calculator")) item.priority = 0.6;
+        // Blog: index and posts high priority, taxonomy archives mid
+        if (item.url === "https://sidequestplugins.com/blog") item.priority = 0.8;
+        if (item.url.match(/\/blog\/[^/]+$/) && !item.url.includes("/category/") && !item.url.includes("/tag/"))
+          item.priority = 0.7;
+        if (item.url.includes("/blog/category/") || item.url.includes("/blog/tag/"))
+          item.priority = 0.5;
         if (item.url.includes("/contact")) item.priority = 0.5;
         if (item.url.includes("/privacy") || item.url.includes("/terms"))
           item.priority = 0.3;

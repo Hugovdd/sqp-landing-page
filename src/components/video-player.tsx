@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface VideoPlayerProps {
   src: string;
+  sources?: { src: string; type?: string }[];
   poster?: string;
   className?: string;
 }
@@ -24,7 +25,12 @@ function getEffectiveDuration(video: HTMLVideoElement): number {
   return 0;
 }
 
-export function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
+export function VideoPlayer({
+  src,
+  sources,
+  poster,
+  className,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -258,7 +264,6 @@ export function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
 
       <video
         ref={videoRef}
-        src={src}
         poster={poster}
         autoPlay
         muted
@@ -274,7 +279,15 @@ export function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
         onDurationChange={syncDurationFromVideo}
         onLoadedData={syncDurationFromVideo}
         onCanPlay={syncDurationFromVideo}
-      />
+      >
+        {sources && sources.length > 0 ? (
+          sources.map((source) => (
+            <source key={`${source.src}-${source.type ?? "unknown"}`} src={source.src} type={source.type} />
+          ))
+        ) : (
+          <source src={src} />
+        )}
+      </video>
 
       {/* Bottom gradient + controls — visible on hover */}
       <div

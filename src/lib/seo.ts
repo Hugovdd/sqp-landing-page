@@ -120,6 +120,66 @@ export function buildItemListSchema(
 }
 
 /**
+ * BlogPosting schema — used on individual blog post pages
+ */
+export function buildArticleSchema(data: {
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  publishedAt: Date;
+  updatedAt?: Date;
+  authorName: string;
+  authorUrl?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: data.title,
+    description: data.description,
+    url: data.url,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": data.url,
+    },
+    ...(data.image && { image: `${SITE.domain}${data.image}` }),
+    datePublished: data.publishedAt.toISOString(),
+    dateModified: (data.updatedAt ?? data.publishedAt).toISOString(),
+    author: {
+      "@type": "Person",
+      name: data.authorName,
+      ...(data.authorUrl && { url: data.authorUrl }),
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE.domain}/images/logo.png`,
+      },
+    },
+  };
+}
+
+/**
+ * BreadcrumbList schema — used on blog index, taxonomy, and post pages
+ */
+export function buildBreadcrumbSchema(
+  crumbs: { name: string; url: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: crumb.name,
+      item: crumb.url,
+    })),
+  };
+}
+
+/**
  * WebPage schema with breadcrumb — used on legal and inner pages
  */
 export function buildWebPageSchema(data: {

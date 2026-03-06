@@ -30,6 +30,7 @@ export const PRODUCT_LINKS = [
 
 // Navigation links (used by desktop navbar + mobile menu)
 export const NAV_LINKS = [
+  { label: "Blog", href: "/blog", group: "Resources" },
   { label: "Freebies", href: "/free-ae-scripts", group: "Resources" },
   { label: "Help", href: "/help", group: "Resources" },
 ] as const;
@@ -46,6 +47,7 @@ export const FOOTER_COLUMNS = [
   {
     title: "Company",
     links: [
+      { text: "Blog", url: "/blog" },
       { text: "Help", url: "/help" },
       { text: "Contact", url: "/contact" },
     ],

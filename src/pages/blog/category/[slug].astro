@@ -1,0 +1,89 @@
+---
+import { getCollection } from "astro:content";
+
+import { BlogList } from "@/components/blocks/blog-list";
+import StructuredData from "@/components/StructuredData.astro";
+import { SITE } from "@/consts";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { buildBreadcrumbSchema } from "@/lib/seo";
+import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
+
+export async function getStaticPaths() {
+  const isDev = import.meta.env.DEV;
+  const allPosts = await getCollection("blog");
+  const posts = allPosts.filter((p) => isDev || !p.data.draft);
+
+  const categories = new Map<string, { name: string; slug: string }>();
+  for (const post of posts) {
+    const { name, slug } = post.data.category;
+    if (!categories.has(slug)) categories.set(slug, { name, slug });
+  }
+
+  return Array.from(categories.values()).map(({ name, slug }) => ({
+    params: { slug },
+    props: { categoryName: name, categorySlug: slug },
+  }));
+}
+
+const { categoryName, categorySlug } = Astro.props;
+const isDev = import.meta.env.DEV;
+
+const allPosts = await getCollection("blog");
+const posts = allPosts
+  .filter((p) => (isDev || !p.data.draft) && p.data.category.slug === categorySlug)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const articles: Article[] = posts.map((post) => ({
+  id: post.id,
+  href: `/blog/${post.id}`,
+  thumbnailUrl: post.data.heroImage,
+  title: post.data.title,
+  summary: post.data.summary,
+  category: {
+    name: post.data.category.name,
+    href: `/blog/category/${post.data.category.slug}`,
+  },
+  author: {
+    name: post.data.author.name,
+    href: post.data.author.href ?? "#",
+    avatarUrl: post.data.author.avatarUrl ?? "",
+  },
+  publishedAt: post.data.publishedAt.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }),
+  readingTime: (() => {
+    const wpm = 200;
+    const words = (post.body ?? "").split(/\s+/).length;
+    return `${Math.max(1, Math.ceil(words / wpm))} min read`;
+  })(),
+  tags: post.data.tags.map((tag) => ({
+    name: tag.name,
+    color: tag.color,
+    href: `/blog/tag/${tag.slug}`,
+  })),
+  isFeatured: post.data.isFeatured,
+}));
+
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { name: "Home", url: SITE.domain },
+  { name: "Blog", url: `${SITE.domain}/blog` },
+  { name: categoryName, url: `${SITE.domain}/blog/category/${categorySlug}` },
+]);
+---
+
+<DefaultLayout
+  title={`${categoryName} Articles — ${SITE.name} Blog`}
+  description={`Browse all ${categoryName} posts on the Sidequest Plugins blog. After Effects tutorials, tips, and guides.`}
+>
+  <StructuredData slot="head" data={breadcrumbSchema} />
+
+  <BlogList
+    articles={articles}
+    heading={categoryName}
+    subheading="Category"
+    description={`Browse all posts in ${categoryName}.`}
+    client:load
+  />
+</DefaultLayout>

@@ -17,6 +17,7 @@ interface ProductHeroProps {
   checkoutUrl: string;
   buyButtonLabel?: string;
   heroVideo?: string;
+  heroVideoSources?: { src: string; type?: string }[];
   heroVideoShowControls?: boolean;
   heroImage?: string;
   heroFeatures?: { icon: string; title: string }[];
@@ -37,6 +38,7 @@ export const ProductHero = ({
   checkoutUrl,
   buyButtonLabel,
   heroVideo,
+  heroVideoSources,
   heroVideoShowControls = true,
   heroImage,
   heroFeatures,
@@ -165,6 +167,7 @@ export const ProductHero = ({
                 {heroVideo ? (
                   <VideoPlayer
                     src={heroVideo}
+                    sources={heroVideoSources}
                     poster={heroImage}
                     className={
                       !heroVideoShowControls
@@ -195,13 +198,24 @@ export const ProductHero = ({
               <>
                 {heroVideo ? (
                   <video
-                    src={heroVideo}
                     autoPlay
                     loop
                     muted
                     playsInline
                     className="w-full object-contain object-left"
-                  />
+                  >
+                    {heroVideoSources && heroVideoSources.length > 0 ? (
+                      heroVideoSources.map((source) => (
+                        <source
+                          key={`${source.src}-${source.type ?? "unknown"}`}
+                          src={source.src}
+                          type={source.type}
+                        />
+                      ))
+                    ) : (
+                      <source src={heroVideo} />
+                    )}
+                  </video>
                 ) : heroImage ? (
                   <img
                     src={heroImage}

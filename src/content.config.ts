@@ -36,6 +36,11 @@ const heroChipSchema = z.object({
   title: z.string(), // Short label, e.g. "Google Gemini & OpenAI"
 });
 
+const videoSourceSchema = z.object({
+  src: z.string(),
+  type: z.string().optional(),
+});
+
 // -- Homepage Product Card --
 const homeCardSchema = z.object({
   title: z.string().optional(),
@@ -71,6 +76,7 @@ const products = defineCollection({
     checkoutUrl: z.string().url(),
     buyButtonLabel: z.string().optional(),
     heroVideo: z.string().optional(), // path or external URL
+    heroVideoSources: z.array(videoSourceSchema).optional(),
     heroImage: z.string().optional(),
     tutorialVideoId: z.string().optional(), // YouTube video ID
     isFree: z.boolean().default(false),
@@ -96,4 +102,44 @@ const legal = defineCollection({
   }),
 });
 
-export const collections = { products, legal };
+// -- Blog Tag --
+const blogTagSchema = z.object({
+  name: z.string(),
+  slug: z.string(), // URL-safe, e.g. "after-effects"
+  color: z.enum([
+    "gray", "brand", "error", "warning", "success",
+    "gray-blue", "blue-light", "blue", "indigo",
+    "purple", "pink", "orange",
+  ]),
+});
+
+// -- Blog Collection --
+const blog = defineCollection({
+  loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    excerpt: z.string().optional(), // short SERP/social snippet override
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    author: z.object({
+      name: z.string(),
+      avatarUrl: z.string().optional(),
+      href: z.string().optional(),
+    }),
+    category: z.object({
+      name: z.string(),
+      slug: z.string(), // used for /blog/category/[slug]
+    }),
+    tags: z.array(blogTagSchema).default([]),
+    heroImage: z.string(),
+    heroImageAlt: z.string(),
+    draft: z.boolean().default(false),
+    isFeatured: z.boolean().optional(),
+    canonicalUrl: z.string().url().optional(),
+    relatedProductSlugs: z.array(z.string()).default([]),
+    seo: seoSchema,
+  }),
+});
+
+export const collections = { products, legal, blog };
