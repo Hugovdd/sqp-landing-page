@@ -7,6 +7,7 @@ import { EmailSignup } from "@/components/blocks/email-signup";
 import { FAQ } from "@/components/blocks/faq";
 import { Hero } from "@/components/blocks/hero";
 import ProductShowcase from "@/components/blocks/product-showcase.astro";
+import { Simple01Vertical } from "@/components/marketing/blog/base-components/blog-cards";
 import StructuredData from "@/components/StructuredData.astro";
 import { SITE } from "@/consts";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
@@ -16,6 +17,7 @@ import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from "@/lib/seo";
+import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
 
 const allProducts = await getCollection("products");
 const products = allProducts
@@ -77,6 +79,40 @@ const homepageFaqs = [
   },
 ];
 
+const allBlogPosts = await getCollection("blog");
+const latestPosts: Article[] = allBlogPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3)
+  .map((post) => ({
+    id: post.id,
+    href: `/blog/${post.id}`,
+    thumbnailUrl: post.data.heroImage,
+    title: post.data.title,
+    summary: post.data.summary,
+    category: {
+      name: post.data.category.name,
+      href: `/blog/category/${post.data.category.slug}`,
+    },
+    author: {
+      name: post.data.author.name,
+      href: post.data.author.href ?? "#",
+      avatarUrl: post.data.author.avatarUrl ?? "",
+    },
+    publishedAt: post.data.publishedAt.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
+    readingTime: `${Math.max(1, Math.ceil((post.body ?? "").split(/\s+/).length / 200))} min read`,
+    tags: post.data.tags.map((tag) => ({
+      name: tag.name,
+      color: tag.color,
+      href: `/blog/tag/${tag.slug}`,
+    })),
+    isFeatured: post.data.isFeatured,
+  }));
+
 const orgSchema = buildOrganizationSchema();
 const siteSchema = buildWebSiteSchema();
 const itemListSchema = buildItemListSchema(itemListData);
@@ -125,6 +161,28 @@ const faqSchema = buildFAQSchema(homepageFaqs);
         />
       </div>
     </Background>
+  </AnimateOnScroll>
+
+  <AnimateOnScroll animation="fade-up">
+    <section class="py-12 md:py-16">
+      <div class="container mx-auto max-w-6xl px-4">
+        <div class="mx-auto mb-10 max-w-2xl text-center md:mb-12">
+          <p class="text-primary text-sm font-semibold">Our blog</p>
+          <h2 class="text-foreground mt-2 text-3xl font-semibold tracking-tight md:text-4xl">Latest resources and insights</h2>
+          <p class="text-muted-foreground mt-4 text-lg">After Effects tutorials, workflow tips, and motion design guides.</p>
+        </div>
+        <div class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+          {latestPosts.map((article) => (
+            <Simple01Vertical article={article} />
+          ))}
+        </div>
+        <div class="mt-10 text-center md:mt-12">
+          <a href="/blog" class="text-primary hover:text-primary/80 text-sm font-semibold underline underline-offset-4">
+            View all posts &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
   </AnimateOnScroll>
 
   <FAQ
