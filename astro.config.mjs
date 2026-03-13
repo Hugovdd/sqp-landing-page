@@ -43,14 +43,20 @@ export default defineConfig({
           item.priority = 0.7;
         if (item.url.includes("/ae-calculator")) item.priority = 0.6;
         // Blog: index and posts high priority, taxonomy archives mid
-        if (item.url === "https://sidequestplugins.com/blog") item.priority = 0.8;
-        if (item.url.match(/\/blog\/[^/]+$/) && !item.url.includes("/category/") && !item.url.includes("/tag/"))
+        if (item.url.match(/\/blog\/?$/) ) item.priority = 0.8;
+        if (item.url.match(/\/blog\/[^/]+\/?$/) && !item.url.includes("/category/") && !item.url.includes("/tag/"))
           item.priority = 0.7;
         if (item.url.includes("/blog/category/") || item.url.includes("/blog/tag/"))
           item.priority = 0.5;
         if (item.url.includes("/contact")) item.priority = 0.5;
         if (item.url.includes("/privacy") || item.url.includes("/terms"))
           item.priority = 0.3;
+
+        // Help Google prioritise crawling with lastmod and changefreq
+        const isBlog = item.url.includes("/blog");
+        item.lastmod = new Date().toISOString();
+        item.changefreq = isBlog ? "weekly" : "monthly";
+
         return item;
       },
     }),
