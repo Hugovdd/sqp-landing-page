@@ -14,9 +14,9 @@
     "favicons": "node scripts/generate-favicons.mjs"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/mdx": "^4.3.7",
-    "@astrojs/react": "^4.4.0",
+    "@astrojs/cloudflare": "^13.6.1",
+    "@astrojs/mdx": "^6.0.2",
+    "@astrojs/react": "^5.0.7",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/inter": "^5.2.8",
@@ -52,7 +52,7 @@
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.2",
     "@untitledui/icons": "^0.0.22",
-    "astro": "^5.14.5",
+    "astro": "^6.4.4",
     "astro-themes": "^0.2.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -96,6 +96,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-tailwindcss": "^0.7.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "wrangler": "^4.97.0"
   }
 }

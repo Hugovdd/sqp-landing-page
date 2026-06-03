@@ -1,8 +1,10 @@
+import { env } from "cloudflare:workers";
+
 import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request, redirect, locals }) => {
+export const GET: APIRoute = async ({ request, redirect }) => {
   try {
     const url = new URL(request.url);
     const email = url.searchParams.get("email");
@@ -13,10 +15,8 @@ export const GET: APIRoute = async ({ request, redirect, locals }) => {
       return redirect("/subscription-error?reason=invalid_hash");
     }
 
-    // Access env vars via Cloudflare adapter
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } })
-      .runtime;
-    const env = runtime?.env || {};
+    // Access env vars via the Cloudflare Workers runtime (Astro 6 / adapter v13),
+    // falling back to import.meta.env for local dev.
     const MAILGUN_API_KEY =
       env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
