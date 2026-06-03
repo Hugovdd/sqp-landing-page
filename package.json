@@ -18,7 +18,10 @@
     "astro": "astro",
     "lint": "eslint . --fix",
     "format": "prettier -w .",
-    "favicons": "node scripts/generate-favicons.mjs"
+    "favicons": "node scripts/generate-favicons.mjs",
+    "deploy:staging": "astro build && wrangler deploy --config dist/server/wrangler.json --name sqp-landing-staging",
+    "deploy:production": "astro build && wrangler deploy --config dist/server/wrangler.json",
+    "cf-types": "wrangler types"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.6.1",

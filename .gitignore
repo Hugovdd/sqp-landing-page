@@ -2,6 +2,10 @@
 dist/
 # generated types
 .astro/
+# cloudflare/wrangler local state
+.wrangler/
+# wrangler-generated worker types
+worker-configuration.d.ts
 
 # dependencies
 node_modules/
