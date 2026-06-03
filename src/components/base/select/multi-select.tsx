@@ -2,12 +2,16 @@
 
 import type { FocusEventHandler, KeyboardEvent, PointerEventHandler, RefAttributes, RefObject } from "react";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
+
 import { SearchLg } from "@untitledui/icons";
 import { FocusScope, useFilter, useFocusManager } from "react-aria";
 import type { ComboBoxProps as AriaComboBoxProps, GroupProps as AriaGroupProps, ListBoxProps as AriaListBoxProps, Key } from "react-aria-components";
 import { ComboBox as AriaComboBox, Group as AriaGroup, Input as AriaInput, ListBox as AriaListBox, ComboBoxStateContext } from "react-aria-components";
 import type { ListData } from "react-stately";
 import { useListData } from "react-stately";
+
+import { SelectItem } from "./select-item";
+
 import { Avatar } from "@/components/base/avatar/avatar";
 import type { IconComponentType } from "@/components/base/badges/badge-types";
 import { HintText } from "@/components/base/input/hint-text";
@@ -17,7 +21,6 @@ import { type SelectItemType, sizes } from "@/components/base/select/select";
 import { TagCloseX } from "@/components/base/tags/base-components/tag-close-x";
 import { useResizeObserver } from "@/hooks/use-resize-observer";
 import { cx } from "@/lib/utils/cx";
-import { SelectItem } from "./select-item";
 
 interface ComboBoxValueProps extends AriaGroupProps {
     size: "sm" | "md";

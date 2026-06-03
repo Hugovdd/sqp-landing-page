@@ -1,7 +1,8 @@
+import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import astroParser from "astro-eslint-parser";
 import astroPlugin from "eslint-plugin-astro";
-import importsPlugin from "eslint-plugin-import";
+import importsPlugin from "eslint-plugin-import-x";
 
 export default [
   {
@@ -78,6 +79,9 @@ export default [
   {
     // Apply to TypeScript files
     files: ["**/*.ts", "**/*.tsx"],
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
     languageOptions: {
       parser: tsParser,
       parserOptions: {

@@ -1,8 +1,9 @@
 "use client";
 
-import { cx } from "@/lib/utils/cx";
 import type { PaginationRootProps } from "./pagination-base";
 import { Pagination } from "./pagination-base";
+
+import { cx } from "@/lib/utils/cx";
 
 interface PaginationLineProps extends Omit<PaginationRootProps, "children"> {
     /** The size of the pagination line. */

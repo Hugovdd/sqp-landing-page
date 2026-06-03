@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { FeatureChips } from "@/components/blocks/feature-chips";
 import { DashedLine } from "@/components/dashed-line";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { VideoPlayer } from "@/components/video-player";
 import { cn } from "@/lib/utils";
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { BlogHeaderFeaturedPost01 } from "@/components/marketing/blog/blog-header-featured-post-01";
 import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
+import { BlogHeaderFeaturedPost01 } from "@/components/marketing/blog/blog-header-featured-post-01";
 
 interface BlogListProps {
     articles: Article[];

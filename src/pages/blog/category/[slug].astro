@@ -2,11 +2,11 @@
 import { getCollection } from "astro:content";
 
 import { BlogList } from "@/components/blocks/blog-list";
+import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
 import StructuredData from "@/components/StructuredData.astro";
 import { SITE } from "@/consts";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
 import { buildBreadcrumbSchema } from "@/lib/seo";
-import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
 
 export async function getStaticPaths() {
   const isDev = import.meta.env.DEV;

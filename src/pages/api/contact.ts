@@ -1,6 +1,5 @@
-import { env } from "cloudflare:workers";
-
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
@@ -47,8 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
       env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
     const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
     const MAILGUN_EU = env.MAILGUN_EU || import.meta.env.MAILGUN_EU;
-    const MAILGUN_REGION =
-      env.MAILGUN_REGION || import.meta.env.MAILGUN_REGION;
+    const MAILGUN_REGION = env.MAILGUN_REGION || import.meta.env.MAILGUN_REGION;
     const CONTACT_TO_EMAIL =
       env.CONTACT_TO_EMAIL || import.meta.env.CONTACT_TO_EMAIL;
     const TURNSTILE_SECRET_KEY =
