@@ -23,6 +23,28 @@ Staging is a **separate worker** rather than a wrangler `[env.staging]` block,
 because the Astro 6 adapter currently drops env-specific settings from the
 generated config. `deploy:staging` just overrides the worker name with `--name`.
 
+## Local secrets (1Password)
+
+The real `.env` is gitignored, so it doesn't travel with the repo. 1Password is
+the source of truth; [`.env.tpl`](../.env.tpl) holds `op://` references (safe to
+commit) that resolve back into `.env`.
+
+**First time (seed 1Password from your current `.env`):**
+```
+brew install 1password-cli                 # then enable: 1Password app →
+                                           # Settings → Developer → Integrate with CLI
+pnpm env:seed                              # creates the "sqp-landing-page" item from .env
+```
+
+**On a new laptop (restore `.env` from 1Password):**
+```
+brew install 1password-cli && op signin
+pnpm env:pull                              # op inject -i .env.tpl -o .env
+```
+
+If your 1Password vault/item names differ from `Private` / `sqp-landing-page`,
+update the `op://` paths in `.env.tpl` (and pass the vault to `pnpm env:seed <vault>`).
+
 ## One-time setup
 
 1. **Authenticate wrangler** (interactive, your Cloudflare account):

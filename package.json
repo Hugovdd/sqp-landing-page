@@ -19,6 +19,8 @@
     "lint": "eslint . --fix",
     "format": "prettier -w .",
     "favicons": "node scripts/generate-favicons.mjs",
+    "env:pull": "op inject -i .env.tpl -o .env",
+    "env:seed": "bash scripts/env-seed-1password.sh",
     "deploy:staging": "astro build && wrangler deploy --config dist/server/wrangler.json --name sqp-landing-staging",
     "deploy:production": "astro build && wrangler deploy --config dist/server/wrangler.json",
     "cf-types": "wrangler types"
