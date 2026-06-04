@@ -1,8 +1,10 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { cx } from "@/lib/utils/cx";
+
 import { Avatar, type AvatarProps } from "./avatar";
+
+import { cx } from "@/lib/utils/cx";
 
 const styles = {
     sm: { root: "gap-2", title: "text-sm font-semibold", subtitle: "text-xs" },

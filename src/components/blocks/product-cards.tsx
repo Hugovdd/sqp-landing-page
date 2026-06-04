@@ -1,9 +1,9 @@
 import { ArrowRight } from "lucide-react";
 
+import { FeatureChips } from "@/components/blocks/feature-chips";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FeatureChips } from "@/components/blocks/feature-chips";
 import { cn } from "@/lib/utils";
 
 interface Product {

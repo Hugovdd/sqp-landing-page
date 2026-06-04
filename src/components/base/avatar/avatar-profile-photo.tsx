@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
 import { User01 } from "@untitledui/icons";
-import { cx } from "@/lib/utils/cx";
+
 import { type AvatarProps } from "./avatar";
 import { AvatarOnlineIndicator, VerifiedTick } from "./base-components";
+
+import { cx } from "@/lib/utils/cx";
 
 const styles = {
     sm: {

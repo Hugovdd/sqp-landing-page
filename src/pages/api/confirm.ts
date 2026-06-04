@@ -1,8 +1,9 @@
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request, redirect, locals }) => {
+export const GET: APIRoute = async ({ request, redirect }) => {
   try {
     const url = new URL(request.url);
     const email = url.searchParams.get("email");
@@ -13,16 +14,13 @@ export const GET: APIRoute = async ({ request, redirect, locals }) => {
       return redirect("/subscription-error?reason=invalid_hash");
     }
 
-    // Access env vars via Cloudflare adapter
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } })
-      .runtime;
-    const env = runtime?.env || {};
-    const MAILGUN_API_KEY =
-      env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
-    const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
-    const SUBSCRIBE_SECRET =
-      env.SUBSCRIBE_SECRET || import.meta.env.SUBSCRIBE_SECRET;
-    const MAILGUN_EU = env.MAILGUN_EU || import.meta.env.MAILGUN_EU;
+    // Secrets come from the Cloudflare Workers runtime (`env`): Worker secrets
+    // in prod/staging, .dev.vars locally. We intentionally do NOT fall back to
+    // import.meta.env — that would inline secret values into the built bundle.
+    const MAILGUN_API_KEY = env.MAILGUN_API_KEY;
+    const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN;
+    const SUBSCRIBE_SECRET = env.SUBSCRIBE_SECRET;
+    const MAILGUN_EU = env.MAILGUN_EU;
 
     if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !SUBSCRIBE_SECRET) {
       return redirect("/subscription-error?reason=server_error");

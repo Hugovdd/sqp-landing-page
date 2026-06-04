@@ -8,6 +8,7 @@ import { FAQ } from "@/components/blocks/faq";
 import { Hero } from "@/components/blocks/hero";
 import ProductShowcase from "@/components/blocks/product-showcase.astro";
 import { Simple01Vertical } from "@/components/marketing/blog/base-components/blog-cards";
+import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
 import StructuredData from "@/components/StructuredData.astro";
 import { SITE } from "@/consts";
 import DefaultLayout from "@/layouts/DefaultLayout.astro";
@@ -17,7 +18,6 @@ import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from "@/lib/seo";
-import type { Article } from "@/components/marketing/blog/base-components/blog-cards";
 
 const allProducts = await getCollection("products");
 const products = allProducts

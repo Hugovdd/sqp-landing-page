@@ -1,12 +1,14 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "@untitledui/icons";
+
+import type { PaginationRootProps } from "./pagination-base";
+import { Pagination } from "./pagination-base";
+
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
 import { cx } from "@/lib/utils/cx";
-import type { PaginationRootProps } from "./pagination-base";
-import { Pagination } from "./pagination-base";
 
 interface PaginationProps extends Partial<Omit<PaginationRootProps, "children">> {
     /** Whether the pagination buttons are rounded. */

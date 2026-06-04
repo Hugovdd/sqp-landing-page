@@ -2,6 +2,15 @@
 dist/
 # generated types
 .astro/
+# cloudflare/wrangler local state
+.wrangler/
+# wrangler-generated worker types
+worker-configuration.d.ts
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
 
 # dependencies
 node_modules/
@@ -25,3 +34,4 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+.dev.vars

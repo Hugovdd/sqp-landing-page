@@ -1,9 +1,12 @@
 "use client";
 
 import { type FC, type ReactNode, useState } from "react";
+
 import { User01 } from "@untitledui/icons";
-import { cx } from "@/lib/utils/cx";
+
 import { AvatarOnlineIndicator, VerifiedTick } from "./base-components";
+
+import { cx } from "@/lib/utils/cx";
 
 type AvatarSize = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
