@@ -36,14 +36,30 @@ brew install 1password-cli                 # then enable: 1Password app →
 pnpm env:seed                              # creates the "sqp-landing-page" item from .env
 ```
 
-**On a new laptop (restore `.env` from 1Password):**
+**On a new laptop (restore secrets from 1Password):**
 ```
 brew install 1password-cli && op signin
-pnpm env:pull                              # op inject -i .env.tpl -o .env
+pnpm env:pull                              # writes .env AND derives .dev.vars
 ```
 
 If your 1Password vault/item names differ from `Private` / `sqp-landing-page`,
 update the `op://` paths in `.env.tpl` (and pass the vault to `pnpm env:seed <vault>`).
+
+### `.env` vs `.dev.vars` (and no secrets in the bundle)
+
+Two gitignored files, both derived from 1Password:
+
+- **`.env`** — read by Vite at build time. Holds only build-time/public values
+  (e.g. `PUBLIC_TURNSTILE_SITE_KEY`, which is inlined into the client bundle).
+- **`.dev.vars`** — read by the Cloudflare Workers runtime (`astro dev` /
+  `astro preview` / Playwright) at request time. Holds the **server secrets**
+  (Mailgun, Turnstile secret, `SUBSCRIBE_SECRET`, `CONTACT_TO_EMAIL`).
+  `pnpm env:pull` derives it from `.env`; `wrangler deploy` never uploads it.
+
+The API routes read secrets **only** from the Workers `env`
+(`import { env } from "cloudflare:workers"`) — Worker secrets in prod/staging,
+`.dev.vars` locally. There is intentionally **no `import.meta.env` fallback**, so
+secret values are never inlined into the deployed worker bundle.
 
 ## One-time setup
 

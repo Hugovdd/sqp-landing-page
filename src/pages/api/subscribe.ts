@@ -20,14 +20,13 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Access env vars via the Cloudflare Workers runtime (Astro 6 / adapter v13),
-    // falling back to import.meta.env for local dev.
-    const MAILGUN_API_KEY =
-      env.MAILGUN_API_KEY || import.meta.env.MAILGUN_API_KEY;
-    const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN || import.meta.env.MAILGUN_DOMAIN;
-    const SUBSCRIBE_SECRET =
-      env.SUBSCRIBE_SECRET || import.meta.env.SUBSCRIBE_SECRET;
-    const MAILGUN_EU = env.MAILGUN_EU || import.meta.env.MAILGUN_EU;
+    // Secrets come from the Cloudflare Workers runtime (`env`): Worker secrets
+    // in prod/staging, .dev.vars locally. We intentionally do NOT fall back to
+    // import.meta.env — that would inline secret values into the built bundle.
+    const MAILGUN_API_KEY = env.MAILGUN_API_KEY;
+    const MAILGUN_DOMAIN = env.MAILGUN_DOMAIN;
+    const SUBSCRIBE_SECRET = env.SUBSCRIBE_SECRET;
+    const MAILGUN_EU = env.MAILGUN_EU;
 
     if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !SUBSCRIBE_SECRET) {
       console.error("Missing environment variables for subscription");
