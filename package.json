@@ -19,6 +19,9 @@
     "lint": "eslint . --fix",
     "format": "prettier -w .",
     "favicons": "node scripts/generate-favicons.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "env:pull": "op inject -i .env.tpl -o .env",
     "env:seed": "bash scripts/env-seed-1password.sh",
     "deploy:staging": "astro build && wrangler deploy --config dist/server/wrangler.json --name sqp-landing-staging",
@@ -95,6 +98,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.60.0",
     "@typescript-eslint/eslint-plugin": "^8.60.1",
     "@typescript-eslint/parser": "^8.60.1",
     "astro-eslint-parser": "^1.4.0",

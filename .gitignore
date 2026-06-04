@@ -7,6 +7,11 @@ dist/
 # wrangler-generated worker types
 worker-configuration.d.ts
 
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
 # dependencies
 node_modules/
 

@@ -53,7 +53,17 @@ export const POST: APIRoute = async ({ request }) => {
       env.TURNSTILE_SECRET_KEY || import.meta.env.TURNSTILE_SECRET_KEY;
 
     // Verify Turnstile token (if secret key is configured)
-    if (TURNSTILE_SECRET_KEY && turnstileToken) {
+    // Fail closed: when Turnstile is configured, a missing token is rejected
+    // (a bot that simply omits cf-turnstile-response must not bypass verification).
+    if (TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        return new Response(
+          JSON.stringify({
+            error: "Bot verification failed. Please try again.",
+          }),
+          { status: 400, headers: { "Content-Type": "application/json" } },
+        );
+      }
       const turnstileResponse = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         {

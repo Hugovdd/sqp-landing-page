@@ -65,6 +65,15 @@ update the `op://` paths in `.env.tpl` (and pass the vault to `pnpm env:seed <va
 
    # Production: same commands with --name sqp-landing-page
    ```
+
+   > **⚠️ Turnstile keys must be deployed together.** `/api/contact` is
+   > fail-closed: when `TURNSTILE_SECRET_KEY` is set as a runtime secret, the
+   > endpoint rejects any submission without a `cf-turnstile-response` token.
+   > The token only exists if the client widget renders, which requires
+   > `PUBLIC_TURNSTILE_SITE_KEY` to be present in `.env` **at build time**. If
+   > the runtime secret is set but the build-time public key is missing, **every
+   > contact submission is rejected (400)**. Set both (or neither) per
+   > environment.
    The `SESSION` KV namespace is **auto-provisioned** by wrangler on first deploy.
 
 ## Deploy
