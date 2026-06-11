@@ -1,0 +1,31 @@
+{
+  // Telemetry ingestion Worker. Owns telemetry.sidequestplugins.com.
+  // Custom-domain only (no .workers.dev / preview URLs), matching the landing
+  // worker's hygiene. POST /e is fire-and-forget; the daily cron prunes old rows.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sqp-telemetry-ingest",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+
+  "routes": [{ "pattern": "telemetry.sidequestplugins.com", "custom_domain": true }],
+
+  // Kill switch (decision: env flag → accept-and-discard when not "true").
+  "vars": { "TELEMETRY_ENABLED": "true" },
+
+  // D1 single-store. database_id is a placeholder for local dev; replace with the
+  // real id from `wrangler d1 create sqp-telemetry` before the first remote deploy.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sqp-telemetry",
+      "database_id": "3d27d61b-11db-4b17-bc84-5edc8ede07d1",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Daily prune at 04:00 UTC.
+  "triggers": { "crons": ["0 4 * * *"] }
+}
