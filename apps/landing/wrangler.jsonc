@@ -1,0 +1,20 @@
+{
+  // Worker identity for the SideQuest Plugins landing page (production).
+  // The @astrojs/cloudflare adapter reads this file and merges in the build
+  // output (entry, static assets binding, KV/IMAGES bindings) at build time,
+  // writing the final config to dist/server/wrangler.json.
+  //
+  // Deploy with the generated config:
+  //   pnpm deploy:production   -> worker "sqp-landing-page"
+  //   pnpm deploy:staging      -> worker "sqp-landing-staging" (name overridden)
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "sqp-landing-page",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Keep the custom domain the only public entry point. Without these, deploy
+  // exposes sqp-landing-page.adminhvdd.workers.dev as a 2nd live URL
+  // (duplicate-content / SEO risk) plus per-version preview URLs.
+  "workers_dev": false,
+  "preview_urls": false
+}
