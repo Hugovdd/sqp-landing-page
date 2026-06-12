@@ -1,5 +1,6 @@
 import { BarList } from "@/components/telemetry/bar-list";
 import { ChartCard } from "@/components/telemetry/chart-card";
+import { OsIcon } from "@/components/telemetry/os-icon";
 import { PageShell } from "@/components/telemetry/page-shell";
 import { filterCache, resolveFilters } from "@/lib/telemetry/filters";
 import { getBreakdowns } from "@/lib/telemetry/queries";
@@ -23,7 +24,12 @@ export default async function BreakdownsPage({
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Operating system">
-          <BarList items={os} />
+          <BarList
+            items={os.map((o) => ({
+              ...o,
+              leading: <OsIcon name={o.key} />,
+            }))}
+          />
         </ChartCard>
         <ChartCard title="App version">
           <BarList items={version} />

@@ -1,7 +1,9 @@
 import { BarList } from "@/components/telemetry/bar-list";
 import { ChartCard } from "@/components/telemetry/chart-card";
+import { CountryFlag } from "@/components/telemetry/country-flag";
 import { PageShell } from "@/components/telemetry/page-shell";
 import { fmt, StatCard } from "@/components/telemetry/stat-card";
+import { countryName } from "@/lib/telemetry/countries";
 import { filterCache, resolveFilters } from "@/lib/telemetry/filters";
 import { getGeography } from "@/lib/telemetry/queries";
 
@@ -30,7 +32,12 @@ export default async function GeographyPage({
 
       <ChartCard title="Installs by country">
         <BarList
-          items={countries.map((c) => ({ key: c.key, count: c.count }))}
+          items={countries.map((c) => ({
+            key: c.key,
+            count: c.count,
+            label: countryName(c.key),
+            leading: <CountryFlag code={c.key} />,
+          }))}
           emptyLabel="No located installs in range"
         />
       </ChartCard>
