@@ -3,6 +3,7 @@ import {
   IconChartBar,
   IconCopy,
   IconLayoutDashboard,
+  IconLicense,
   IconWorld,
 } from "@tabler/icons-react";
 
@@ -22,6 +23,7 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "Overview", url: "/overview", icon: IconLayoutDashboard },
         { title: "Duplication", url: "/duplication", icon: IconCopy },
+        { title: "Licensing", url: "/licensing", icon: IconLicense },
         { title: "Geography", url: "/geography", icon: IconWorld },
         { title: "Breakdowns", url: "/breakdowns", icon: IconChartBar },
         { title: "Errors", url: "/errors", icon: IconBug },

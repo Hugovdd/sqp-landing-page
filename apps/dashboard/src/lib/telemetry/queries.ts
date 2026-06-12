@@ -238,6 +238,35 @@ export async function getBreakdowns(
   return { os: os.results, version: version.results };
 }
 
+/**
+ * License plan + type breakdown of the install base (latest-seen). `plan` buckets
+ * the whole base; `type` (AESP licenseType code) is only meaningful for paid
+ * installs, so it's filtered to licensePlan='paid'.
+ */
+export async function getLicensing(
+  f: ResolvedFilters,
+): Promise<{ plan: KeyCount[]; type: KeyCount[] }> {
+  const b = productFilter(f);
+  const [plan, type] = await Promise.all([
+    db()
+      .prepare(
+        `SELECT COALESCE(NULLIF(licensePlan,''),'unknown') key, count(*) count
+           FROM installs WHERE 1=1${b.sql} GROUP BY key ORDER BY count DESC`,
+      )
+      .bind(...b.binds)
+      .all<KeyCount>(),
+    db()
+      .prepare(
+        `SELECT COALESCE(NULLIF(licenseType,''),'unknown') key, count(*) count
+           FROM installs WHERE licensePlan='paid'${b.sql}
+           GROUP BY key ORDER BY count DESC`,
+      )
+      .bind(...b.binds)
+      .all<KeyCount>(),
+  ]);
+  return { plan: plan.results, type: type.results };
+}
+
 export interface ErrorGroup {
   name: string;
   message: string;
