@@ -2,7 +2,7 @@
 
 import { NavGroup } from "@/components/layout/nav-group";
 import { NavUser } from "@/components/layout/nav-user";
-import { TeamSwitcher } from "@/components/layout/team-switcher";
+import { ProductSwitcher } from "@/components/layout/product-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +17,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <div className="relative">
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
-          <TeamSwitcher teams={sidebarData.teams} />
+          <ProductSwitcher />
         </SidebarHeader>
         <SidebarContent>
           {sidebarData.navGroups.map((props) => (

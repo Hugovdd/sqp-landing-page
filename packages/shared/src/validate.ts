@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 
+import { BRANDS } from "./products";
 import {
   KNOWN_EVENTS,
   MAX_COMPS_PER_RUN,
@@ -26,7 +27,7 @@ const UUID_RE =
 
 const AppSchema = z
   .object({
-    brand: z.enum(["ae", "binance"]),
+    brand: z.enum(BRANDS),
     appVersion: z.string().min(1).max(MAX_VERSION_LEN),
     aeVersion: z.string().max(MAX_VERSION_LEN).optional(),
     os: z.string().max(MAX_OS_LEN).optional(),

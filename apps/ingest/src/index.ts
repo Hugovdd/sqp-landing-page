@@ -177,13 +177,18 @@ async function writeEvent(
       const mode = strOrNull(e.props.mode);
       await db.batch([
         insertUsage("duplication_run", null, comps, mode),
+        // Upsert so a brand's counter row is created on first run — no per-brand
+        // seed needed when onboarding a new product (the migration's seed lines
+        // remain for the original brands but are no longer required).
         db
           .prepare(
-            `UPDATE counters
-               SET comps_total = comps_total + ?, runs_total = runs_total + 1
-             WHERE brand = ?`,
+            `INSERT INTO counters (brand, comps_total, runs_total)
+               VALUES (?, ?, 1)
+             ON CONFLICT(brand) DO UPDATE SET
+               comps_total = comps_total + excluded.comps_total,
+               runs_total  = runs_total  + 1`,
           )
-          .bind(comps, brand),
+          .bind(brand, comps),
       ]);
       return;
     }

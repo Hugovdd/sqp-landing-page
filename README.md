@@ -1,6 +1,6 @@
-# SideQuest Plugins — Platform Monorepo
+# Sidequest Plugins — Platform Monorepo
 
-pnpm workspace for the SideQuest Plugins web + telemetry platform.
+pnpm workspace for the Sidequest Plugins web + telemetry platform.
 
 ## Apps & packages
 

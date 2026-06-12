@@ -1,6 +1,6 @@
 # Telemetry
 
-Anonymous, always-on usage and crash telemetry for the SideQuest Plugins CEP panels
+Anonymous, always-on usage and crash telemetry for the Sidequest Plugins CEP panels
 (AE Sheets and Binance Localiser). Payloads carry no PII and no project content; the
 telemetry population *is* the whole user base (no opt-out), so counts are treated as exact.
 
@@ -26,10 +26,24 @@ Two timestamps, deliberately distinct:
   on for an existing user base does not register the back-catalogue as new installs.
 
 **Brand**:
-Which plugin a payload comes from — `ae` (AE Sheets) or `binance` (Binance Localiser).
-One `installId` belongs to exactly one brand; a machine running both plugins has two
-`installId`s. The primary filter dimension across the dashboard.
-_Avoid_: product, app (reserve "app" for the envelope's `app{}` block).
+The wire-level field identifying which client a payload comes from — `ae` or `binance`.
+One `installId` belongs to exactly one brand. Internal/wire dimension only: the dashboard
+no longer filters by brand directly but groups brands into user-facing **products** (see
+below). `binance` is an AE Sheets sub-version, not a peer plugin. The set of accepted
+brands is **derived from the product registry** (`packages/shared/src/products.ts`,
+`BRANDS`) — the ingest validator rejects any brand not listed there, so the registry
+doubles as the ingest accept-list.
+_Avoid_: app (reserve "app" for the envelope's `app{}` block).
+
+**Product**:
+The user-facing unit Sidequest Plugins ships, and the dashboard's primary filter dimension
+(the sidebar product switcher scopes every metric). A product maps to one or more brands:
+**AE Sheets** = `ae` + `binance`; **Find and Replace Fonts** and **Altar** are defined in the
+shared product registry (`packages/shared/src/products.ts`, `PRODUCT_REGISTRY`) — the single
+source of truth from which both the ingest validator's accepted brands and the dashboard
+switcher derive — and will carry data once their clients integrate. Resolved to
+`brand IN (...)` at query time. Adding a product is one registry edit; see
+`docs/ONBOARDING-TELEMETRY.md`.
 
 **Session**:
 A once-per-day heartbeat emitted by the panel (deduped client-side to roughly one per

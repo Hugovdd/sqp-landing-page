@@ -1,12 +1,8 @@
 // The wire envelope sent by the plugins to POST /e.
 // See CONTEXT.md for the meaning of installId / Brand / Session.
 
-import type {
-  Brand,
-  DuplicationMode,
-  ErrorCategory,
-  KnownEvent,
-} from "./constants";
+import type { DuplicationMode, ErrorCategory, KnownEvent } from "./constants";
+import type { Brand } from "./products";
 
 /** Anonymous app context attached to every event. */
 export interface AppInfo {
@@ -60,4 +56,4 @@ export interface ParsedEnvelope {
   props: Record<string, unknown>;
 }
 
-export type { Brand, KnownEvent, DuplicationMode, ErrorCategory };
+export type { KnownEvent, DuplicationMode, ErrorCategory };

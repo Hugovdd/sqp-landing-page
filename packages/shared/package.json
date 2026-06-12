@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./products": "./src/products.ts",
     "./d1-schema.sql": "./d1-schema.sql"
   },
   "types": "./src/index.ts",

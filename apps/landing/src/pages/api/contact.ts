@@ -105,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
       : "https://api.mailgun.net/v3";
 
     const formData = new FormData();
-    formData.append("from", `SideQuest Contact <noreply@${MAILGUN_DOMAIN}>`);
+    formData.append("from", `Sidequest Contact <noreply@${MAILGUN_DOMAIN}>`);
     formData.append("to", CONTACT_TO_EMAIL || "support@sidequestplugins.com");
     formData.append("subject", `Contact form: ${name}`);
     formData.append("reply-to", email);

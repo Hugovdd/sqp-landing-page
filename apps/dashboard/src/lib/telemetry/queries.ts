@@ -1,11 +1,11 @@
 import "server-only";
 
 import { db } from "./d1";
-import { brandFilter, type ResolvedFilters } from "./filters";
+import { productFilter, type ResolvedFilters } from "./filters";
 
 // All queries are exact SQL over the single D1 store (ADR-0001). Each is filtered
-// by the resolved brand + date range. `brandFilter` appends `AND brand = ?` last,
-// so its bind always goes at the end of the binds array.
+// by the resolved product + date range. `productFilter` appends `AND brand IN
+// (...)` last, so its binds always go at the end of the binds array.
 
 export interface Kpis {
   totalInstalls: number;
@@ -26,7 +26,7 @@ async function scalar(sql: string, binds: unknown[]): Promise<number> {
 }
 
 export async function getKpis(f: ResolvedFilters): Promise<Kpis> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   const [totalInstalls, newInstalls, dau, mau, counters, fetchCount] =
     await Promise.all([
       scalar(`SELECT count(*) c FROM installs WHERE 1=1${b.sql}`, b.binds),
@@ -74,7 +74,7 @@ export interface DayCount {
 export async function getInstallsSeries(
   f: ResolvedFilters,
 ): Promise<{ day: string; created: number; cumulative: number }[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   const rows = (
     await db()
       .prepare(
@@ -102,7 +102,7 @@ export async function getInstallsSeries(
 
 /** DAU per day across the range (distinct active installs that day). */
 export async function getActiveSeries(f: ResolvedFilters): Promise<DayCount[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   return (
     await db()
       .prepare(
@@ -127,7 +127,7 @@ export interface DuplicationData {
 export async function getDuplication(
   f: ResolvedFilters,
 ): Promise<DuplicationData> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   const range = [f.fromMs, f.toMs, ...b.binds];
   const [totals, perDay, modeSplit, lifetime] = await Promise.all([
     db()
@@ -179,7 +179,7 @@ export async function getDuplication(
 export async function getFetchSeries(
   f: ResolvedFilters,
 ): Promise<{ day: string; count: number; items: number }[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   return (
     await db()
       .prepare(
@@ -201,7 +201,7 @@ export interface KeyCount {
 
 /** Install base by latest-seen country (decision 7). */
 export async function getGeography(f: ResolvedFilters): Promise<KeyCount[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   return (
     await db()
       .prepare(
@@ -218,7 +218,7 @@ export async function getGeography(f: ResolvedFilters): Promise<KeyCount[]> {
 export async function getBreakdowns(
   f: ResolvedFilters,
 ): Promise<{ os: KeyCount[]; version: KeyCount[] }> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   const [os, version] = await Promise.all([
     db()
       .prepare(
@@ -250,7 +250,7 @@ export interface ErrorGroup {
 export async function getErrorGroups(
   f: ResolvedFilters,
 ): Promise<ErrorGroup[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   return (
     await db()
       .prepare(
@@ -283,7 +283,7 @@ export async function getErrorOccurrences(
   message: string,
   f: ResolvedFilters,
 ): Promise<ErrorOccurrence[]> {
-  const b = brandFilter(f);
+  const b = productFilter(f);
   // Range-bound to match getErrorGroups, so the drill-down rows agree with the
   // group's count/affected totals.
   return (

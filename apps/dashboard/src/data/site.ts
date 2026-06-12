@@ -1,13 +1,11 @@
-/** Global branding: sidebar team switcher, <Logo />, auth shell, metadata, etc. */
+/** Global branding: sidebar product switcher, <Logo />, auth shell, metadata, etc. */
 export const site = {
-  /** Title next to the logo (sidebar team switcher, auth header, default document title) */
-  title: "SideQuest Plugins",
-  description: "Telemetry for the AE Sheets & Binance Localiser plugins",
+  /** Company name — shown as the product switcher subtitle, auth header, default document title */
+  title: "Sidequest Plugins",
+  description: "Telemetry for Sidequest Plugins products",
   logoLightSrc: "/logo-black.svg",
   logoDarkSrc: "/logo-white.svg",
-  logoAlt: "SideQuest Plugins",
-  /** Subtitle under the title in the sidebar team switcher (first team) */
-  plan: "Telemetry",
+  logoAlt: "Sidequest Plugins",
   /** Sticky bar title next to the sidebar trigger */
   dashboardAppTitle: {
     telemetry: "Telemetry",

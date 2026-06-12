@@ -1,19 +1,25 @@
-// Filter resolution (server). The dashboard filters every metric by brand
-// (ae | binance | all) and a date range, carried in the URL via nuqs so views
-// are shareable and server-readable. Isomorphic parsers live in filter-params.ts.
+// Filter resolution (server). The dashboard filters every metric by product
+// (all | ae-sheets | find-and-replace-fonts | altar) and a date range, carried
+// in the URL via nuqs so views are shareable and server-readable. A product
+// resolves to one or more wire-level brands (see filter-params.ts); the SQL
+// filters on `brand IN (...)`. Isomorphic parsers live in filter-params.ts.
 
 import { createSearchParamsCache } from "nuqs/server";
 
-import { type BrandFilter, filterParsers } from "./filter-params";
+import {
+  filterParsers,
+  type ProductFilter,
+  PRODUCTS,
+} from "./filter-params";
 
-export type { BrandFilter };
+export type { ProductFilter };
 
 export const filterCache = createSearchParamsCache(filterParsers);
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface ResolvedFilters {
-  brand: BrandFilter;
+  product: ProductFilter;
   fromDay: string; // YYYY-MM-DD (inclusive)
   toDay: string; // YYYY-MM-DD (inclusive)
   fromMs: number; // start of fromDay, UTC
@@ -28,7 +34,7 @@ function utcDay(ms: number): string {
 
 /** Apply defaults (last 30 days) and derive the epoch bounds the queries need. */
 export function resolveFilters(raw: {
-  brand: BrandFilter;
+  product: ProductFilter;
   from: string;
   to: string;
 }): ResolvedFilters {
@@ -41,7 +47,7 @@ export function resolveFilters(raw: {
     : utcDay(now - 29 * DAY_MS);
 
   return {
-    brand: raw.brand,
+    product: raw.product,
     fromDay,
     toDay,
     fromMs: Date.parse(`${fromDay}T00:00:00.000Z`),
@@ -51,12 +57,17 @@ export function resolveFilters(raw: {
   };
 }
 
-/** `AND brand = ?` fragment + its bind (empty when "all"). */
-export function brandFilter(f: ResolvedFilters): {
+/**
+ * `AND brand IN (?, ?)` fragment + its binds for the selected product's
+ * brands. Empty (no filter) when the product is "all". The fragment is always
+ * appended last, so its binds go at the end of the binds array.
+ */
+export function productFilter(f: ResolvedFilters): {
   sql: string;
   binds: string[];
 } {
-  return f.brand === "all"
-    ? { sql: "", binds: [] }
-    : { sql: " AND brand = ?", binds: [f.brand] };
+  const brands = PRODUCTS[f.product].brands;
+  if (brands.length === 0) return { sql: "", binds: [] };
+  const placeholders = brands.map(() => "?").join(", ");
+  return { sql: ` AND brand IN (${placeholders})`, binds: [...brands] };
 }

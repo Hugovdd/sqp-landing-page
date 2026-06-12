@@ -1,8 +1,8 @@
-# SideQuest Plugins — Astro 5 Rebuild Specification
+# Sidequest Plugins — Astro 5 Rebuild Specification
 
 ## Overview
 
-Rebuild the **SideQuest Plugins** marketing website (`sidequestplugins.com`) from scratch using **Astro 5**, based on the [Mainline Astro Template](https://github.com/shadcnblocks/mainline-astro-template). The site sells After Effects plugins and extensions.
+Rebuild the **Sidequest Plugins** marketing website (`sidequestplugins.com`) from scratch using **Astro 5**, based on the [Mainline Astro Template](https://github.com/shadcnblocks/mainline-astro-template). The site sells After Effects plugins and extensions.
 
 ### Goals
 
@@ -49,8 +49,8 @@ The Mainline template ships with pre-built pages and blocks. Here's how they map
 
 | Mainline Block | Use For |
 |---|---|
-| `navbar.tsx` | Site header — adapt links to match SideQuest nav |
-| `footer.tsx` | Site footer — adapt columns to match SideQuest footer |
+| `navbar.tsx` | Site header — adapt links to match Sidequest nav |
+| `footer.tsx` | Site footer — adapt columns to match Sidequest footer |
 | `hero.tsx` | Homepage hero, product page heroes |
 | `features.tsx` | Product feature cards on `/find-and-replace-fonts` and `/ae-sheets` |
 | `faq.tsx` | FAQ accordion sections on product pages |
@@ -66,14 +66,14 @@ The Mainline template ships with pre-built pages and blocks. Here's how they map
 | Mainline Page | Action |
 |---|---|
 | `index.astro` | **Repurpose** → Homepage |
-| `about.astro` | **Remove** (no about page in SideQuest) |
+| `about.astro` | **Remove** (no about page in Sidequest) |
 | `pricing.astro` | **Remove** (pricing is per-product, not a standalone page) |
 | `faq.astro` | **Remove** (FAQs live on individual product pages) |
 | `contact.astro` | **Repurpose** → `/contact` |
-| `login.astro` / `signup.astro` | **Remove** (no auth in SideQuest) |
+| `login.astro` / `signup.astro` | **Remove** (no auth in Sidequest) |
 | `privacy.mdx` | **Repurpose** → `/privacy` |
 | `blog/` | **Remove for now** (keep template files for future use) |
-| `404.astro` | **Keep** — customize for SideQuest branding |
+| `404.astro` | **Keep** — customize for Sidequest branding |
 | `rss.xml.js` | **Remove for now** (no blog) |
 
 ### Layouts
@@ -171,7 +171,7 @@ Links (in order):
 4. **Help** → `/help` (redirects to `/docs`)
 5. **Contact** → `/contact`
 
-Logo/brand "**SideQuest Plugins**" links to `/`.
+Logo/brand "**Sidequest Plugins**" links to `/`.
 
 Mobile drawer grouped as:
 - **Products**: Find and Replace Fonts, AE Sheets
@@ -186,7 +186,7 @@ Mobile drawer grouped as:
 | **Connect** | Twitter (`https://twitter.com/sidequestplugins`), Instagram (`https://instagram.com/sidequestplugins`), YouTube (`https://youtube.com/sidequestplugins`) |
 
 Bottom bar:
-- `© {year} SideQuest Plugins. All rights reserved.`
+- `© {year} Sidequest Plugins. All rights reserved.`
 - Terms of Service (`/terms`) | Privacy Policy (`/privacy`)
 
 ---
@@ -364,7 +364,7 @@ title: "Privacy Policy"
 lastUpdated: 2025-03-07
 seo:
   metaTitle: "Privacy Policy"
-  metaDescription: "Privacy Policy for SideQuest Plugins — how we handle your data."
+  metaDescription: "Privacy Policy for Sidequest Plugins — how we handle your data."
 ---
 
 # Privacy Policy
@@ -379,7 +379,7 @@ Last updated: March 7, 2025
 ```ts
 // Site metadata
 export const SITE = {
-  name: "SideQuest Plugins",
+  name: "Sidequest Plugins",
   tagline: "After Effects plugins, scripts, and tools for motion designers.",
   domain: "https://sidequestplugins.com",
   supportEmail: "support@sidequestplugins.com",
@@ -890,8 +890,8 @@ Since content lives in the Git repo, any commit to the `main` branch automatical
 - [ ] Verify all collections build without Zod errors
 
 ### Phase 3: Components & Pages
-- [ ] Adapt navbar with SideQuest navigation (data from `consts.ts` via props)
-- [ ] Adapt footer with SideQuest columns (data from `consts.ts` via props)
+- [ ] Adapt navbar with Sidequest navigation (data from `consts.ts` via props)
+- [ ] Adapt footer with Sidequest columns (data from `consts.ts` via props)
 - [ ] Build `ProductHero`, `Features`, `TechStack`, `FAQ`, `CTASection` blocks
 - [ ] Build `ProductCards`, `FreebieCards` blocks for listing pages
 - [ ] Build `EmailSignup` and `ContactForm` with Turnstile

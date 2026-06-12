@@ -1,5 +1,5 @@
 {
-  // Worker identity for the SideQuest Plugins landing page (production).
+  // Worker identity for the Sidequest Plugins landing page (production).
   // The @astrojs/cloudflare adapter reads this file and merges in the build
   // output (entry, static assets binding, KV/IMAGES bindings) at build time,
   // writing the final config to dist/server/wrangler.json.

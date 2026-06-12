@@ -1,10 +1,8 @@
 // Shared telemetry vocabulary + abuse/sanity bounds.
 // Both the ingestion Worker (apps/ingest) and the dashboard (apps/dashboard)
 // import from here so the wire contract has a single source of truth.
-
-/** The two plugins. One installId belongs to exactly one brand. */
-export const BRANDS = ["ae", "binance"] as const;
-export type Brand = (typeof BRANDS)[number];
+// The product/brand vocabulary (BRANDS, Brand, PRODUCT_REGISTRY) lives in
+// ./products and is re-exported through the package barrel (./index).
 
 /** Event names the dashboard understands. Unknown events are still stored raw. */
 export const KNOWN_EVENTS = [

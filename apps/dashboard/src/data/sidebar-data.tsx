@@ -7,8 +7,6 @@ import {
 } from "@tabler/icons-react";
 
 import { type SidebarData } from "@/components/layout/types";
-import { Logo } from "@/components/logo";
-import { site } from "@/data/site";
 
 export const sidebarData: SidebarData = {
   // Cosmetic only — real identity is enforced by Cloudflare Access in front of
@@ -18,15 +16,6 @@ export const sidebarData: SidebarData = {
     email: "admin@sidequestplugins.com",
     avatar: "/avatars/ausrobdev-avatar.png",
   },
-  teams: [
-    {
-      name: site.title,
-      logo: ({ className }: { className: string }) => (
-        <Logo className={className} />
-      ),
-      plan: "Telemetry",
-    },
-  ],
   navGroups: [
     {
       title: "Telemetry",
