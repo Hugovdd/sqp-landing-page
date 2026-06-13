@@ -52,7 +52,7 @@ pnpm ingest:deploy           # = wrangler deploy in apps/ingest
 # Dashboard (dashboard.sidequestplugins.com)
 # The deploy script runs `opennextjs-cloudflare build` first — do NOT use
 # `next build` (it writes .next, not the .open-next bundle wrangler ships).
-pnpm -F @sqp/dashboard deploy
+pnpm dashboard:deploy
 
 # Landing (unchanged)
 pnpm landing:deploy

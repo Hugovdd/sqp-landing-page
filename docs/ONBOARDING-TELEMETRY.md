@@ -115,7 +115,7 @@ Do Track A first (the product must exist), then:
    to test locally, then `pnpm -F @sqp/ingest db:migrate` for production (both wrap
    `wrangler d1 migrations apply DB`). See `docs/TELEMETRY-DEPLOYMENT.md`.
 4. Deploy ingest: `pnpm ingest:deploy`.
-5. Deploy dashboard: `pnpm -F @sqp/dashboard deploy`.
+5. Deploy dashboard: `pnpm dashboard:deploy`.
 6. Smoke: send a test envelope with the new `brand`; confirm it appears in the
    dashboard for that product.
 
