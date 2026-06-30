@@ -92,23 +92,34 @@ async function writeEvent(
   const brand = app.brand;
   const os = app.os ?? null;
   const appVersion = app.appVersion ?? null;
+  // Coarse license plan resolves asynchronously on the client, so early events
+  // carry "unknown". Treat unknown/absent as "no new information" so a later
+  // session heartbeat can't clobber a previously-resolved plan back to unknown.
+  const licensePlanRaw = app.license?.plan ?? null;
+  const licensePlan =
+    licensePlanRaw && licensePlanRaw !== "unknown" ? licensePlanRaw : null;
+  const licenseType = licensePlan ? (app.license?.type ?? null) : null;
 
   // Upsert the identity row. `withInstalledAt` is only true for app_installed.
   // firstSeen is never overwritten; installedAt is set once and kept (COALESCE);
-  // os/appVersion/country are refreshed to latest-seen.
+  // os/appVersion/country are refreshed to latest-seen. license* are latest
+  // *known* (COALESCE(new, existing) — a NULL/unknown never overwrites a value).
   const upsertInstall = (withInstalledAt: boolean) =>
     db
       .prepare(
         `INSERT INTO installs
-           (installId, firstSeen, installedAt, lastSeen, brand, os, appVersion, country)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           (installId, firstSeen, installedAt, lastSeen, brand, os, appVersion, country,
+            licensePlan, licenseType)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(installId) DO UPDATE SET
            lastSeen    = excluded.lastSeen,
            brand       = excluded.brand,
            os          = excluded.os,
            appVersion  = excluded.appVersion,
            country     = excluded.country,
-           installedAt = COALESCE(installs.installedAt, excluded.installedAt)`,
+           installedAt = COALESCE(installs.installedAt, excluded.installedAt),
+           licensePlan = COALESCE(excluded.licensePlan, installs.licensePlan),
+           licenseType = COALESCE(excluded.licenseType, installs.licenseType)`,
       )
       .bind(
         installId,
@@ -119,6 +130,8 @@ async function writeEvent(
         os,
         appVersion,
         country,
+        licensePlan,
+        licenseType,
       );
 
   const insertUsage = (
@@ -126,13 +139,16 @@ async function writeEvent(
     indexedItemCount: number | null,
     compsDuplicated: number | null,
     mode: string | null,
+    pane: string | null = null,
+    tool: string | null = null,
+    action: string | null = null,
   ) =>
     db
       .prepare(
         `INSERT INTO usage_events
            (receivedAt, brand, event, installId, os, appVersion, country,
-            indexedItemCount, compsDuplicated, mode)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            indexedItemCount, compsDuplicated, mode, pane, tool, action)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         receivedAt,
@@ -145,6 +161,9 @@ async function writeEvent(
         indexedItemCount,
         compsDuplicated,
         mode,
+        pane,
+        tool,
+        action,
       );
 
   switch (event) {
@@ -169,6 +188,18 @@ async function writeEvent(
         numOrNull(e.props.indexedItemCount),
         null,
         null,
+      ).run();
+      return;
+
+    case "tool_used":
+      await insertUsage(
+        "tool_used",
+        null,
+        null,
+        null,
+        strOrNull(e.props.pane),
+        strOrNull(e.props.tool),
+        strOrNull(e.props.action),
       ).run();
       return;
 

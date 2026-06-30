@@ -1,11 +1,17 @@
-import { BarSeriesChart, LineSeriesChart } from "@/components/telemetry/charts";
+import { BarList } from "@/components/telemetry/bar-list";
 import { ChartCard } from "@/components/telemetry/chart-card";
+import { BarSeriesChart, LineSeriesChart } from "@/components/telemetry/charts";
+import { CountryFlag } from "@/components/telemetry/country-flag";
+import { OsIcon } from "@/components/telemetry/os-icon";
 import { PageShell } from "@/components/telemetry/page-shell";
 import { fmt, StatCard } from "@/components/telemetry/stat-card";
+import { countryName } from "@/lib/telemetry/countries";
 import { filterCache, resolveFilters } from "@/lib/telemetry/filters";
 import {
   getActiveSeries,
+  getBreakdowns,
   getFetchSeries,
+  getGeography,
   getInstallsSeries,
   getKpis,
 } from "@/lib/telemetry/queries";
@@ -20,12 +26,15 @@ export default async function OverviewPage({
   searchParams: SP;
 }) {
   const f = resolveFilters(filterCache.parse(await searchParams));
-  const [kpis, installs, active, fetches] = await Promise.all([
-    getKpis(f),
-    getInstallsSeries(f),
-    getActiveSeries(f),
-    getFetchSeries(f),
-  ]);
+  const [kpis, installs, active, fetches, countries, breakdowns] =
+    await Promise.all([
+      getKpis(f),
+      getInstallsSeries(f),
+      getActiveSeries(f),
+      getFetchSeries(f),
+      getGeography(f),
+      getBreakdowns(f),
+    ]);
 
   return (
     <PageShell
@@ -92,6 +101,34 @@ export default async function OverviewPage({
             data={fetches}
             xKey="day"
             series={[{ key: "count", label: "Fetches" }]}
+          />
+        </ChartCard>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ChartCard
+          title="Countries"
+          description="Top countries by install base (latest-seen)"
+        >
+          <BarList
+            items={countries.slice(0, 8).map((c) => ({
+              key: c.key,
+              count: c.count,
+              label: countryName(c.key),
+              leading: <CountryFlag code={c.key} />,
+            }))}
+            emptyLabel="No located installs in range"
+          />
+        </ChartCard>
+        <ChartCard
+          title="Operating systems"
+          description="Install base by OS (latest-seen)"
+        >
+          <BarList
+            items={breakdowns.os.slice(0, 8).map((o) => ({
+              ...o,
+              leading: <OsIcon name={o.key} />,
+            }))}
           />
         </ChartCard>
       </div>

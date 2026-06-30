@@ -10,6 +10,7 @@ export const KNOWN_EVENTS = [
   "session",
   "fetch",
   "duplication_run",
+  "tool_used",
   "error",
 ] as const;
 export type KnownEvent = (typeof KNOWN_EVENTS)[number];
@@ -21,6 +22,13 @@ export type DuplicationMode = (typeof DUPLICATION_MODES)[number];
 /** error.category — where the error originated (client pre-filters to real bugs). */
 export const ERROR_CATEGORIES = ["react", "extendscript", "unhandled"] as const;
 export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
+
+/**
+ * Coarse, non-identifying license plan attached to app context. Never the key.
+ * "unknown" = the async AESP check hadn't resolved when the event fired.
+ */
+export const LICENSE_PLANS = ["trial", "paid", "none", "unknown"] as const;
+export type LicensePlan = (typeof LICENSE_PLANS)[number];
 
 // --- Sanity / abuse bounds (see plan: "reject absurd compsDuplicated, skewed ts") ---
 
@@ -41,3 +49,11 @@ export const ERROR_NAME_MAX = 200;
 export const ERROR_MESSAGE_MAX = 2000;
 export const ERROR_STACK_MAX = 8000;
 export const ERROR_ACTION_MAX = 200;
+
+// tool_used caps — low-cardinality identifiers, not free text.
+export const MAX_PANE_LEN = 32;
+export const MAX_TOOL_LEN = 48;
+export const MAX_TOOL_ACTION_LEN = 48;
+
+/** app.license.type — AESP licenseType code (SUL/SUB/EDU/…); low-cardinality. */
+export const MAX_LICENSE_TYPE_LEN = 32;

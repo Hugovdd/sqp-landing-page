@@ -48,6 +48,72 @@ UPDATE counters SET
   comps_total = COALESCE((SELECT sum(compsDuplicated) FROM usage_events WHERE event = 'duplication_run' AND brand = counters.brand), 0),
   runs_total  = COALESCE((SELECT count(*) FROM usage_events WHERE event = 'duplication_run' AND brand = counters.brand), 0);
 
+-- ── Altar (brand 'altar') ────────────────────────────────────────────────────
+-- A separate product whose dashboard surface is Forge tool usage. Without these
+-- rows the Forge page is empty locally for everyone.
+
+-- 15 Altar installs.
+WITH RECURSIVE seq(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM seq WHERE i < 14)
+INSERT INTO installs (installId, firstSeen, installedAt, lastSeen, brand, os, appVersion, country)
+SELECT
+  'altar-inst-' || i,
+  (unixepoch('now') - (40 - i) * 86400) * 1000,
+  (unixepoch('now') - (40 - i) * 86400) * 1000,
+  (unixepoch('now') - (i % 5) * 86400) * 1000,
+  'altar',
+  CASE i % 3 WHEN 0 THEN 'macOS 15' WHEN 1 THEN 'macOS 14' ELSE 'Windows 11' END,
+  CASE i % 3 WHEN 0 THEN '0.9.0' WHEN 1 THEN '0.8.1' ELSE '0.8.0' END,
+  CASE i % 6 WHEN 0 THEN 'US' WHEN 1 THEN 'GB' WHEN 2 THEN 'DE' WHEN 3 THEN 'NL' WHEN 4 THEN 'FR' ELSE 'CA' END
+FROM seq;
+
+-- Altar daily active (sparse, last 30 days).
+WITH RECURSIVE inst(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM inst WHERE i < 14),
+     days(d) AS (SELECT 0 UNION ALL SELECT d + 1 FROM days WHERE d < 29)
+INSERT OR IGNORE INTO daily_active (installId, day, brand)
+SELECT 'altar-inst-' || i,
+       date(unixepoch('now') - d * 86400, 'unixepoch'),
+       'altar'
+FROM inst JOIN days
+WHERE (i + d) % 4 = 0;
+
+-- 180 Forge tool_used events. Tool popularity is uneven (`i % 11` → weighted
+-- buckets) and the install (`i % 15`, coprime to 11) is decoupled from the tool,
+-- so per-tool *reach* (distinct installs) genuinely varies — broad-adoption vs
+-- heavy-use-by-few — instead of every tool landing on the same install subset.
+WITH RECURSIVE seq(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM seq WHERE i < 179)
+INSERT INTO usage_events (receivedAt, brand, event, installId, os, appVersion, country, pane, tool, action)
+SELECT
+  (unixepoch('now') - (i % 30) * 86400 - (i % 12) * 3600) * 1000,
+  'altar',
+  'tool_used',
+  -- Confine rarer tools to fewer installs so per-tool reach forms a gradient
+  -- (pin broad across all 15, stroke narrow across 2) rather than saturating.
+  'altar-inst-' || (i % (CASE
+    WHEN i % 11 < 4 THEN 15
+    WHEN i % 11 < 7 THEN 12
+    WHEN i % 11 < 9 THEN 8
+    WHEN i % 11 < 10 THEN 4
+    ELSE 2 END)),
+  CASE i % 3 WHEN 0 THEN 'macOS 15' WHEN 1 THEN 'macOS 14' ELSE 'Windows 11' END,
+  '0.9.0',
+  CASE i % 6 WHEN 0 THEN 'US' WHEN 1 THEN 'GB' WHEN 2 THEN 'DE' WHEN 3 THEN 'NL' WHEN 4 THEN 'FR' ELSE 'CA' END,
+  'forge',
+  CASE
+    WHEN i % 11 < 4 THEN 'pin'        -- most popular
+    WHEN i % 11 < 7 THEN 'resize'
+    WHEN i % 11 < 9 THEN 'align'
+    WHEN i % 11 < 10 THEN 'distribute'
+    ELSE 'stroke'                     -- rare, narrow reach
+  END,
+  CASE
+    WHEN i % 11 < 4 THEN (CASE i % 3 WHEN 0 THEN 'top-left' WHEN 1 THEN 'center' ELSE 'bottom-right' END)
+    WHEN i % 11 < 7 THEN (CASE i % 2 WHEN 0 THEN 'width' ELSE 'height' END)
+    WHEN i % 11 < 9 THEN (CASE i % 2 WHEN 0 THEN 'horizontal' ELSE 'vertical' END)
+    WHEN i % 11 < 10 THEN 'even'
+    ELSE 'outline'
+  END
+FROM seq;
+
 -- 40 errors forming 4 groups (name+message), with scrubbed stacks.
 WITH RECURSIVE seq(i) AS (SELECT 0 UNION ALL SELECT i + 1 FROM seq WHERE i < 39)
 INSERT INTO errors (installId, receivedAt, brand, appVersion, aeVersion, os, country, category, name, message, stack, action)

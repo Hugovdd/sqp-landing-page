@@ -7,9 +7,11 @@ import { z } from "zod";
 import { BRANDS } from "./products";
 import {
   KNOWN_EVENTS,
+  LICENSE_PLANS,
   MAX_COMPS_PER_RUN,
   MAX_EVENT_NAME_LEN,
   MAX_INDEXED_ITEMS,
+  MAX_LICENSE_TYPE_LEN,
   MAX_OS_LEN,
   MAX_TS_SKEW_MS,
   MAX_VERSION_LEN,
@@ -18,6 +20,9 @@ import {
   ERROR_MESSAGE_MAX,
   ERROR_NAME_MAX,
   ERROR_STACK_MAX,
+  MAX_PANE_LEN,
+  MAX_TOOL_LEN,
+  MAX_TOOL_ACTION_LEN,
 } from "./constants";
 import type { ParsedEnvelope } from "./envelope";
 
@@ -25,12 +30,22 @@ import type { ParsedEnvelope } from "./envelope";
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+const LicenseSchema = z
+  .object({
+    plan: z.enum(LICENSE_PLANS),
+    type: z.string().max(MAX_LICENSE_TYPE_LEN).optional(),
+  })
+  .catchall(z.unknown());
+
 const AppSchema = z
   .object({
     brand: z.enum(BRANDS),
     appVersion: z.string().min(1).max(MAX_VERSION_LEN),
     aeVersion: z.string().max(MAX_VERSION_LEN).optional(),
     os: z.string().max(MAX_OS_LEN).optional(),
+    // Optional + coerced away on bad shape (.catch) so a malformed license block
+    // never drops the whole event — license is a nice-to-have, not the spine.
+    license: LicenseSchema.optional().catch(undefined),
   })
   .catchall(z.unknown());
 
@@ -65,6 +80,13 @@ const PropsByEvent = {
     .object({
       compsDuplicated: z.number().int().nonnegative().max(MAX_COMPS_PER_RUN),
       mode: z.enum(["current", "all"]),
+    })
+    .catchall(z.unknown()),
+  tool_used: z
+    .object({
+      pane: z.string().min(1).max(MAX_PANE_LEN),
+      tool: z.string().min(1).max(MAX_TOOL_LEN),
+      action: z.string().max(MAX_TOOL_ACTION_LEN).optional(),
     })
     .catchall(z.unknown()),
   error: z
@@ -118,6 +140,7 @@ export function parseEnvelope(
       appVersion: e.app.appVersion,
       aeVersion: e.app.aeVersion,
       os: e.app.os,
+      license: e.app.license,
     },
     props,
   };

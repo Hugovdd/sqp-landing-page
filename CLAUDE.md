@@ -20,7 +20,7 @@ more business areas planned).
 ## Conventions
 
 - **No CI/CD — deploys are manual.** Pushing ships nothing. Per app:
-  `pnpm landing:deploy`, `pnpm ingest:deploy`, `pnpm -F @sqp/dashboard deploy`
+  `pnpm landing:deploy`, `pnpm ingest:deploy`, `pnpm dashboard:deploy`
   (dashboard must build via opennextjs, not `next build`).
 - Branch off `main` for changes; commit/push only when asked.
 

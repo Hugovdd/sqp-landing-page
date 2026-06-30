@@ -12,9 +12,10 @@
     "landing:deploy:staging": "pnpm -F @sqp/landing deploy:staging",
     "landing:deploy": "pnpm -F @sqp/landing deploy:production",
     "ingest:dev": "pnpm -F @sqp/ingest dev",
-    "ingest:deploy": "pnpm -F @sqp/ingest deploy",
+    "ingest:deploy": "pnpm -F @sqp/ingest run deploy",
     "dashboard:dev": "pnpm -F @sqp/dashboard dev",
     "dashboard:build": "pnpm -F @sqp/dashboard build",
+    "dashboard:deploy": "pnpm -F @sqp/dashboard run deploy",
     "shared:test": "pnpm -F @sqp/shared test",
     "format": "prettier -w .",
     "lint": "pnpm -r --if-present lint"

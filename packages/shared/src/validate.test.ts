@@ -42,6 +42,48 @@ describe("parseEnvelope — valid events", () => {
     expect(r?.props.mode).toBe("all");
   });
 
+  it("passes app.license through when valid", () => {
+    const r = parseEnvelope(
+      {
+        ...base("session"),
+        app: { ...base("session").app, license: { plan: "paid", type: "SUL" } },
+      },
+      NOW,
+    );
+    expect(r?.app.license).toEqual({ plan: "paid", type: "SUL" });
+  });
+
+  it("coerces a malformed license to undefined without dropping the event", () => {
+    const r = parseEnvelope(
+      {
+        ...base("session"),
+        app: { ...base("session").app, license: { plan: "premium" } },
+      },
+      NOW,
+    );
+    expect(r?.known).toBe(true);
+    expect(r?.app.license).toBeUndefined();
+  });
+
+  it("accepts tool_used with pane + tool + action", () => {
+    const r = parseEnvelope(
+      base("tool_used", { pane: "rigging", tool: "pinning", action: "top-left" }),
+      NOW,
+    );
+    expect(r?.known).toBe(true);
+    expect(r?.props.tool).toBe("pinning");
+    expect(r?.props.action).toBe("top-left");
+  });
+
+  it("accepts tool_used without an action", () => {
+    const r = parseEnvelope(
+      base("tool_used", { pane: "rigging", tool: "grid-packer" }),
+      NOW,
+    );
+    expect(r?.props.tool).toBe("grid-packer");
+    expect(r?.props.action).toBeUndefined();
+  });
+
   it("accepts error", () => {
     const r = parseEnvelope(
       base("error", {
@@ -118,6 +160,9 @@ describe("parseEnvelope — known-event prop bounds", () => {
         NOW,
       ),
     ).toBeNull();
+  });
+  it("drops tool_used missing tool", () => {
+    expect(parseEnvelope(base("tool_used", { pane: "rigging" }), NOW)).toBeNull();
   });
   it("drops error missing name", () => {
     expect(
