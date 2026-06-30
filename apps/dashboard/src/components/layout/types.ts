@@ -1,33 +1,15 @@
-interface User {
-  name: string;
-  email: string;
-  avatar: string;
-}
-
 interface BaseNavItem {
   title: string;
   badge?: string;
   icon?: React.ElementType;
 }
 
-export type NavItem =
-  | (BaseNavItem & {
-      items: (BaseNavItem & { url: string })[];
-      url?: never;
-    })
-  | (BaseNavItem & {
-      url: string;
-      items?: never;
-    });
+/** A single sidebar entry: a labelled link, optionally with an icon/badge. */
+export type NavItem = BaseNavItem & { url: string };
 
 interface NavGroup {
   title: string;
   items: NavItem[];
 }
 
-interface SidebarData {
-  user: User;
-  navGroups: NavGroup[];
-}
-
-export type { NavGroup, SidebarData };
+export type { NavGroup };

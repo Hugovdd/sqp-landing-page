@@ -267,6 +267,80 @@ export async function getLicensing(
   return { plan: plan.results, type: type.results };
 }
 
+export interface ToolUsage {
+  /** Tool families ranked by invocations. */
+  tools: KeyCount[];
+  /** Tool · sub-action drill-down, ranked by invocations. */
+  actions: KeyCount[];
+  /** tool_used events per day (the pane's usage trend over the range). */
+  perDay: DayCount[];
+  /** Distinct installs that touched each tool — "broad adoption" vs "heavy use by few". */
+  reach: KeyCount[];
+  /** Distinct installs with any event in this pane in the range. */
+  activeInstalls: number;
+}
+
+/**
+ * Everything the tools page needs for one pane (`pane`, e.g. "rigging" or
+ * "forge"): rankings, the daily trend, per-tool reach, and active-install count.
+ * Counts successful invocations in the selected product + date range. New tool
+ * ids appear automatically — every grouping is over the free-text `tool` column,
+ * so onboarding a new in-panel tool needs no dashboard change.
+ */
+export async function getToolUsage(
+  f: ResolvedFilters,
+  pane: string,
+): Promise<ToolUsage> {
+  const b = productFilter(f);
+  const where = `event='tool_used' AND pane=? AND receivedAt BETWEEN ? AND ?${b.sql}`;
+  const binds = [pane, f.fromMs, f.toMs, ...b.binds];
+  const [tools, actions, perDay, reach, activeInstalls] = await Promise.all([
+    db()
+      .prepare(
+        `SELECT COALESCE(NULLIF(tool,''),'unknown') key, count(*) count
+           FROM usage_events WHERE ${where} GROUP BY key ORDER BY count DESC`,
+      )
+      .bind(...binds)
+      .all<KeyCount>(),
+    db()
+      .prepare(
+        `SELECT COALESCE(NULLIF(tool,''),'unknown')
+                  || COALESCE(' · ' || NULLIF(action,''), '') key,
+                count(*) count
+           FROM usage_events WHERE ${where}
+           GROUP BY tool, action ORDER BY count DESC LIMIT 100`,
+      )
+      .bind(...binds)
+      .all<KeyCount>(),
+    db()
+      .prepare(
+        `SELECT date(receivedAt/1000,'unixepoch') day, count(*) count
+           FROM usage_events WHERE ${where} GROUP BY day ORDER BY day`,
+      )
+      .bind(...binds)
+      .all<DayCount>(),
+    db()
+      .prepare(
+        `SELECT COALESCE(NULLIF(tool,''),'unknown') key,
+                count(DISTINCT installId) count
+           FROM usage_events WHERE ${where} GROUP BY key ORDER BY count DESC`,
+      )
+      .bind(...binds)
+      .all<KeyCount>(),
+    scalar(
+      `SELECT count(DISTINCT installId) c FROM usage_events WHERE ${where}`,
+      binds,
+    ),
+  ]);
+  return {
+    tools: tools.results,
+    actions: actions.results,
+    perDay: perDay.results,
+    reach: reach.results,
+    activeInstalls,
+  };
+}
+
 export interface ErrorGroup {
   name: string;
   message: string;

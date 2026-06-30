@@ -88,9 +88,11 @@ pnpm dev                                   # http://localhost:8787
 curl -X POST localhost:8787/e -H 'content-type: application/json' \
   -d '{"v":1,"installId":"<uuid>","event":"session","ts":'$(($(date +%s)*1000))',"app":{"brand":"ae","appVersion":"1.1.1"},"props":{}}'
 
-# Dashboard: seed a local D1 (shared schema + sample data), then run
+# Dashboard: seed a local D1 (shared schema + sample data), then run.
+# Apply ALL migrations in order (the seed needs the tool_used + license columns,
+# not just 0001) — the migrations live in apps/ingest.
 cd apps/dashboard
-wrangler d1 execute DB --local --file ../ingest/migrations/0001_init.sql
+for m in ../ingest/migrations/*.sql; do wrangler d1 execute DB --local --file "$m"; done
 wrangler d1 execute DB --local --file ../ingest/seed.dev.sql
 pnpm dev                                   # http://localhost:3000  (getCloudflareContext → local D1)
 ```

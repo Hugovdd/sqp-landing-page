@@ -3,6 +3,7 @@
 import { NavGroup } from "@/components/layout/nav-group";
 import { NavUser } from "@/components/layout/nav-user";
 import { ProductSwitcher } from "@/components/layout/product-switcher";
+import { useNavItems } from "@/components/layout/use-nav-items";
 import {
   Sidebar,
   SidebarContent,
@@ -10,9 +11,17 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { sidebarData } from "@/data/sidebar-data";
+import { sidebarUser } from "@/data/sidebar-data";
 
+/**
+ * The sidebar is product-aware: it renders the active product's declared nav
+ * (PRODUCT_REGISTRY in @sqp/shared), resolved from `?product=` by useNavItems.
+ * Switching product re-renders this client component, so the section set
+ * re-resolves automatically.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const items = useNavItems();
+
   return (
     <div className="relative">
       <Sidebar collapsible="icon" {...props}>
@@ -20,12 +29,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <ProductSwitcher />
         </SidebarHeader>
         <SidebarContent>
-          {sidebarData.navGroups.map((props) => (
-            <NavGroup key={props.title} {...props} />
-          ))}
+          <NavGroup title="Telemetry" items={items} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={sidebarData.user} />
+          <NavUser user={sidebarUser} />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>

@@ -51,20 +51,42 @@ spine and are stored raw (`known: false`) for later.
 
    ```ts
    export const PRODUCT_REGISTRY = {
-     "ae-sheets": { label: "AE Sheets", brands: ["ae", "binance"] },
+     "ae-sheets": { label: "AE Sheets", brands: ["ae", "binance"], nav: [...] },
      // ...
-     "my-tool": { label: "My Tool", brands: ["my-tool"] }, // ← add
-   } as const;
+     "my-tool": {                       // ← add
+       label: "My Tool",
+       brands: ["my-tool"],
+       nav: [                           // ← the product's dashboard sections
+         { key: "overview" },
+         { key: "tools", label: "My pane", pane: "mypane" },
+         { key: "geography" },
+         { key: "errors" },
+       ],
+     },
+   } as const satisfies ...;
    ```
 
    The `brands` slug(s) are the exact `app.brand` string(s) the client sends. A
    product can map to several brands (sub-versions) — they're unioned in the UI.
 
+   `nav` declares which sidebar sections the product shows (and their order). A
+   fixed `key` (overview / duplication / licensing / geography / breakdowns /
+   errors) maps to that section's route; a `{ key: "tools", label, pane }` entry
+   is a pane-scoped tool-usage view served by the shared `/tools` page,
+   discriminated by `?pane=`. Add `placeholder: true` to a tools entry to show an
+   "not wired yet" empty state instead of querying (e.g. a surface whose client
+   events haven't shipped). Only list the sections the product actually emits.
+
    That single edit flows everywhere automatically: `BRANDS` and the `Brand` type
    widen, the ingest validator (`z.enum(BRANDS)`) starts accepting the new brand,
-   and the dashboard product switcher + every `brand IN (...)` query pick it up.
-   The `counters` row self-seeds on first `duplication_run` (upsert in
-   `apps/ingest/src/index.ts`) — no migration needed.
+   the product switcher + every `brand IN (...)` query pick it up, and the sidebar
+   renders the product's `nav`. The `counters` row self-seeds on first
+   `duplication_run` (upsert in `apps/ingest/src/index.ts`) — no migration needed.
+
+   **Tool-usage views are zero-config per tool.** The `/tools` page groups
+   dynamically by the free-text `tool` column (`GROUP BY tool`), so a brand-new
+   in-panel tool id appears in the rankings/reach the moment it's emitted — no
+   registry or dashboard edit. You only touch `nav` to add a whole new *pane*.
 
    > Note: the registry doubles as the **ingest accept-list**. Listing a product
    > here immediately makes the open ingest endpoint accept its brand(s), even
@@ -100,8 +122,12 @@ Do Track A first (the product must exist), then:
    `productFilter(f)`'s `.sql` last and its `.binds` at the end of the bind array
    so product scoping works.
 6. **Show it** — add a page under `apps/dashboard/src/app/(admin)/<name>/page.tsx`
-   (parse filters via `filterCache` → `resolveFilters`, call your query) and a
-   sidebar entry in `apps/dashboard/src/data/sidebar-data.tsx`.
+   (parse filters via `filterCache` → `resolveFilters`, call your query). To put
+   it in the sidebar: for a brand-new fixed section, add a `NavKey` +
+   `SECTION_NAV` entry in `apps/dashboard/src/data/sidebar-data.tsx` and reference
+   that key from the relevant products' `nav`; for a new tool *pane*, just add a
+   `{ key: "tools", label, pane }` entry to a product's `nav` (the `/tools` page
+   already handles any pane).
 7. **Update the shared tests** — `packages/shared/src/validate.test.ts` for the
    new event's accept/reject cases.
 

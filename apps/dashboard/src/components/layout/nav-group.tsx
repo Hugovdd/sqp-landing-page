@@ -1,24 +1,15 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -28,71 +19,28 @@ import { type NavGroup, NavItem } from "./types";
 export function NavGroup({ title, items }: NavGroup) {
   const { setOpenMobile } = useSidebar();
   const pathname = usePathname();
+  // Several entries can share the /tools path, distinguished only by ?pane=
+  // (Forge / Chat / Vault). Compare the active pane so only the matching one lights.
+  const activePane = useSearchParams().get("pane");
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => {
-          if (!item.items) {
-            return (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={checkIsActive(pathname, item, true)}
-                  tooltip={item.title}
-                >
-                  <Link href={item.url} onClick={() => setOpenMobile(false)}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                    {item.badge && <NavBadge>{item.badge}</NavBadge>}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          }
-          return (
-            <Collapsible
-              key={item.title}
+        {items.map((item) => (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
               asChild
-              defaultOpen={checkIsActive(pathname, item, true)}
-              className="group/collapsible"
+              isActive={isActive(pathname, activePane, item)}
+              tooltip={item.title}
             >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                    {item.badge && <NavBadge>{item.badge}</NavBadge>}
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="CollapsibleContent">
-                  <SidebarMenuSub>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={checkIsActive(pathname, subItem)}
-                        >
-                          <Link
-                            href={subItem.url}
-                            onClick={() => setOpenMobile(false)}
-                          >
-                            {subItem.icon && <subItem.icon />}
-                            <span>{subItem.title}</span>
-                            {subItem.badge && (
-                              <NavBadge>{subItem.badge}</NavBadge>
-                            )}
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-          );
-        })}
+              <Link href={item.url} onClick={() => setOpenMobile(false)}>
+                {item.icon && <item.icon />}
+                <span>{item.title}</span>
+                {item.badge && <NavBadge>{item.badge}</NavBadge>}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
       </SidebarMenu>
     </SidebarGroup>
   );
@@ -102,19 +50,20 @@ const NavBadge = ({ children }: { children: ReactNode }) => (
   <Badge className="rounded-full px-1 py-0 text-xs">{children}</Badge>
 );
 
-function checkIsActive(href: string, item: NavItem, mainNav = false): boolean {
-  const currentPath = normalizePath(href);
-
-  if (item.items) {
-    return item.items.some((subItem) => checkIsActive(currentPath, subItem));
-  }
-
+function isActive(
+  pathname: string,
+  activePane: string | null,
+  item: NavItem,
+): boolean {
+  const currentPath = normalizePath(pathname);
   const itemPath = normalizePath(item.url);
   if (currentPath === itemPath) {
-    return true;
+    // Pane-scoped entries (/tools?pane=…) only match when the pane agrees, so
+    // sibling tool surfaces don't all highlight on the shared /tools path.
+    const itemPane = new URLSearchParams(item.url.split("?")[1]).get("pane");
+    return itemPane ? itemPane === activePane : true;
   }
-
-  return mainNav && itemPath !== "/" && currentPath.startsWith(`${itemPath}/`);
+  return itemPath !== "/" && currentPath.startsWith(`${itemPath}/`);
 }
 
 function normalizePath(url: string): string {
