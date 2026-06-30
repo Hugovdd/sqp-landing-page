@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, Suspense, useContext } from "react";
 
 import { CommandMenu } from "./command-menu";
 
@@ -20,7 +20,12 @@ export default function SearchProvider({ children, value }: Props) {
   return (
     <SearchContext.Provider value={value}>
       {children}
-      <CommandMenu />
+      {/* CommandMenu reads ?product= via useSearchParams; the Suspense boundary
+          keeps it from bailing static prerender of pages that use the root
+          layout (e.g. the error pages). */}
+      <Suspense fallback={null}>
+        <CommandMenu />
+      </Suspense>
     </SearchContext.Provider>
   );
 }
