@@ -55,48 +55,33 @@ describe("parseTeamInviteInput", () => {
 });
 
 describe("parseTeamInviteResponse", () => {
-  it("maps minted and reused deliveries", () => {
+  it("maps minted and reused deliveries from the Worker contract", () => {
     expect(
-      parseTeamInviteResponse(
-        { ok: true, outcome: "minted", delivered: true },
-        200,
-      ),
+      parseTeamInviteResponse({ ok: true, outcome: "minted" }, 200),
     ).toEqual({ status: "sent" });
     expect(
-      parseTeamInviteResponse(
-        { ok: true, outcome: "reused", delivered: true },
-        200,
-      ),
+      parseTeamInviteResponse({ ok: true, outcome: "reused" }, 200),
     ).toEqual({ status: "resent" });
   });
 
-  it("maps a retryable delivery failure", () => {
+  it("maps HTTP 502 delivery_failed to a retryable partial failure", () => {
     expect(
       parseTeamInviteResponse(
-        { ok: true, outcome: "minted", delivered: false },
-        200,
+        {
+          ok: false,
+          outcome: "delivery_failed",
+          code: "ALTAR-AAAA-BBBB",
+          error: "Email delivery failed.",
+        },
+        502,
       ),
     ).toEqual({ status: "delivery_failed" });
-  });
-
-  it("maps already-a-member without requiring a new invite", () => {
-    expect(
-      parseTeamInviteResponse(
-        { ok: false, reason: "already_member", error: "Already a member." },
-        409,
-      ),
-    ).toEqual({
-      status: "already_member",
-      message: "Already a member.",
-    });
   });
 
   it("maps unknown Team, unauthorized, and invalid payloads", () => {
     expect(
       parseTeamInviteResponse({ ok: false, error: "No such org." }, 404),
-    ).toEqual({
-      status: "unknown_team",
-    });
+    ).toEqual({ status: "unknown_team" });
     expect(parseTeamInviteResponse({ ok: false }, 401)).toEqual({
       status: "unauthorized",
     });

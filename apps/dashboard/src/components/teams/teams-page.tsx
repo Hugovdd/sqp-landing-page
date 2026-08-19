@@ -16,11 +16,7 @@ import {
   type AltarAdminErrorKind,
   type TeamsPageData,
 } from "@/lib/altar-admin";
-import {
-  TEAM_INVITE_STATUS_LABELS,
-  TEAM_ROLE_LABELS,
-  type TeamsParams,
-} from "@/lib/altar-teams";
+import { TEAM_INVITE_STATUS_LABELS, TEAM_ROLE_LABELS } from "@/lib/altar-teams";
 
 type TeamsPageResult =
   | { status: "ready"; data: TeamsPageData }
@@ -66,13 +62,7 @@ function Unavailable({ kind }: { kind: AltarAdminErrorKind }) {
   );
 }
 
-export function TeamsPageView({
-  params: _params,
-  result,
-}: {
-  params: TeamsParams;
-  result: TeamsPageResult;
-}) {
+export function TeamsPageView({ result }: { result: TeamsPageResult }) {
   return (
     <main id="main-content" className="flex flex-col gap-5 p-4 sm:p-6">
       <div>

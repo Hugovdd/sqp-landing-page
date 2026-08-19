@@ -539,9 +539,11 @@ function waitlistIdentityDatabase(): DatabaseSync {
     );
     INSERT INTO waitlist VALUES
       ('alice@example.com', 1, 'joined', 2),
-      ('pat@example.com', 3, 'pending', NULL);
+      ('bob@example.com', 3, 'joined', 4),
+      ('pat@example.com', 5, 'pending', NULL);
     INSERT INTO invite_codes VALUES
-      ('ALTAR-ACCE-SS01', 'alice@example.com', 4, 9, 'claimed', 5, 'alice@example.com', 'user_alice');
+      ('ALTAR-ACCE-SS01', 'alice@example.com', 6, 9, 'claimed', 7, 'alice@example.com', 'user_alice'),
+      ('ALTAR-ACCE-SS02', 'bob@example.com', 8, 9, 'claimed', 9, 'bob@example.com', 'user_bob');
   `);
   return database;
 }
@@ -591,7 +593,11 @@ describe("getAltarTeamsPage", () => {
       "claimed",
       "expired",
     ]);
-    expect(data.peopleEmails).toEqual(["alice@example.com", "pat@example.com"]);
+    expect(data.peopleEmails).toEqual([
+      "alice@example.com",
+      "bob@example.com",
+      "pat@example.com",
+    ]);
     expect(data.mutation).toEqual({ status: "ready" });
     vault.close();
     waitlist.close();
@@ -651,7 +657,7 @@ describe("sendAltarTeamInvite", () => {
           orgId: "org_binance",
           role: "member",
         });
-        return jsonResponse({ ok: true, outcome: "minted", delivered: true });
+        return jsonResponse({ ok: true, outcome: "minted" });
       },
     );
 
@@ -668,14 +674,13 @@ describe("sendAltarTeamInvite", () => {
     expect(JSON.stringify(result)).not.toContain("secret-token");
   });
 
-  it("maps resent, delivery-failed, and already-a-member outcomes", async () => {
+  it("maps resent and retryable delivery failure from the Worker contract", async () => {
     await expect(
       sendAltarTeamInvite(
         { email: "pat@example.com", orgId: "org_binance", role: "admin" },
         {
           env: { ALTAR_ADMIN_TOKEN: "secret" },
-          fetch: async () =>
-            jsonResponse({ ok: true, outcome: "reused", delivered: true }),
+          fetch: async () => jsonResponse({ ok: true, outcome: "reused" }),
         },
       ),
     ).resolves.toMatchObject({ status: "resent", role: "admin" });
@@ -685,27 +690,60 @@ describe("sendAltarTeamInvite", () => {
         {
           env: { ALTAR_ADMIN_TOKEN: "secret" },
           fetch: async () =>
-            jsonResponse({ ok: true, outcome: "minted", delivered: false }),
-        },
-      ),
-    ).resolves.toMatchObject({ status: "delivery_failed" });
-    await expect(
-      sendAltarTeamInvite(
-        { email: "pat@example.com", orgId: "org_binance", role: "member" },
-        {
-          env: { ALTAR_ADMIN_TOKEN: "secret" },
-          fetch: async () =>
             jsonResponse(
               {
                 ok: false,
-                reason: "already_member",
-                error: "Already a member.",
+                outcome: "delivery_failed",
+                code: "ALTAR-AAAA-BBBB",
+                error: "Email delivery failed.",
               },
-              409,
+              502,
             ),
         },
       ),
+    ).resolves.toMatchObject({ status: "delivery_failed" });
+  });
+
+  it("skips the Worker when a known Account already holds the role", async () => {
+    const fetchImpl = vi.fn();
+    const vault = vaultDatabase();
+    const waitlist = waitlistIdentityDatabase();
+    await expect(
+      sendAltarTeamInvite(
+        { email: "alice@example.com", orgId: "org_binance", role: "member" },
+        {
+          env: { ALTAR_ADMIN_TOKEN: "secret" },
+          fetch: fetchImpl,
+          vault: sqliteDb(vault),
+          waitlist: sqliteDb(waitlist),
+        },
+      ),
     ).resolves.toMatchObject({ status: "already_member" });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    vault.close();
+    waitlist.close();
+  });
+
+  it("still mints an admin invite for a known member", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse({ ok: true, outcome: "minted" }),
+    );
+    const vault = vaultDatabase();
+    const waitlist = waitlistIdentityDatabase();
+    await expect(
+      sendAltarTeamInvite(
+        { email: "bob@example.com", orgId: "org_binance", role: "admin" },
+        {
+          env: { ALTAR_ADMIN_TOKEN: "secret" },
+          fetch: fetchImpl,
+          vault: sqliteDb(vault),
+          waitlist: sqliteDb(waitlist),
+        },
+      ),
+    ).resolves.toMatchObject({ status: "sent" });
+    expect(fetchImpl).toHaveBeenCalledOnce();
+    vault.close();
+    waitlist.close();
   });
 
   it("returns missing_config, unauthorized, and unavailable without leaking the token", async () => {

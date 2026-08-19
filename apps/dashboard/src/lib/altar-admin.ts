@@ -24,12 +24,16 @@ import {
   type TeamInviteActionState,
 } from "./altar-team-invite";
 import {
+  alreadyHoldsRole,
   buildIdentityMap,
   type Membership,
   MEMBERSHIPS_LIST_LIMIT,
   PEOPLE_EMAIL_LIMIT,
   type Team,
+  TEAM_ROLE_RANK,
   type TeamInvite,
+  type TeamRole,
+  teamRoleSchema,
   TEAMS_LIST_LIMIT,
   TEAMS_PAGE_SIZE,
   type TeamsParams,
@@ -117,6 +121,13 @@ function altarVaultCatalogDb(): D1Database {
     throw error;
   }
   return env.ALTAR_VAULT_CATALOG;
+}
+
+function optionalAltarVaultCatalogDb(): D1Database | null {
+  const env = getCloudflareContext().env as unknown as {
+    ALTAR_VAULT_CATALOG?: D1Database;
+  };
+  return env.ALTAR_VAULT_CATALOG ?? null;
 }
 
 function listQuery(params: PeopleParams): { sql: string; binds: unknown[] } {
@@ -252,7 +263,7 @@ const DETAIL_SQL = `SELECT w.email AS waitlistEmail,
  WHERE w.email = ?
  ORDER BY i.created_at DESC, i.code DESC`;
 
-/** The only server-side Altar admin integration seam. All dashboard access is read-only and bound. */
+/** Server-side Altar admin seam. People and email previews stay read-only. */
 export async function getAltarPeoplePage(
   params: PeopleParams,
   database: D1Database = altarWaitlistDb(),
@@ -570,12 +581,52 @@ export async function getAltarTeamsPage(
   }
 }
 
+const CLAIMED_USER_SQL = `SELECT claimed_user_id AS userId
+  FROM invite_codes
+ WHERE status = 'claimed'
+   AND lower(claimed_email) = ?
+   AND claimed_user_id IS NOT NULL
+   AND claimed_user_id != ''`;
+
+async function knownMembershipRole(
+  vault: D1Database,
+  waitlist: D1Database,
+  orgId: string,
+  email: string,
+) {
+  const claimed = await waitlist.prepare(CLAIMED_USER_SQL).bind(email).all();
+  const userIds = claimed.results.flatMap((row) => {
+    const parsed = z.object({ userId: z.string().min(1) }).safeParse(row);
+    return parsed.success ? [parsed.data.userId] : [];
+  });
+  if (userIds.length === 0) return null;
+
+  const roles = await vault
+    .prepare(
+      `SELECT role FROM memberships WHERE orgId = ? AND userId IN (${userIds.map(() => "?").join(", ")})`,
+    )
+    .bind(orgId, ...userIds)
+    .all();
+
+  let best: TeamRole | null = null;
+  for (const row of roles.results) {
+    const parsed = z.object({ role: teamRoleSchema }).safeParse(row);
+    if (!parsed.success) continue;
+    if (!best || TEAM_ROLE_RANK[parsed.data.role] > TEAM_ROLE_RANK[best]) {
+      best = parsed.data.role;
+    }
+  }
+  return best;
+}
+
 /** Mint or reuse a Team Invite through the vault-signing Worker. Never writes Membership. */
 export async function sendAltarTeamInvite(
   input: { email?: unknown; orgId?: unknown; role?: unknown },
   options: {
     env?: AltarTeamInviteEnv;
     fetch?: typeof globalThis.fetch;
+    vault?: D1Database | null;
+    waitlist?: D1Database | null;
   } = {},
 ): Promise<TeamInviteActionState> {
   const parsed = parseTeamInviteInput(input);
@@ -585,6 +636,28 @@ export async function sendAltarTeamInvite(
     orgId: parsed.orgId,
     role: parsed.role,
   };
+
+  const vault =
+    options.vault === undefined ? optionalAltarVaultCatalogDb() : options.vault;
+  const waitlist =
+    options.waitlist === undefined
+      ? optionalAltarWaitlistDb()
+      : options.waitlist;
+  if (vault && waitlist) {
+    try {
+      const existing = await knownMembershipRole(
+        vault,
+        waitlist,
+        request.orgId,
+        request.email,
+      );
+      if (existing && alreadyHoldsRole(existing, request.role)) {
+        return { status: "already_member", ...request };
+      }
+    } catch (error) {
+      console.error("Could not check existing Team membership.", error);
+    }
+  }
 
   const env =
     options.env ??

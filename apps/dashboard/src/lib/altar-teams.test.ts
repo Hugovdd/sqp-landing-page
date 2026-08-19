@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  alreadyHoldsRole,
   buildIdentityMap,
   membershipIdentity,
   parseTeamsParams,
@@ -97,5 +98,17 @@ describe("toMembership / toTeamInvite", () => {
       claimedEmail: "alice@example.com",
       claimedIdentity: "alice@example.com",
     });
+  });
+});
+
+describe("alreadyHoldsRole", () => {
+  it("treats an existing admin as already holding member or admin", () => {
+    expect(alreadyHoldsRole("admin", "member")).toBe(true);
+    expect(alreadyHoldsRole("admin", "admin")).toBe(true);
+  });
+
+  it("lets a member still receive an explicit admin invite", () => {
+    expect(alreadyHoldsRole("member", "member")).toBe(true);
+    expect(alreadyHoldsRole("member", "admin")).toBe(false);
   });
 });

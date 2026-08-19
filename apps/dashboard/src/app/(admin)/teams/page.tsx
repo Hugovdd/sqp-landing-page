@@ -47,5 +47,5 @@ export default async function TeamsPage({
       throw error;
     }
   }
-  return <TeamsPageView params={params} result={result} />;
+  return <TeamsPageView result={result} />;
 }

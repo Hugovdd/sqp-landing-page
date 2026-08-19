@@ -32,7 +32,7 @@ export function parseTeamsParams(searchParams: SearchParams): TeamsParams {
 const nullableString = z.string().nullable();
 const epochSeconds = z.number().int().nonnegative();
 const nullableEpochSeconds = epochSeconds.nullable();
-const teamRoleSchema = z.enum(["admin", "member", "viewer"]);
+export const teamRoleSchema = z.enum(["admin", "member", "viewer"]);
 
 export const teamRowSchema = z.object({
   orgId: z.string().min(1),
@@ -159,3 +159,17 @@ export const TEAM_ROLE_LABELS: Record<TeamRole, string> = {
   member: "Member",
   viewer: "Viewer",
 };
+
+export const TEAM_ROLE_RANK: Record<TeamRole, number> = {
+  admin: 3,
+  member: 2,
+  viewer: 1,
+};
+
+/** True when a known membership already satisfies the invite, so no new code is needed. */
+export function alreadyHoldsRole(
+  existing: TeamRole,
+  requested: MintableTeamRole,
+): boolean {
+  return TEAM_ROLE_RANK[existing] >= TEAM_ROLE_RANK[requested];
+}

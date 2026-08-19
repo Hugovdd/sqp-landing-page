@@ -4,12 +4,9 @@ import { describe, expect, it } from "vitest";
 
 import type { TeamsPageData } from "@/lib/altar-admin";
 import { idleTeamInviteState } from "@/lib/altar-team-invite";
-import type { TeamsParams } from "@/lib/altar-teams";
 
 import { TeamInviteFormFields } from "./invite-form";
 import { TeamsPageView } from "./teams-page";
-
-const params: TeamsParams = { page: 1 };
 
 const team = {
   orgId: "org_binance",
@@ -92,7 +89,6 @@ describe("Teams page", () => {
   it("does not invent a Membership after a successful send", () => {
     const html = renderToStaticMarkup(
       <TeamsPageView
-        params={params}
         result={{
           status: "ready",
           data: data({
@@ -127,7 +123,6 @@ describe("Teams page", () => {
   it("shows a Clerk user ID when no email mapping exists", () => {
     const html = renderToStaticMarkup(
       <TeamsPageView
-        params={params}
         result={{
           status: "ready",
           data: data({
@@ -153,7 +148,6 @@ describe("Teams page", () => {
   it("disables mutation and names the missing token", () => {
     const html = renderToStaticMarkup(
       <TeamsPageView
-        params={params}
         result={{
           status: "ready",
           data: data({ mutation: { status: "missing_config" } }),
@@ -167,7 +161,6 @@ describe("Teams page", () => {
   it("renders an explicit vault unavailable state, never a false empty list", () => {
     const html = renderToStaticMarkup(
       <TeamsPageView
-        params={params}
         result={{ status: "unavailable", kind: "query_failed" }}
       />,
     );
