@@ -4,6 +4,11 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { z } from "zod";
 
 import {
+  type AltarEmailPreviewsResult,
+  altarEmailPreviewsUrl,
+  parseAltarEmailPreviews,
+} from "./altar-email";
+import {
   lifecycleCaseSql,
   PEOPLE_PAGE_SIZE,
   type PeopleParams,
@@ -260,67 +265,9 @@ export async function getAltarPeoplePage(
 
 export const altarAdminSqlForTest = { listQuery, detail: DETAIL_SQL };
 
-export const DEFAULT_ALTAR_WAITLIST_URL = "https://waitlist.motionaltar.com";
-export const ALTAR_EMAIL_PREVIEWS_PATH = "/admin/email-previews";
-
-export type AltarEmailTemplateOk = {
-  id: string;
-  name: string;
-  trigger: string;
-  subject: string;
-  html: string;
-  text: string;
-};
-
-export type AltarEmailTemplateError = {
-  id: string;
-  name?: string;
-  trigger?: string;
-  error: string;
-};
-
-export type AltarEmailTemplate = AltarEmailTemplateOk | AltarEmailTemplateError;
-
-export type AltarEmailPreviewsResult =
-  | { status: "missing_config" }
-  | { status: "unauthorized" }
-  | { status: "unavailable" }
-  | { status: "malformed" }
-  | { status: "empty" }
-  | { status: "ready"; templates: AltarEmailTemplate[] };
-
 export interface AltarEmailPreviewEnv {
   ALTAR_WAITLIST_URL?: string;
   ALTAR_ADMIN_TOKEN?: string;
-}
-
-const readyEmailTemplateSchema = z.object({
-  id: z.string().min(1),
-  name: z.string(),
-  trigger: z.string(),
-  subject: z.string(),
-  html: z.string(),
-  text: z.string(),
-});
-
-const errorEmailTemplateSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().optional(),
-  trigger: z.string().optional(),
-  error: z.string(),
-});
-
-const emailPreviewsResponseSchema = z.object({
-  ok: z.literal(true),
-  templates: z.array(
-    z.union([errorEmailTemplateSchema, readyEmailTemplateSchema]),
-  ),
-});
-
-function normalizeWaitlistUrl(raw: string | undefined): string {
-  const trimmed = raw?.trim();
-  if (!trimmed) return DEFAULT_ALTAR_WAITLIST_URL;
-  return trimmed.replace(/\/+$/, "");
 }
 
 /** Live email HTML/text come from the waitlist Worker. The dashboard never stores a second copy. */
@@ -335,12 +282,11 @@ export async function getAltarEmailPreviews(
     (getCloudflareContext().env as unknown as AltarEmailPreviewEnv);
   const token = env.ALTAR_ADMIN_TOKEN?.trim();
   if (!token) {
-    const error = new Error("ALTAR_ADMIN_TOKEN is not configured.");
-    console.error(error.message);
+    console.error("ALTAR_ADMIN_TOKEN is not configured.");
     return { status: "missing_config" };
   }
 
-  const url = `${normalizeWaitlistUrl(env.ALTAR_WAITLIST_URL)}${ALTAR_EMAIL_PREVIEWS_PATH}`;
+  const url = altarEmailPreviewsUrl(env.ALTAR_WAITLIST_URL);
   const fetchImpl = options.fetch ?? globalThis.fetch;
 
   let response: Response;
@@ -358,9 +304,7 @@ export async function getAltarEmailPreviews(
     return { status: "unavailable" };
   }
 
-  if (response.status === 401) {
-    return { status: "unauthorized" };
-  }
+  if (response.status === 401) return { status: "unauthorized" };
   if (!response.ok) {
     console.error(
       `Altar email preview endpoint returned HTTP ${response.status}.`,
@@ -368,21 +312,10 @@ export async function getAltarEmailPreviews(
     return { status: "unavailable" };
   }
 
-  let payload: unknown;
   try {
-    payload = await response.json();
+    return parseAltarEmailPreviews(await response.json());
   } catch (error) {
     console.error("Altar email preview response was not JSON.", error);
     return { status: "malformed" };
   }
-
-  const parsed = emailPreviewsResponseSchema.safeParse(payload);
-  if (!parsed.success) {
-    console.error("Altar email preview response is malformed.", parsed.error);
-    return { status: "malformed" };
-  }
-  if (parsed.data.templates.length === 0) {
-    return { status: "empty" };
-  }
-  return { status: "ready", templates: parsed.data.templates };
 }

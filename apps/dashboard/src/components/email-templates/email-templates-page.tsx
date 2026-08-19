@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   AltarEmailPreviewsResult,
   AltarEmailTemplate,
-} from "@/lib/altar-admin";
+} from "@/lib/altar-email";
 
 const STATUS_COPY = {
   missing_config: {
@@ -24,6 +24,10 @@ const STATUS_COPY = {
     title: "Email preview response is malformed",
     body: "The waitlist Worker returned a payload that did not match the expected preview schema.",
   },
+  empty: {
+    title: "No email templates were returned",
+    body: "The preview endpoint succeeded and returned an empty template list.",
+  },
 } as const;
 
 function StatusCard({
@@ -31,29 +35,20 @@ function StatusCard({
 }: {
   status: Exclude<AltarEmailPreviewsResult["status"], "ready">;
 }) {
-  if (status === "empty") {
-    return (
-      <Card>
-        <CardContent className="text-muted-foreground flex min-h-64 flex-col items-center justify-center gap-2 p-8 text-center">
-          <IconMail className="size-8" />
-          <p className="text-foreground font-medium">
-            No email templates were returned
-          </p>
-          <p className="max-w-lg text-sm">
-            The preview endpoint succeeded and returned an empty template list.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   const copy = STATUS_COPY[status];
+  const failed = status !== "empty";
   return (
-    <Card className="border-destructive/40">
+    <Card className={failed ? "border-destructive/40" : undefined}>
       <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3 p-8 text-center">
-        <IconAlertTriangle className="text-destructive size-8" />
+        {failed ? (
+          <IconAlertTriangle className="text-destructive size-8" />
+        ) : (
+          <IconMail className="size-8" />
+        )}
         <div>
-          <h3 className="font-semibold">{copy.title}</h3>
+          <h3 className={failed ? "font-semibold" : "font-medium"}>
+            {copy.title}
+          </h3>
           <p className="text-muted-foreground mt-1 max-w-lg text-sm">
             {copy.body}
           </p>
@@ -64,12 +59,12 @@ function StatusCard({
 }
 
 function TemplatePreview({ template }: { template: AltarEmailTemplate }) {
-  if ("error" in template) {
+  if (!template.ok) {
     return (
       <Card className="border-destructive/40">
         <CardHeader>
           <CardTitle className="flex flex-wrap items-center justify-between gap-2">
-            <span>{template.name ?? template.id}</span>
+            <span>{template.name}</span>
             <Badge variant="destructive">Render failed</Badge>
           </CardTitle>
         </CardHeader>
@@ -119,6 +114,57 @@ function TemplatePreview({ template }: { template: AltarEmailTemplate }) {
   );
 }
 
+function TemplateGallery({
+  templates,
+  selectedId,
+}: {
+  templates: [AltarEmailTemplate, ...AltarEmailTemplate[]];
+  selectedId?: string;
+}) {
+  const selected =
+    templates.find((template) => template.id === selectedId) ?? templates[0];
+  return (
+    <div className="grid gap-5 xl:grid-cols-[minmax(260px,0.4fr)_minmax(0,1fr)]">
+      <Card>
+        <CardHeader>
+          <CardTitle>Templates</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-2">
+          {templates.map((template) => {
+            const isSelected = selected.id === template.id;
+            const query = new URLSearchParams({
+              product: "altar",
+              template: template.id,
+            });
+            return (
+              <a
+                key={template.id}
+                href={`/email-templates?${query.toString()}`}
+                aria-current={isSelected ? "page" : undefined}
+                className={
+                  isSelected
+                    ? "bg-muted rounded-md border p-3"
+                    : "hover:bg-muted/40 rounded-md border p-3"
+                }
+              >
+                <p className="font-medium">{template.name}</p>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  {template.trigger || "Trigger unavailable"}
+                </p>
+                <p className="mt-1 text-sm">
+                  {template.ok ? template.subject : "Render failed"}
+                </p>
+              </a>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      <TemplatePreview template={selected} />
+    </div>
+  );
+}
+
 export function EmailTemplatesPageView({
   result,
   selectedId,
@@ -126,12 +172,6 @@ export function EmailTemplatesPageView({
   result: AltarEmailPreviewsResult;
   selectedId?: string;
 }) {
-  const selected =
-    result.status === "ready"
-      ? (result.templates.find((template) => template.id === selectedId) ??
-        result.templates[0]!)
-      : null;
-
   return (
     <main id="main-content" className="flex flex-col gap-5 p-4 sm:p-6">
       <div>
@@ -142,53 +182,10 @@ export function EmailTemplatesPageView({
         </p>
       </div>
 
-      {result.status !== "ready" || selected === null ? (
-        <StatusCard
-          status={result.status === "ready" ? "empty" : result.status}
-        />
+      {result.status === "ready" ? (
+        <TemplateGallery templates={result.templates} selectedId={selectedId} />
       ) : (
-        <div className="grid gap-5 xl:grid-cols-[minmax(260px,0.4fr)_minmax(0,1fr)]">
-          <Card>
-            <CardHeader>
-              <CardTitle>Templates</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              {result.templates.map((template) => {
-                const isSelected = selected.id === template.id;
-                const query = new URLSearchParams({
-                  product: "altar",
-                  template: template.id,
-                });
-                return (
-                  <a
-                    key={template.id}
-                    href={`/email-templates?${query.toString()}`}
-                    aria-current={isSelected ? "page" : undefined}
-                    className={
-                      isSelected
-                        ? "bg-muted rounded-md border p-3"
-                        : "hover:bg-muted/40 rounded-md border p-3"
-                    }
-                  >
-                    <p className="font-medium">
-                      {template.name ?? template.id}
-                    </p>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      {"error" in template
-                        ? (template.trigger ?? "Trigger unavailable")
-                        : template.trigger}
-                    </p>
-                    <p className="mt-1 text-sm">
-                      {"error" in template ? "Render failed" : template.subject}
-                    </p>
-                  </a>
-                );
-              })}
-            </CardContent>
-          </Card>
-
-          <TemplatePreview template={selected} />
-        </div>
+        <StatusCard status={result.status} />
       )}
     </main>
   );

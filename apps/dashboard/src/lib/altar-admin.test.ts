@@ -10,10 +10,10 @@ import {
   AltarAdminError,
   altarAdminSqlForTest,
   type D1Database,
-  DEFAULT_ALTAR_WAITLIST_URL,
   getAltarEmailPreviews,
   getAltarPeoplePage,
 } from "./altar-admin";
+import { DEFAULT_ALTAR_WAITLIST_URL } from "./altar-email";
 import {
   LIFECYCLE_STATES,
   type PeopleParams,
@@ -370,7 +370,7 @@ describe("getAltarEmailPreviews", () => {
       }),
     ).resolves.toEqual({
       status: "ready",
-      templates: [sampleTemplate],
+      templates: [{ ok: true, ...sampleTemplate }],
     });
     expect(fetchImpl).toHaveBeenCalledOnce();
   });
@@ -405,7 +405,16 @@ describe("getAltarEmailPreviews", () => {
     });
     expect(result).toEqual({
       status: "ready",
-      templates: [sampleTemplate, failed],
+      templates: [
+        { ok: true, ...sampleTemplate },
+        {
+          ok: false,
+          id: "invite-follow-up",
+          name: "Invite follow-up",
+          trigger: "",
+          error: "sample render failed",
+        },
+      ],
     });
   });
 

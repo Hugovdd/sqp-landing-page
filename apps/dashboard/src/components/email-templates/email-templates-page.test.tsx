@@ -5,13 +5,14 @@ import { describe, expect, it } from "vitest";
 import type {
   AltarEmailPreviewsResult,
   AltarEmailTemplate,
-} from "@/lib/altar-admin";
+} from "@/lib/altar-email";
 
 import { EmailTemplatesPageView } from "./email-templates-page";
 
 const hostile = `<img src=x onerror=alert(1)><script>alert("x")</script>`;
 
 const readyTemplate: AltarEmailTemplate = {
+  ok: true,
   id: "waitlist-confirm",
   name: hostile,
   trigger: `Joined waitlist ${hostile}`,
@@ -21,6 +22,7 @@ const readyTemplate: AltarEmailTemplate = {
 };
 
 const failedTemplate: AltarEmailTemplate = {
+  ok: false,
   id: "invite-follow-up",
   name: "Invite follow-up",
   trigger: "Invite is about to expire",
