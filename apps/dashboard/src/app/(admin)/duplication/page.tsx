@@ -1,6 +1,6 @@
 import { BarList } from "@/components/telemetry/bar-list";
-import { BarSeriesChart, LineSeriesChart } from "@/components/telemetry/charts";
 import { ChartCard } from "@/components/telemetry/chart-card";
+import { BarSeriesChart, LineSeriesChart } from "@/components/telemetry/charts";
 import { PageShell } from "@/components/telemetry/page-shell";
 import { fmt, StatCard } from "@/components/telemetry/stat-card";
 import { filterCache, resolveFilters } from "@/lib/telemetry/filters";

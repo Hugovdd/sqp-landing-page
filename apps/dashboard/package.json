@@ -15,7 +15,8 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -71,6 +72,7 @@
     "prettier-plugin-tailwindcss": "0.7.2",
     "tailwindcss": "4.2.2",
     "typescript": "5.9.3",
+    "vitest": "^3.2.4",
     "wrangler": "^4.97.0"
   },
   "engines": {

@@ -13,10 +13,12 @@
 
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
 
-  "routes": [{ "pattern": "dashboard.sidequestplugins.com", "custom_domain": true }],
+  "routes": [
+    { "pattern": "dashboard.sidequestplugins.com", "custom_domain": true },
+  ],
 
   // Same D1 as ingest, read-only usage. database_id is a placeholder for local
   // dev; replace with the real id from `wrangler d1 create sqp-telemetry`.
@@ -24,7 +26,12 @@
     {
       "binding": "DB",
       "database_name": "sqp-telemetry",
-      "database_id": "3d27d61b-11db-4b17-bc84-5edc8ede07d1"
-    }
-  ]
+      "database_id": "3d27d61b-11db-4b17-bc84-5edc8ede07d1",
+    },
+    {
+      "binding": "ALTAR_WAITLIST",
+      "database_name": "altar-waitlist",
+      "database_id": "e12047a5-5da5-4cf5-b51a-947dfe236151",
+    },
+  ],
 }

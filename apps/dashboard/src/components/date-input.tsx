@@ -73,24 +73,25 @@ function DateInput({ value, onChange }: Props) {
 
   const initialDate = useRef<DateParts>(date);
 
-  const handleBlur =
-    (field: keyof DateParts) =>
-    (e: React.FocusEvent<HTMLInputElement>): void => {
-      if (!e.target.value) {
-        setDate(initialDate.current);
-        return;
-      }
+  const handleBlur = (
+    field: keyof DateParts,
+    e: React.FocusEvent<HTMLInputElement>,
+  ): void => {
+    if (!e.target.value) {
+      setDate(initialDate.current);
+      return;
+    }
 
-      const newValue = Number(e.target.value);
-      const isValid = validateDate(field, newValue);
+    const newValue = Number(e.target.value);
+    const isValid = validateDate(field, newValue);
 
-      if (!isValid) {
-        setDate(initialDate.current);
-      } else {
-        // If the new value is valid, update the initial value
-        initialDate.current = { ...date, [field]: newValue };
-      }
-    };
+    if (!isValid) {
+      setDate(initialDate.current);
+    } else {
+      // If the new value is valid, update the initial value
+      initialDate.current = { ...date, [field]: newValue };
+    }
+  };
 
   const handleKeyDown =
     (field: keyof DateParts) => (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -215,7 +216,7 @@ function DateInput({ value, onChange }: Props) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("month")}
+        onBlur={(e) => handleBlur("month", e)}
         className="w-6 border-none p-0 text-center outline-hidden"
         placeholder="M"
       />
@@ -233,7 +234,7 @@ function DateInput({ value, onChange }: Props) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("day")}
+        onBlur={(e) => handleBlur("day", e)}
         className="w-7 border-none p-0 text-center outline-hidden"
         placeholder="D"
       />
@@ -251,7 +252,7 @@ function DateInput({ value, onChange }: Props) {
             e.target.select();
           }
         }}
-        onBlur={handleBlur("year")}
+        onBlur={(e) => handleBlur("year", e)}
         className="w-12 border-none p-0 text-center outline-hidden"
         placeholder="YYYY"
       />

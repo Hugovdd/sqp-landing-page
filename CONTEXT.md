@@ -66,3 +66,22 @@ state at install — the daily heartbeat overwrites them. So "OS / version / geo
 breakdown" means the *current live* user base, and a travelling install moves on the map to
 where it was last active.
 _Avoid_: reading any breakdown as "at install time".
+
+# Altar beta lifecycle
+
+The Altar-only People page reads the product's existing waitlist D1 through the read-only
+`ALTAR_WAITLIST` dashboard binding. It is an admin projection, not another source of lifecycle state.
+
+**Waitlist Entry**:
+One email address's beta-access intent. `pending` is not access. Historical `invited` rows remain
+valid manual/legacy email-bound grants because their provenance cannot be reconstructed safely.
+
+**Access Invite**:
+A single-use credential issued to an intended email. Issuance is recorded in `invite_codes` and does
+not change the Waitlist Entry's grant status. The verified Account that claims it may use a different
+email, so intended and claimed identities must always remain visible as separate fields.
+
+**Account**:
+The verified Clerk identity that claims an Access Invite. `waitlist.status='joined'` records access
+for its verified email. `first_signed_in_at` ends this page's lifecycle at the first successful Altar
+panel sign-in. Team Membership is a separate axis and is not inferred here.
