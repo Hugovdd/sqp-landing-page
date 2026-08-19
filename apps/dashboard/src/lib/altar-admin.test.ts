@@ -10,6 +10,8 @@ import {
   AltarAdminError,
   altarAdminSqlForTest,
   type D1Database,
+  DEFAULT_ALTAR_WAITLIST_URL,
+  getAltarEmailPreviews,
   getAltarPeoplePage,
 } from "./altar-admin";
 import {
@@ -319,5 +321,144 @@ describe("getAltarPeoplePage", () => {
     ).rejects.toMatchObject({
       kind: "malformed_data",
     } satisfies Partial<AltarAdminError>);
+  });
+});
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+const sampleTemplate = {
+  id: "waitlist-confirm",
+  name: "Waitlist confirmation",
+  trigger: "Someone joins the waitlist",
+  subject: "You're on the list",
+  html: "<p>Welcome</p>",
+  text: "Welcome",
+};
+
+describe("getAltarEmailPreviews", () => {
+  it("returns missing_config when the admin token is unset", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await expect(getAltarEmailPreviews()).resolves.toEqual({
+      status: "missing_config",
+    });
+  });
+
+  it("fetches live previews with no-store and a bearer token", async () => {
+    const fetchImpl = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        expect(String(input)).toBe(
+          `${DEFAULT_ALTAR_WAITLIST_URL}/admin/email-previews`,
+        );
+        expect(init?.cache).toBe("no-store");
+        expect(init?.headers).toMatchObject({
+          Authorization: "Bearer test-admin-token",
+          Accept: "application/json",
+        });
+        return jsonResponse({ ok: true, templates: [sampleTemplate] });
+      },
+    );
+
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: fetchImpl,
+      }),
+    ).resolves.toEqual({
+      status: "ready",
+      templates: [sampleTemplate],
+    });
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
+  it("strips a trailing slash from the configured waitlist origin", async () => {
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      expect(String(input)).toBe(
+        "https://waitlist.example.test/admin/email-previews",
+      );
+      return jsonResponse({ ok: true, templates: [sampleTemplate] });
+    });
+
+    await getAltarEmailPreviews({
+      env: {
+        ALTAR_WAITLIST_URL: "https://waitlist.example.test/",
+        ALTAR_ADMIN_TOKEN: "test-admin-token",
+      },
+      fetch: fetchImpl,
+    });
+  });
+
+  it("keeps a per-template error without blanking the gallery", async () => {
+    const failed = {
+      id: "invite-follow-up",
+      name: "Invite follow-up",
+      error: "sample render failed",
+    };
+    const result = await getAltarEmailPreviews({
+      env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+      fetch: async () =>
+        jsonResponse({ ok: true, templates: [sampleTemplate, failed] }),
+    });
+    expect(result).toEqual({
+      status: "ready",
+      templates: [sampleTemplate, failed],
+    });
+  });
+
+  it("returns empty when the worker sends no templates", async () => {
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: async () => jsonResponse({ ok: true, templates: [] }),
+      }),
+    ).resolves.toEqual({ status: "empty" });
+  });
+
+  it("returns unauthorized on HTTP 401", async () => {
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "wrong-token" },
+        fetch: async () => jsonResponse({ ok: false }, 401),
+      }),
+    ).resolves.toEqual({ status: "unauthorized" });
+  });
+
+  it("returns unavailable on network and 5xx failures", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: async () => {
+          throw new Error("connect failed");
+        },
+      }),
+    ).resolves.toEqual({ status: "unavailable" });
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: async () => jsonResponse({ ok: false }, 503),
+      }),
+    ).resolves.toEqual({ status: "unavailable" });
+  });
+
+  it("returns malformed for non-JSON and schema-invalid bodies", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: async () => new Response("<html>nope</html>", { status: 200 }),
+      }),
+    ).resolves.toEqual({ status: "malformed" });
+    await expect(
+      getAltarEmailPreviews({
+        env: { ALTAR_ADMIN_TOKEN: "test-admin-token" },
+        fetch: async () =>
+          jsonResponse({ ok: true, templates: [{ id: "broken" }] }),
+      }),
+    ).resolves.toEqual({ status: "malformed" });
   });
 });

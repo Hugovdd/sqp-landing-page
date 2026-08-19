@@ -26,6 +26,21 @@ pnpm run dev
 The Altar admin integration lives in `src/lib/altar-admin.ts`. Keep this seam server-only and do not
 add invite, resend, grant, or other lifecycle mutations to the dashboard.
 
+## Altar email previews
+
+The Email Templates page fetches live renderings from the waitlist Worker over HTTP. It does not
+query waitlist D1 for email HTML or text, and it never stores a second copy of those bodies.
+
+- `ALTAR_WAITLIST_URL` - waitlist Worker origin. Defaults to `https://waitlist.motionaltar.com` when
+  unset. Also set as a Wrangler `vars` value.
+- `ALTAR_ADMIN_TOKEN` - server-only bearer token for `GET /admin/email-previews`. Set with
+  `wrangler secret put ALTAR_ADMIN_TOKEN` or in `.dev.vars` for local `next dev`. Do not commit this
+  value and do not expose it to the browser.
+
+Requests use `cache: "no-store"` so a Worker deploy cannot leave the dashboard showing stale
+templates. Missing token, 401, network/5xx, malformed payloads, and an empty template list each have
+an explicit page state.
+
 ## Tech Stack
 
 - shadcn/ui 4
