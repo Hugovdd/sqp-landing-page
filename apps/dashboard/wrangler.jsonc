@@ -34,4 +34,10 @@
       "database_id": "e12047a5-5da5-4cf5-b51a-947dfe236151",
     },
   ],
+
+  // Public waitlist origin for live email preview fetches. ALTAR_ADMIN_TOKEN is
+  // a Wrangler secret / .dev.vars value and must never be committed.
+  "vars": {
+    "ALTAR_WAITLIST_URL": "https://waitlist.motionaltar.com",
+  },
 }

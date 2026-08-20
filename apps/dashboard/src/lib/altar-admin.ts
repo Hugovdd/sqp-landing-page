@@ -4,6 +4,11 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { z } from "zod";
 
 import {
+  type AltarEmailPreviewsResult,
+  altarEmailPreviewsUrl,
+  parseAltarEmailPreviews,
+} from "./altar-email";
+import {
   lifecycleCaseSql,
   PEOPLE_PAGE_SIZE,
   type PeopleParams,
@@ -259,3 +264,58 @@ export async function getAltarPeoplePage(
 }
 
 export const altarAdminSqlForTest = { listQuery, detail: DETAIL_SQL };
+
+export interface AltarEmailPreviewEnv {
+  ALTAR_WAITLIST_URL?: string;
+  ALTAR_ADMIN_TOKEN?: string;
+}
+
+/** Live email HTML/text come from the waitlist Worker. The dashboard never stores a second copy. */
+export async function getAltarEmailPreviews(
+  options: {
+    env?: AltarEmailPreviewEnv;
+    fetch?: typeof globalThis.fetch;
+  } = {},
+): Promise<AltarEmailPreviewsResult> {
+  const env =
+    options.env ??
+    (getCloudflareContext().env as unknown as AltarEmailPreviewEnv);
+  const token = env.ALTAR_ADMIN_TOKEN?.trim();
+  if (!token) {
+    console.error("ALTAR_ADMIN_TOKEN is not configured.");
+    return { status: "missing_config" };
+  }
+
+  const url = altarEmailPreviewsUrl(env.ALTAR_WAITLIST_URL);
+  const fetchImpl = options.fetch ?? globalThis.fetch;
+
+  let response: Response;
+  try {
+    response = await fetchImpl(url, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    });
+  } catch (error) {
+    console.error("Altar email preview request failed.", error);
+    return { status: "unavailable" };
+  }
+
+  if (response.status === 401) return { status: "unauthorized" };
+  if (!response.ok) {
+    console.error(
+      `Altar email preview endpoint returned HTTP ${response.status}.`,
+    );
+    return { status: "unavailable" };
+  }
+
+  try {
+    return parseAltarEmailPreviews(await response.json());
+  } catch (error) {
+    console.error("Altar email preview response was not JSON.", error);
+    return { status: "malformed" };
+  }
+}
