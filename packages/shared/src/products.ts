@@ -30,6 +30,7 @@ export type NavKey =
   | "duplication"
   | "licensing"
   | "people"
+  | "teams"
   | "email-templates"
   | "geography"
   | "breakdowns"
@@ -79,6 +80,7 @@ export const PRODUCT_REGISTRY = {
     nav: [
       { key: "overview" },
       { key: "people" },
+      { key: "teams" },
       { key: "email-templates" },
       { key: "tools", label: "Forge", pane: "forge" },
       { key: "tools", label: "Chat", pane: "chat", placeholder: true },

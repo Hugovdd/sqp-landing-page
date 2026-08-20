@@ -33,11 +33,17 @@
       "database_name": "altar-waitlist",
       "database_id": "e12047a5-5da5-4cf5-b51a-947dfe236151",
     },
+    {
+      "binding": "ALTAR_VAULT_CATALOG",
+      "database_name": "altar-vault-catalog",
+      "database_id": "7da31040-d522-449a-86ee-624e4b009009",
+    },
   ],
 
-  // Public waitlist origin for live email preview fetches. ALTAR_ADMIN_TOKEN is
-  // a Wrangler secret / .dev.vars value and must never be committed.
+  // Public Altar Worker origins. ALTAR_ADMIN_TOKEN is a Wrangler secret /
+  // .dev.vars value and must never be committed.
   "vars": {
     "ALTAR_WAITLIST_URL": "https://waitlist.motionaltar.com",
+    "ALTAR_VAULT_URL": "https://sign.motionaltar.com",
   },
 }

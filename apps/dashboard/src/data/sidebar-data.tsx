@@ -8,6 +8,7 @@ import {
   IconMail,
   IconTool,
   IconUsers,
+  IconUsersGroup,
   IconWorld,
 } from "@tabler/icons-react";
 
@@ -34,6 +35,7 @@ export const SECTION_NAV: Record<
   duplication: { title: "Duplication", url: "/duplication", icon: IconCopy },
   licensing: { title: "Licensing", url: "/licensing", icon: IconLicense },
   people: { title: "People", url: "/people", icon: IconUsers },
+  teams: { title: "Teams", url: "/teams", icon: IconUsersGroup },
   "email-templates": {
     title: "Email Templates",
     url: "/email-templates",
