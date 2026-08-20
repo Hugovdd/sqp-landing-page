@@ -6,6 +6,7 @@ import {
   IconLayoutDashboard,
   IconLicense,
   IconTool,
+  IconUsers,
   IconWorld,
 } from "@tabler/icons-react";
 
@@ -31,6 +32,7 @@ export const SECTION_NAV: Record<
   overview: { title: "Overview", url: "/overview", icon: IconLayoutDashboard },
   duplication: { title: "Duplication", url: "/duplication", icon: IconCopy },
   licensing: { title: "Licensing", url: "/licensing", icon: IconLicense },
+  people: { title: "People", url: "/people", icon: IconUsers },
   geography: { title: "Geography", url: "/geography", icon: IconWorld },
   breakdowns: { title: "Breakdowns", url: "/breakdowns", icon: IconChartBar },
   errors: { title: "Errors", url: "/errors", icon: IconBug },
