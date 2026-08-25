@@ -3,6 +3,7 @@ import { z } from "zod";
 export const PEOPLE_PAGE_SIZE = 50;
 
 export const LIFECYCLE_STATES = [
+  "revoked",
   "awaiting_invite",
   "invite_issued",
   "invite_expired",
@@ -15,6 +16,7 @@ export type LifecycleState = (typeof LIFECYCLE_STATES)[number];
 export type PeopleOrder = "newest" | "oldest";
 
 export const LIFECYCLE_LABELS: Record<LifecycleState, string> = {
+  revoked: "Revoked",
   awaiting_invite: "Awaiting invite",
   invite_issued: "Invite issued",
   invite_expired: "Invite expired",
@@ -68,7 +70,7 @@ const nullableTimestamp = z.number().int().nonnegative().nullable();
 export const peopleListRowSchema = z.object({
   email: z.string().email(),
   createdAt: z.number().int().nonnegative(),
-  waitlistStatus: z.enum(["pending", "invited", "joined"]),
+  waitlistStatus: z.enum(["pending", "invited", "joined", "revoked"]),
   firstSignedInAt: nullableTimestamp,
   inviteCount: z.number().int().nonnegative(),
   claimedCount: z.number().int().nonnegative(),
@@ -92,6 +94,11 @@ interface LifecycleRule {
 
 /** Ordered lifecycle precedence shared by SQL filtering and view-model derivation. */
 export const LIFECYCLE_RULES: readonly LifecycleRule[] = [
+  {
+    state: "revoked",
+    sql: "waitlistStatus = 'revoked'",
+    matches: (row) => row.waitlistStatus === "revoked",
+  },
   {
     state: "active_in_panel",
     sql: "firstSignedInAt IS NOT NULL",
@@ -152,6 +159,7 @@ interface LifecycleBase {
 
 export type PersonLifecycle = LifecycleBase &
   (
+    | { state: "revoked" }
     | { state: "awaiting_invite" }
     | { state: "invite_issued" }
     | { state: "invite_expired" }
@@ -190,7 +198,7 @@ export function toPersonLifecycle(
 export const inviteHistoryRowSchema = z.object({
   waitlistEmail: z.string().email(),
   waitlistCreatedAt: z.number().int().nonnegative(),
-  waitlistStatus: z.enum(["pending", "invited", "joined"]),
+  waitlistStatus: z.enum(["pending", "invited", "joined", "revoked"]),
   waitlistFirstSignedInAt: nullableTimestamp,
   code: nullableString,
   intendedEmail: nullableString,
@@ -219,7 +227,7 @@ export interface InviteHistoryItem {
 export interface PersonDetail {
   email: string;
   createdAt: number;
-  waitlistStatus: "pending" | "invited" | "joined";
+  waitlistStatus: "pending" | "invited" | "joined" | "revoked";
   firstSignedInAt: number | null;
   invites: InviteHistoryItem[];
 }

@@ -1,6 +1,11 @@
 import { IconAlertTriangle, IconUsersGroup } from "@tabler/icons-react";
 
+import {
+  CreateTeamForm,
+  IdentifiedToggle,
+} from "@/components/teams/team-admin-forms";
 import { TeamInviteForm } from "@/components/teams/invite-form";
+import { IdentifiedUsageCard } from "@/components/identified-usage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +21,12 @@ import {
   type AltarAdminErrorKind,
   type TeamsPageData,
 } from "@/lib/altar-admin";
-import { TEAM_INVITE_STATUS_LABELS, TEAM_ROLE_LABELS } from "@/lib/altar-teams";
+import {
+  TEAM_INVITE_STATUS_LABELS,
+  TEAM_ROLE_LABELS,
+} from "@/lib/altar-teams";
+import type { IdentifiedUsageResult } from "@/lib/altar-usage";
+import { usageForOrg } from "@/lib/altar-usage";
 
 type TeamsPageResult =
   | { status: "ready"; data: TeamsPageData }
@@ -62,7 +72,13 @@ function Unavailable({ kind }: { kind: AltarAdminErrorKind }) {
   );
 }
 
-export function TeamsPageView({ result }: { result: TeamsPageResult }) {
+export function TeamsPageView({
+  result,
+  usage = { status: "empty" },
+}: {
+  result: TeamsPageResult;
+  usage?: IdentifiedUsageResult;
+}) {
   return (
     <main id="main-content" className="flex flex-col gap-5 p-4 sm:p-6">
       <div>
@@ -98,6 +114,17 @@ export function TeamsPageView({ result }: { result: TeamsPageResult }) {
               />
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Create a Team</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CreateTeamForm
+                accounts={result.data.claimedAccounts}
+                disabled={result.data.mutation.status !== "ready"}
+              />
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -119,6 +146,7 @@ export function TeamsPageView({ result }: { result: TeamsPageResult }) {
                       <TableHead>Team</TableHead>
                       <TableHead>Members</TableHead>
                       <TableHead>Invites</TableHead>
+                      <TableHead>Usage</TableHead>
                       <TableHead>Created</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -133,6 +161,12 @@ export function TeamsPageView({ result }: { result: TeamsPageResult }) {
                         </TableCell>
                         <TableCell>{team.memberCount}</TableCell>
                         <TableCell>{team.inviteCount}</TableCell>
+                        <TableCell>
+                          <IdentifiedToggle
+                            team={team}
+                            disabled={result.data.mutation.status !== "ready"}
+                          />
+                        </TableCell>
                         <TableCell>{formatTime(team.createdAt)}</TableCell>
                       </TableRow>
                     ))}
@@ -141,6 +175,16 @@ export function TeamsPageView({ result }: { result: TeamsPageResult }) {
               )}
             </CardContent>
           </Card>
+
+          {result.data.teams
+            .filter((team) => team.identified === 1)
+            .map((team) => (
+              <IdentifiedUsageCard
+                key={team.orgId}
+                title={`${team.name} usage`}
+                result={usageForOrg(usage, team.orgId)}
+              />
+            ))}
 
           <Card>
             <CardHeader>

@@ -17,6 +17,7 @@ import {
   toPersonDetail,
   toPersonLifecycle,
 } from "./altar-people";
+import { postAltarAdmin } from "./altar-admin-mutations";
 import {
   altarTeamInviteUrl,
   parseTeamInviteInput,
@@ -73,6 +74,7 @@ export interface PeoplePageData {
   page: number;
   pageCount: number;
   detail: PersonDetail | null;
+  mutation: { status: "ready" } | { status: "missing_config" };
 }
 
 export interface TeamsPageData {
@@ -83,6 +85,7 @@ export interface TeamsPageData {
   invitePage: number;
   invitePageCount: number;
   peopleEmails: string[];
+  claimedAccounts: { userId: string; email: string }[];
   mutation: { status: "ready" } | { status: "missing_config" };
 }
 
@@ -310,6 +313,7 @@ export async function getAltarPeoplePage(
       page: total === 0 ? 1 : Math.floor(actualOffset / PEOPLE_PAGE_SIZE) + 1,
       pageCount: Math.max(1, Math.ceil(total / PEOPLE_PAGE_SIZE)),
       detail,
+      mutation: mutationConfig(),
     };
   } catch (error) {
     if (error instanceof AltarAdminError) throw error;
@@ -394,11 +398,12 @@ const TEAMS_SQL = `SELECT o.orgId AS orgId,
        o.quotaBytes AS quotaBytes,
        o.createdAt AS createdAt,
        COUNT(DISTINCT m.userId) AS memberCount,
-       COUNT(DISTINCT i.code) AS inviteCount
+       COUNT(DISTINCT i.code) AS inviteCount,
+       COALESCE(o.identified, 0) AS identified
   FROM orgs o
   LEFT JOIN memberships m ON m.orgId = o.orgId
   LEFT JOIN org_invite_codes i ON i.orgId = o.orgId
- GROUP BY o.orgId, o.name, o.quotaBytes, o.createdAt
+ GROUP BY o.orgId, o.name, o.quotaBytes, o.createdAt, o.identified
  ORDER BY o.name ASC, o.orgId ASC
  LIMIT ?`;
 
@@ -486,7 +491,7 @@ export const altarTeamsSqlForTest = {
 };
 
 function mutationConfig(
-  env: AltarTeamInviteEnv | undefined,
+  env?: AltarTeamInviteEnv,
 ): TeamsPageData["mutation"] {
   const resolved =
     env ?? (getCloudflareContext().env as unknown as AltarTeamInviteEnv);
@@ -563,6 +568,10 @@ export async function getAltarTeamsPage(
         const parsed = peopleEmailRow.safeParse(row);
         return parsed.success ? [parsed.data.email] : [];
       }),
+      claimedAccounts: [...emails.entries()].map(([userId, email]) => ({
+        userId,
+        email,
+      })),
       mutation: mutationConfig(options.env),
     };
   } catch (error) {
@@ -667,35 +676,17 @@ export async function sendAltarTeamInvite(
     console.error("ALTAR_ADMIN_TOKEN is not configured.");
     return { status: "missing_config", ...request };
   }
-
-  const url = altarTeamInviteUrl(env.ALTAR_VAULT_URL);
-  const fetchImpl = options.fetch ?? globalThis.fetch;
-  let response: Response;
   try {
-    response = await fetchImpl(url, {
-      method: "POST",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
+    const { status, payload } = await postAltarAdmin(
+      altarTeamInviteUrl(env.ALTAR_VAULT_URL),
+      token,
+      request,
+      options.fetch ?? globalThis.fetch,
+    );
+    return { ...parseTeamInviteResponse(payload, status), ...request };
   } catch (error) {
     console.error("Altar team invite request failed.", error);
     return { status: "unavailable", ...request };
   }
-
-  let payload: unknown = null;
-  try {
-    payload = await response.json();
-  } catch (error) {
-    console.error("Altar team invite response was not JSON.", error);
-    if (response.status === 401) return { status: "unauthorized", ...request };
-    if (response.status === 404) return { status: "unknown_team", ...request };
-    return { status: "unavailable", ...request };
-  }
-
-  return { ...parseTeamInviteResponse(payload, response.status), ...request };
 }
+

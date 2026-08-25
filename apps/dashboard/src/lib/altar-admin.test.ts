@@ -483,7 +483,8 @@ function vaultDatabase(): DatabaseSync {
       orgId TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       quotaBytes INTEGER,
-      createdAt INTEGER NOT NULL
+      createdAt INTEGER NOT NULL,
+      identified INTEGER NOT NULL DEFAULT 0
     );
     CREATE TABLE memberships (
       userId TEXT NOT NULL,
@@ -504,8 +505,8 @@ function vaultDatabase(): DatabaseSync {
       claimedUserId TEXT
     );
     INSERT INTO orgs VALUES
-      ('org_binance', 'Binance', NULL, 10),
-      ('org_sqp', 'Sidequest', 1000, 20);
+      ('org_binance', 'Binance', NULL, 10, 0),
+      ('org_sqp', 'Sidequest', 1000, 20, 0);
     INSERT INTO memberships VALUES
       ('user_alice', 'org_binance', 'admin', 30),
       ('user_bob', 'org_binance', 'member', 40),

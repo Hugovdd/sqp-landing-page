@@ -85,3 +85,12 @@ email, so intended and claimed identities must always remain visible as separate
 The verified Clerk identity that claims an Access Invite. `waitlist.status='joined'` records access
 for its verified email. `first_signed_in_at` ends this page's lifecycle at the first successful Altar
 panel sign-in. Team Membership is a separate axis and is not inferred here.
+
+**revoked**:
+A sticky deny on a Waitlist Entry. `checkGrant` refuses the next panel sign-in. Unclaimed Access
+Invites are expired so they cannot grant a different Account. A later Access Invite + redeem can grant
+again.
+
+**Identified Team**:
+An Org the admin marked as consented for person-level usage. Only then may an `installId` be attached
+to an Account (`account_installs`). Anonymous telemetry charts stay install-scoped.

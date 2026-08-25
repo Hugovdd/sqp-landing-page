@@ -15,6 +15,7 @@ const team = {
   createdAt: 100,
   memberCount: 1,
   inviteCount: 1,
+  identified: 0 as const,
 };
 
 function data(overrides: Partial<TeamsPageData> = {}): TeamsPageData {
@@ -26,6 +27,7 @@ function data(overrides: Partial<TeamsPageData> = {}): TeamsPageData {
     invitePage: 1,
     invitePageCount: 1,
     peopleEmails: ["pat@example.com"],
+    claimedAccounts: [{ userId: "user_pat", email: "pat@example.com" }],
     mutation: { status: "ready" },
     ...overrides,
   };

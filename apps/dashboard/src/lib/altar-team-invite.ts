@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { MINTABLE_TEAM_ROLES, type MintableTeamRole } from "./altar-teams";
+import { altarOriginUrl } from "./altar-urls";
 
 export const DEFAULT_ALTAR_VAULT_URL = "https://sign.motionaltar.com";
 export const ALTAR_TEAM_INVITE_PATH = "/admin/team-invite";
@@ -71,10 +72,15 @@ export function parseTeamInviteInput(input: {
   return { ok: true, email, orgId, role: parsedRole.data };
 }
 
+export function altarVaultAdminUrl(
+  origin: string | undefined,
+  path: string,
+): string {
+  return altarOriginUrl(origin, DEFAULT_ALTAR_VAULT_URL, path);
+}
+
 export function altarTeamInviteUrl(origin: string | undefined): string {
-  const trimmed = origin?.trim();
-  const base = trimmed ? trimmed.replace(/\/+$/, "") : DEFAULT_ALTAR_VAULT_URL;
-  return `${base}${ALTAR_TEAM_INVITE_PATH}`;
+  return altarVaultAdminUrl(origin, ALTAR_TEAM_INVITE_PATH);
 }
 
 const deliveredSchema = z.object({

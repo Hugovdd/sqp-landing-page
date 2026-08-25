@@ -1,12 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { PeoplePageView } from "@/components/people/people-page";
-import {
-  AltarAdminError,
-  type AltarAdminErrorKind,
-  getAltarPeoplePage,
-} from "@/lib/altar-admin";
+import { AltarAdminError, getAltarPeoplePage } from "@/lib/altar-admin";
 import { parsePeopleParams } from "@/lib/altar-people";
+import { getPersonUsage } from "@/lib/altar-usage";
 import { redirectUnlessAltarProduct } from "@/lib/require-altar-product";
 
 export const dynamic = "force-dynamic";
@@ -37,21 +34,31 @@ export default async function PeoplePage({
   redirectUnlessAltarProduct(rawSearchParams);
   const params = parsePeopleParams(rawSearchParams);
 
-  let result:
-    | { status: "ready"; data: Awaited<ReturnType<typeof getAltarPeoplePage>> }
-    | { status: "unavailable"; kind: AltarAdminErrorKind };
   try {
     const data = await getAltarPeoplePage(params);
     if (params.page > data.pageCount) {
       redirect(peoplePageHref(params, data.pageCount));
     }
-    result = { status: "ready", data };
+    const usage = data.detail
+      ? await getPersonUsage(data.detail)
+      : { status: "empty" as const };
+    return (
+      <PeoplePageView
+        params={params}
+        result={{ status: "ready", data }}
+        usage={usage}
+      />
+    );
   } catch (error) {
     if (error instanceof AltarAdminError) {
-      result = { status: "unavailable", kind: error.kind };
-    } else {
-      throw error;
+      return (
+        <PeoplePageView
+          params={params}
+          result={{ status: "unavailable", kind: error.kind }}
+          usage={{ status: "empty" }}
+        />
+      );
     }
+    throw error;
   }
-  return <PeoplePageView params={params} result={result} />;
 }

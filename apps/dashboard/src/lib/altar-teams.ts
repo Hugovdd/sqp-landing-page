@@ -41,6 +41,7 @@ export const teamRowSchema = z.object({
   createdAt: epochSeconds,
   memberCount: z.number().int().nonnegative(),
   inviteCount: z.number().int().nonnegative(),
+  identified: z.coerce.number().int().pipe(z.union([z.literal(0), z.literal(1)])),
 });
 
 export type Team = z.infer<typeof teamRowSchema>;

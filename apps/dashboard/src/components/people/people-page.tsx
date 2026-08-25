@@ -1,3 +1,4 @@
+import { AccessActions } from "@/components/people/access-actions";
 import {
   IconAlertTriangle,
   IconArrowRight,
@@ -26,6 +27,8 @@ import {
   type PersonDetail,
   type PersonLifecycle,
 } from "@/lib/altar-people";
+import type { IdentifiedUsageResult } from "@/lib/altar-usage";
+import { IdentifiedUsageCard } from "@/components/identified-usage";
 
 type PeoplePageResult =
   | { status: "ready"; data: PeoplePageData }
@@ -40,11 +43,10 @@ function formatTime(ms: number | null): string {
 function lifecycleVariant(
   state: PersonLifecycle["state"],
 ): "default" | "secondary" | "outline" | "destructive" {
-  if (state === "active_in_panel" || state === "account_joined")
-    return "default";
-  if (state === "invite_expired") return "destructive";
-  if (state === "manual_legacy_grant") return "secondary";
-  return "outline";
+  if (state === "active_in_panel" || state === "account_joined") return "default";
+  if (state === "invite_expired" || state === "revoked") return "destructive";
+  if (state === "manual_legacy_grant") return "outline";
+  return "secondary";
 }
 
 function hrefFor(
@@ -63,8 +65,15 @@ function hrefFor(
   }
   return `/people?${sp.toString()}`;
 }
-
-function Detail({ detail }: { detail: PersonDetail }) {
+function Detail({
+  detail,
+  mutationDisabled,
+  usage,
+}: {
+  detail: PersonDetail;
+  mutationDisabled: boolean;
+  usage: IdentifiedUsageResult;
+}) {
   const events = [
     {
       at: detail.createdAt,
@@ -168,6 +177,8 @@ function Detail({ detail }: { detail: PersonDetail }) {
               ) : null}
             </div>
           ))}
+          <AccessActions detail={detail} disabled={mutationDisabled} />
+          <IdentifiedUsageCard result={usage} />
         </div>
       </CardContent>
     </Card>
@@ -177,9 +188,11 @@ function Detail({ detail }: { detail: PersonDetail }) {
 export function PeoplePageView({
   params,
   result,
+  usage = { status: "empty" },
 }: {
   params: PeopleParams;
   result: PeoplePageResult;
+  usage?: IdentifiedUsageResult;
 }) {
   return (
     <main id="main-content" className="flex flex-col gap-5 p-4 sm:p-6">
@@ -389,7 +402,13 @@ export function PeoplePageView({
             </CardContent>
           </Card>
 
-          {result.data.detail ? <Detail detail={result.data.detail} /> : null}
+          {result.data.detail ? (
+            <Detail
+              detail={result.data.detail}
+              mutationDisabled={result.data.mutation.status !== "ready"}
+              usage={usage}
+            />
+          ) : null}
         </>
       )}
     </main>

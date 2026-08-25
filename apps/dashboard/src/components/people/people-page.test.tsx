@@ -22,6 +22,7 @@ function data(overrides: Partial<PeoplePageData> = {}): PeoplePageData {
     page: 1,
     pageCount: 1,
     detail: null,
+    mutation: { status: "ready" },
     ...overrides,
   };
 }

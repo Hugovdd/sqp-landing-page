@@ -59,6 +59,15 @@ describe("toPersonLifecycle", () => {
       "active_in_panel",
     ],
     [row({ waitlistStatus: "invited" }), "manual_legacy_grant"],
+    [
+      row({
+        waitlistStatus: "revoked",
+        firstSignedInAt: 1_500,
+        inviteCount: 1,
+        claimedCount: 1,
+      }),
+      "revoked",
+    ],
   ])("maps the diagram branch to %s", (input, expected) => {
     expect(toPersonLifecycle(input, NOW).state).toBe(expected);
   });
@@ -66,6 +75,7 @@ describe("toPersonLifecycle", () => {
   it("uses one ordered declaration for TypeScript and SQL lifecycle precedence", () => {
     const sql = lifecycleCaseSql();
     expect(LIFECYCLE_RULES.map((rule) => rule.state)).toEqual([
+      "revoked",
       "active_in_panel",
       "account_joined",
       "manual_legacy_grant",
@@ -74,7 +84,9 @@ describe("toPersonLifecycle", () => {
       "invite_issued",
     ]);
     for (const rule of LIFECYCLE_RULES) {
-      expect(sql.match(new RegExp(`'${rule.state}'`, "g"))).toHaveLength(1);
+      expect(sql.match(new RegExp(`THEN '${rule.state}'`, "g"))).toHaveLength(
+        1,
+      );
     }
   });
 

@@ -1,3 +1,4 @@
+import { altarOriginUrl } from "./altar-urls";
 import { z } from "zod";
 
 export const DEFAULT_ALTAR_WAITLIST_URL = "https://waitlist.motionaltar.com";
@@ -56,11 +57,7 @@ const emailPreviewsResponseSchema = z.object({
 });
 
 export function altarEmailPreviewsUrl(origin: string | undefined): string {
-  const trimmed = origin?.trim();
-  const base = trimmed
-    ? trimmed.replace(/\/+$/, "")
-    : DEFAULT_ALTAR_WAITLIST_URL;
-  return `${base}${ALTAR_EMAIL_PREVIEWS_PATH}`;
+  return altarOriginUrl(origin, DEFAULT_ALTAR_WAITLIST_URL, ALTAR_EMAIL_PREVIEWS_PATH);
 }
 
 function toTemplate(
