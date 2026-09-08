@@ -1,6 +1,6 @@
 ---
 title: "Privacy Policy"
-lastUpdated: 2025-03-07
+lastUpdated: 2026-09-08
 seo:
   metaTitle: "Privacy Policy"
   metaDescription: "Privacy Policy for Sidequest Plugins — how we handle your data."
@@ -8,7 +8,7 @@ seo:
 
 # Privacy Policy
 
-Last updated: March 7, 2025
+Last updated: September 8, 2026
 
 This Privacy Policy describes our policies and procedures on the collection, use, and disclosure of your information when you use the Service and tells you about your privacy rights and how the law protects you.
 
@@ -55,7 +55,11 @@ Usage Data may include information such as your Device's Internet Protocol addre
 
 ### Tracking Technologies and Cookies
 
-We use Cloudflare Web Analytics, which is a privacy-first analytics tool that does not use cookies or collect personal data. It provides aggregate metrics about page views and visits without tracking individual users.
+With your permission, we use Google Analytics to understand which websites and campaigns bring visitors to our site and which visits lead to purchases. Analytics may include pages visited, referring websites, campaign information, approximate country, device and browser information, and purchase details such as product, transaction ID, value, and currency. We do not intentionally send your name, email address, or payment card details to Google Analytics.
+
+On this website, the Google Analytics tag loads only after you accept analytics cookies. You can reject analytics or withdraw your consent through **Cookie settings** in the footer. Withdrawing consent stops website analytics and removes its Google Analytics cookies from this domain. We remember your preference in your browser for 180 days. Advertising storage and advertising personalization remain disabled.
+
+LemonSqueezy provides our checkout and sends purchase events through its Google Analytics integration. Hosted checkout pages are also subject to [LemonSqueezy's privacy policy](https://www.lemonsqueezy.com/privacy). Learn more about [Google's use of information from sites that use its services](https://policies.google.com/technologies/partner-sites).
 
 ### Use of Your Personal Data
 
@@ -78,7 +82,8 @@ Your information, including Personal Data, is processed at the Company's operati
 
 We use the following third-party services:
 
-- **Cloudflare** — hosting, CDN, and web analytics
+- **Cloudflare** - hosting and CDN
+- **Google Analytics** - website traffic and purchase analytics
 - **Mailgun** — email delivery for subscriptions and contact form
 - **LemonSqueezy** — payment processing for product purchases
 

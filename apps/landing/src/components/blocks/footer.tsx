@@ -65,7 +65,7 @@ export function Footer() {
           <p className="text-muted-foreground text-sm">
             &copy; {year} {SITE.name}. All rights reserved.
           </p>
-          <ul className="flex items-center gap-6">
+          <ul className="flex flex-wrap items-center justify-center gap-6">
             {LEGAL_LINKS.map((link) => (
               <li key={link.text}>
                 <a
@@ -76,6 +76,11 @@ export function Footer() {
                 </a>
               </li>
             ))}
+            <li>
+              <button type="button" data-analytics-settings className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                Cookie settings
+              </button>
+            </li>
           </ul>
         </div>
       </div>

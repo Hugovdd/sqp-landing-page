@@ -1,0 +1,114 @@
+<section
+  id="analytics-consent"
+  aria-label="Analytics preferences"
+  hidden
+  class="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-2xl border border-border bg-background p-5 text-foreground shadow-xl"
+>
+  <h2 class="text-base font-semibold">Help us understand what brings you here</h2>
+  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+    With your permission, we use Google Analytics cookies to measure visits and
+    purchases. You can change your choice anytime in the footer.
+    <a href="/privacy" class="underline underline-offset-4">Privacy policy</a>
+  </p>
+  <div class="mt-4 flex flex-wrap gap-3">
+    <button id="analytics-reject" type="button" class="rounded-lg border border-border px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-4">Reject analytics</button>
+    <button id="analytics-accept" type="button" class="rounded-lg border border-border px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-4">Accept analytics</button>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const id = 'G-4X9B1G9ESM';
+    const key = 'sqp-analytics-consent';
+    const banner = document.getElementById('analytics-consent');
+    const settings = document.querySelector('[data-analytics-settings]');
+    let accepted = false;
+    let loaded = false;
+    let previousFocus;
+    window.dataLayer = window.dataLayer || [];
+    // LemonSqueezy uses this same function. Drop events until consent is granted.
+    window.gtag = function () {
+      if (accepted || arguments[0] === 'consent') window.dataLayer.push(arguments);
+    };
+    window.gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+
+    function readChoice() {
+      try {
+        const choice = JSON.parse(localStorage.getItem(key));
+        if (choice?.expires > Date.now() && typeof choice.accepted === 'boolean') return choice;
+      } catch { /* Storage can be unavailable. Ask again on the next page. */ }
+      return null;
+    }
+
+    function enable() {
+      accepted = true;
+      if (loaded || !['sidequestplugins.com', 'www.sidequestplugins.com'].includes(location.hostname)) return;
+      loaded = true;
+      window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      window.gtag('js', new Date());
+      // Keep campaign attribution, but do not send arbitrary URL tokens or form data.
+      const page = new URL(location.href);
+      const campaign = new URLSearchParams();
+      for (const name of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_id', 'utm_term', 'utm_content']) {
+        if (page.searchParams.has(name)) campaign.set(name, page.searchParams.get(name));
+      }
+      page.search = campaign.toString();
+      page.hash = '';
+      const referrer = document.referrer ? new URL(document.referrer) : null;
+      window.gtag('config', id, {
+        page_location: page.href,
+        page_referrer: referrer ? referrer.origin + referrer.pathname : '',
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+      });
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(script);
+    }
+
+    function choose(value) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ accepted: value, expires: Date.now() + 180 * 86400000 }));
+      } catch { /* The current page still respects the visitor's choice. */ }
+      banner.hidden = true;
+      if (value) enable();
+      else {
+        accepted = false;
+        window['ga-disable-' + id] = true;
+        for (const cookie of document.cookie.split(';')) {
+          const name = cookie.split('=')[0].trim();
+          if (name === '_ga' || name.startsWith('_ga_')) {
+            for (const domain of ['', location.hostname, '.sidequestplugins.com']) {
+              document.cookie = name + '=; Max-Age=0; Path=/' + (domain ? '; Domain=' + domain : '');
+            }
+          }
+        }
+        if (loaded) location.reload();
+      }
+      previousFocus?.focus();
+    }
+
+    document.getElementById('analytics-accept').addEventListener('click', () => {
+      window['ga-disable-' + id] = false;
+      choose(true);
+    });
+    document.getElementById('analytics-reject').addEventListener('click', () => choose(false));
+    settings?.addEventListener('click', () => {
+      previousFocus = settings;
+      banner.hidden = false;
+      document.getElementById('analytics-reject').focus();
+    });
+    window.addEventListener('storage', (event) => {
+      if (event.key === key || event.key === null) location.reload();
+    });
+    const choice = readChoice();
+    if (choice?.accepted) enable();
+    banner.hidden = choice !== null;
+  })();
+</script>
