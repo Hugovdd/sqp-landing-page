@@ -29,9 +29,6 @@ export type NavKey =
   | "overview"
   | "duplication"
   | "licensing"
-  | "people"
-  | "teams"
-  | "email-templates"
   | "geography"
   | "breakdowns"
   | "errors";
@@ -79,9 +76,6 @@ export const PRODUCT_REGISTRY = {
     brands: ["altar"],
     nav: [
       { key: "overview" },
-      { key: "people" },
-      { key: "teams" },
-      { key: "email-templates" },
       { key: "tools", label: "Forge", pane: "forge" },
       { key: "tools", label: "Chat", pane: "chat", placeholder: true },
       { key: "tools", label: "Vault", pane: "vault", placeholder: true },
