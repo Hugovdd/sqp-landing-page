@@ -92,6 +92,7 @@ async function writeEvent(
   const brand = app.brand;
   const os = app.os ?? null;
   const appVersion = app.appVersion ?? null;
+  const hostApp = app.hostApp ?? null; // NULL = After Effects (old clients)
   // Coarse license plan resolves asynchronously on the client, so early events
   // carry "unknown". Treat unknown/absent as "no new information" so a later
   // session heartbeat can't clobber a previously-resolved plan back to unknown.
@@ -109,14 +110,15 @@ async function writeEvent(
       .prepare(
         `INSERT INTO installs
            (installId, firstSeen, installedAt, lastSeen, brand, os, appVersion, country,
-            licensePlan, licenseType)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            licensePlan, licenseType, hostApp)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(installId) DO UPDATE SET
            lastSeen    = excluded.lastSeen,
            brand       = excluded.brand,
            os          = excluded.os,
            appVersion  = excluded.appVersion,
            country     = excluded.country,
+           hostApp     = excluded.hostApp,
            installedAt = COALESCE(installs.installedAt, excluded.installedAt),
            licensePlan = COALESCE(excluded.licensePlan, installs.licensePlan),
            licenseType = COALESCE(excluded.licenseType, installs.licenseType)`,
@@ -132,6 +134,7 @@ async function writeEvent(
         country,
         licensePlan,
         licenseType,
+        hostApp,
       );
 
   const insertUsage = (
@@ -147,8 +150,8 @@ async function writeEvent(
       .prepare(
         `INSERT INTO usage_events
            (receivedAt, brand, event, installId, os, appVersion, country,
-            indexedItemCount, compsDuplicated, mode, pane, tool, action)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            indexedItemCount, compsDuplicated, mode, pane, tool, action, hostApp)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         receivedAt,
@@ -164,6 +167,7 @@ async function writeEvent(
         pane,
         tool,
         action,
+        hostApp,
       );
 
   switch (event) {
@@ -176,9 +180,9 @@ async function writeEvent(
         upsertInstall(false),
         db
           .prepare(
-            `INSERT OR IGNORE INTO daily_active (installId, day, brand) VALUES (?, ?, ?)`,
+            `INSERT OR IGNORE INTO daily_active (installId, day, brand, hostApp) VALUES (?, ?, ?, ?)`,
           )
-          .bind(installId, utcDay(receivedAt), brand),
+          .bind(installId, utcDay(receivedAt), brand, hostApp),
       ]);
       return;
 
@@ -237,8 +241,8 @@ async function writeEvent(
           .prepare(
             `INSERT INTO errors
                (installId, receivedAt, brand, appVersion, aeVersion, os, country,
-                category, name, message, stack, action)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                category, name, message, stack, action, hostApp)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           )
           .bind(
             installId,
@@ -253,6 +257,7 @@ async function writeEvent(
             s.message,
             s.stack ?? null,
             s.action ?? null,
+            hostApp,
           ),
       ]);
       return;

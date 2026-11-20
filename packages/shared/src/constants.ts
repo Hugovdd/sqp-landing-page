@@ -30,6 +30,10 @@ export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
 export const LICENSE_PLANS = ["trial", "paid", "none", "unknown"] as const;
 export type LicensePlan = (typeof LICENSE_PLANS)[number];
 
+/** Host application the event came from. Absent (stored NULL) means After Effects. */
+export const HOST_APPS = ["ae", "premiere"] as const;
+export type HostApp = (typeof HOST_APPS)[number];
+
 // --- Sanity / abuse bounds (see plan: "reject absurd compsDuplicated, skewed ts") ---
 
 /** Reject ts older than ~2017 — anything earlier is junk/abuse. */

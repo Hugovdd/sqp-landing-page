@@ -8,7 +8,8 @@
     "deploy": "wrangler deploy",
     "cf-types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
-    "db:migrate": "wrangler d1 migrations apply DB --remote"
+    "db:migrate": "wrangler d1 migrations apply DB --remote",
+    "test": "vitest run"
   },
   "dependencies": {
     "@sqp/shared": "workspace:*"
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4",
     "typescript": "^5.9.3",
+    "vitest": "^3.2.6",
     "wrangler": "^4.97.0"
   }
 }
