@@ -118,7 +118,7 @@ async function writeEvent(
            os          = excluded.os,
            appVersion  = excluded.appVersion,
            country     = excluded.country,
-           hostApp     = excluded.hostApp,
+           hostApp     = COALESCE(excluded.hostApp, installs.hostApp),
            installedAt = COALESCE(installs.installedAt, excluded.installedAt),
            licensePlan = COALESCE(excluded.licensePlan, installs.licensePlan),
            licenseType = COALESCE(excluded.licenseType, installs.licenseType)`,
