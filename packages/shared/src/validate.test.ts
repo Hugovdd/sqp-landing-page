@@ -65,6 +65,24 @@ describe("parseEnvelope — valid events", () => {
     expect(r?.app.license).toBeUndefined();
   });
 
+  it("passes app.hostApp through when known", () => {
+    const r = parseEnvelope(
+      { ...base("session"), app: { ...base("session").app, hostApp: "premiere" } },
+      NOW,
+    );
+    expect(r?.app.hostApp).toBe("premiere");
+  });
+
+  it("drops the event for an unknown or malformed hostApp", () => {
+    for (const hostApp of ["resolve", 5, null]) {
+      const r = parseEnvelope(
+        { ...base("session"), app: { ...base("session").app, hostApp } },
+        NOW,
+      );
+      expect(r).toBeNull();
+    }
+  });
+
   it("accepts tool_used with pane + tool + action", () => {
     const r = parseEnvelope(
       base("tool_used", { pane: "rigging", tool: "pinning", action: "top-left" }),

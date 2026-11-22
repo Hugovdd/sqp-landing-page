@@ -4,6 +4,7 @@
 import type {
   DuplicationMode,
   ErrorCategory,
+  HostApp,
   KnownEvent,
   LicensePlan,
 } from "./constants";
@@ -20,7 +21,9 @@ export interface LicenseInfo {
 export interface AppInfo {
   brand: Brand;
   appVersion: string;
-  /** After Effects version — present for the AE brand; may be absent for binance. */
+  /** Host app; absent means After Effects (old clients). */
+  hostApp?: HostApp;
+  /** Host app version (keeps its AE-era name); may be absent for binance. */
   aeVersion?: string;
   /** OS string, e.g. "macOS 14". */
   os?: string;

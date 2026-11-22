@@ -20,6 +20,7 @@ import {
   ERROR_MESSAGE_MAX,
   ERROR_NAME_MAX,
   ERROR_STACK_MAX,
+  HOST_APPS,
   MAX_PANE_LEN,
   MAX_TOOL_LEN,
   MAX_TOOL_ACTION_LEN,
@@ -41,6 +42,7 @@ const AppSchema = z
   .object({
     brand: z.enum(BRANDS),
     appVersion: z.string().min(1).max(MAX_VERSION_LEN),
+    hostApp: z.enum(HOST_APPS).optional(),
     aeVersion: z.string().max(MAX_VERSION_LEN).optional(),
     os: z.string().max(MAX_OS_LEN).optional(),
     // Optional + coerced away on bad shape (.catch) so a malformed license block
@@ -138,6 +140,7 @@ export function parseEnvelope(
     app: {
       brand: e.app.brand,
       appVersion: e.app.appVersion,
+      hostApp: e.app.hostApp,
       aeVersion: e.app.aeVersion,
       os: e.app.os,
       license: e.app.license,
